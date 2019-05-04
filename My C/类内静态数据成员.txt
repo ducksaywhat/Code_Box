@@ -1,0 +1,28 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class app
+{
+public:
+	app(int a)
+	{
+		cout<<"constrution complete"<<endl;
+		x=a,y++;
+	}
+	void move()
+	{
+		cout<<"y ="<<y<<endl;
+	}
+	static int y;
+private:
+
+	int x;
+    
+	
+};
+int app::y(0); 
+int main()
+{
+	app qwe(20),ewq(100);
+	cout<<app::y<<endl;
+}

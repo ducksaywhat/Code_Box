@@ -1,0 +1,27 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	int i=0;
+	 typedef struct haha {
+		int date;
+		struct haha *next;
+	}haha;
+	 haha *p;
+	 haha *b=new haha;
+	 while(i<5){
+		 p=new haha;
+		 cin>>p->date;
+		 p->next=b->next;
+		 b->next=p;
+		 i++;
+	 }
+	 i=0;
+	 while(i<5)
+	 {
+		 cout<<b->next->date<<endl;
+		 b->next=b->next->next;
+		 i++;
+	 }
+
+}

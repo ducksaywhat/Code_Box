@@ -1,0 +1,66 @@
+#include<iostream>
+using namespace std;
+class fun1
+{
+public:
+	fun1(){}
+	fun1(int a)
+	{
+		x=a;
+	}
+	void inx(int a)
+	{
+		x=a;
+	}
+	int getx()
+	{
+		return x;
+	}
+	void disp()
+	{
+		cout<<"x ="<<x<<endl;
+	}
+private:
+	int x;
+};
+class fun2
+{
+public:
+	fun2(){}
+	fun2(int a)
+	{
+		y=a;
+	}
+	void iny(int a)
+	{
+		y=a;
+	}
+	int gety()
+	{
+		return y;
+	}
+	void disp()
+	{
+		cout<<"y ="<<y<<endl;
+	}
+private:
+	int y;
+};
+class upfun:public fun1,public fun2
+{
+public:
+	upfun(){}
+	upfun(int a,int b):
+fun1(a),fun2(b){}
+};
+int main()
+{
+	upfun qwe(60,99);
+	//qwe.inx(50);
+	//qwe.iny(60);
+	qwe.fun1::disp();
+	qwe.fun2::disp();
+}
+	
+
+

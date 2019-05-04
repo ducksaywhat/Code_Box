@@ -1,0 +1,31 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class a
+{
+public:
+	a()
+	{
+		cout<<"no int"<<endl;
+	}
+	a(int a)
+	{
+		cout<<"have int"<<endl;
+		x=a;
+	}
+	void move()
+	{
+		cout<<"x ="<<x<<endl;
+
+	}
+private:
+	int x;
+};
+int main()
+{
+	a q;
+	a w(20);
+	q.move();
+	w.move();
+	cout<<"c++ is funny!"<<endl;
+}

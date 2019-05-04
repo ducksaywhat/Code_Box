@@ -1,0 +1,42 @@
+#include<iostream>
+using namespace std;
+class fun
+{
+public:
+	fun(int q,int w)
+	{
+		x=q;
+		y=w;
+		cout<<"great"<<endl;
+	};
+
+	void inx(int a)
+	{
+		x=a;
+	};
+	void iny(int a)
+	{
+		y=a;
+	};
+	void disp()
+	{
+		cout<<"x ="<<x<<"y ="<<y<<endl;
+	};
+private:
+	int x;
+	int y;
+};
+void hfun(fun &b)
+{
+	b.inx(50);
+	b.iny(19);
+}
+
+int main()
+{
+	fun a(10,20);
+	a.disp();
+	hfun(a);
+	a.disp();
+	return 0;
+}

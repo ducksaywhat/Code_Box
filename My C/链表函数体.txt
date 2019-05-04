@@ -1,0 +1,33 @@
+#include<iostream>
+#define NULL 0;
+using namespace std;
+int main()
+{
+
+	int i=0;
+	typedef struct haha{
+		int date;
+		struct haha *next;
+	}haha;
+	haha *l=new haha;
+	haha *a=l;
+
+    for(i=0;a;)
+	{
+		haha *p=new haha;
+		p->date=i;
+		a->next=p;
+		a=p;
+		if(i++==5){a->next=NULL;
+		break;}
+	
+
+	};
+	a=l->next;
+	for(i=0;a;a=a->next)
+	{
+		cout<<a->date<<endl;
+	   
+	
+	};
+}

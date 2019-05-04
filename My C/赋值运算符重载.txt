@@ -1,0 +1,56 @@
+#include<iostream>
+using namespace std;
+class base
+{
+public:
+	base(int a,int b)
+	{
+		x=a;
+		y=b;
+		cout<<"constrution complete"<<endl;
+	}
+	void inx(int a)
+	{
+		x=a;
+	}
+	void iny(int b)
+	{
+		y=b;
+	}
+	int gety()
+	{
+		return y;
+
+	}
+	int getx()
+	{
+		return x;
+	}
+	void disp()
+	{
+		cout<<"x="<<x<<endl;
+		cout<<"y="<<y<<endl;
+	}
+
+	base& operator=(base &);
+private:
+	int x;
+	int y;
+};
+base& base::operator=(base &d)
+{
+	x=d.x;
+	y=d.y;
+	return(*this);
+};
+//class ubase::public base
+int main()
+{
+	base a(1,2),b(3,4);
+	a.disp();
+	b.disp();
+	a=b;
+	cout<<"and then"<<endl;
+	a.disp();
+	a.disp();
+}

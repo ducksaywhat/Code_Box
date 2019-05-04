@@ -1,0 +1,47 @@
+#include<iostream>
+using namespace std;
+template <typename T>
+class array
+{
+public:
+	array(int a)
+	{
+		size=a;
+		elem=new T[size];
+	}
+	~array()
+	{
+		cout<<"this array is using over"<<endl;
+	}
+	void arrayset()
+	{
+		int i(0);
+		while(i<size)
+		{
+		cin>>elem[i];
+		i++;
+		}
+	}
+	T& operator [](int a)
+	{
+		if(a<0||a>=size)
+		{
+			cout<<"数组下标越界"<<endl;
+			exit(0);
+		}
+		return elem[a];
+	}
+private:
+	int size;
+	T  *elem;
+};
+int main()
+{
+    //array<int> a(5);
+	//array<double>a(5);
+	array<char>a(5);
+	a.arrayset();
+	cout<<a[2]<<endl;
+	cout<<a[10]<<endl;
+	
+}

@@ -1,0 +1,28 @@
+#includeiostream
+using namespace std;
+class base
+{
+public
+	void disp()
+	{
+		coutthe result is xyendl;
+	}
+	base(int a,int b)
+	{
+		x=a,y=b;
+	}
+friend bool operator%(base &,base &);
+private
+	int x,y;
+};
+bool operator%(base &c,base &d)
+{
+	return(c.xd.x);
+};
+int main()
+{
+	int w;
+	base a(50,60),b(5,6);
+    if(a%b)
+	coutcome on bro wendl;
+}

@@ -1,0 +1,150 @@
+#include<iostream>
+using namespace std;
+typedef struct seed
+{
+	int date;
+	struct seed *lc,*rc;
+}seed;
+typedef struct root
+{
+	int level;
+	int leafs;
+	seed *tseed;
+}root;
+seed* leaf(root *t)//need to text
+{
+	int leafs=t->leafs;
+	int level=t->level;
+	double num1(1);
+	double num2(0);
+	double num3(0);
+	seed *a=t->tseed;
+	while(level+1)
+	{
+		num1=num1*2;
+		num2+=num1;
+		level--;//because
+	}
+	level=t->level;//why
+	num3=leafs-num2+num1;
+	if(num3==0)
+	{
+		while(level)
+		{
+			a=a->lc;
+            level--;
+		}
+		a->lc=new seed;
+		a=a->lc;
+		a->lc=a->rc=0;
+		t->leafs++;
+		return a;
+	}
+	else
+	{
+		while(level)
+		{
+			if(num3>=((num1)/2))
+			{
+				a=a->rc;
+				num3=num3-(num1)/2;
+				num1=(num1)/2;
+			}
+			else
+			{
+			a=a->lc;
+			num1=(num1)/2;
+			}
+			level--;
+		};
+		if(num3>=((num1)/2))
+		{
+			a->rc=new seed;
+			a=a->rc;
+		}
+		else
+		{
+			a->lc=new seed;
+			a=a->lc;
+		}
+		a->lc=a->rc=0;
+		t->leafs++;
+		if(t->leafs==num2)t->level++;
+		return a;
+	}
+}
+void addleaf(root *t)
+{
+	int date;
+	cout<<"in what you want to in,space to separate,0 to end"<<endl;
+	cin>>date;
+	while(date!=0)
+	{
+		seed *a;
+		a=leaf(t);
+		a->date=date;
+		cin>>date;
+	}
+}
+void displevel(seed *s,int i)
+{
+	if(i==0)
+	{
+		if(s)
+			cout<<s->date<<" ";
+		else
+			cout<<0<<" ";		
+	}
+	else
+	{
+		displevel(s->lc,(i-1));displevel(s->rc,(i-1));
+	}
+}
+void disptree(root *t)
+{
+	seed *p=t->tseed;
+	double num1(1);
+	double num2(0);
+	double num3(0);
+	int i(1);
+	int n;
+	int leafs=t->leafs;
+	int level=t->level;
+	n=(t->level+1);
+	while(n)
+	{
+		num1=num1*2;
+		num2+=num1;
+		n--;
+	}
+	if((num2-leafs)==num1)
+		level--;
+	cout<<"this tree is  "<<level+1<<" level"<<endl;
+	cout<<"this tree has "<<leafs<<" leafs"<<endl;
+	cout<<endl;
+	while(level+1)
+	{
+		cout<<"level "<<i<<":"<<endl;
+		displevel(p,i);
+		cout<<endl;
+		i++;
+		level--;
+	};
+	/*level=(t->level+1);
+	while(levlel)
+	{
+		num1=num1*2;
+		num2+=num1;
+	}
+	num3=leafs-num2+num1;
+	*/
+}
+int main()
+{
+	root *tree=new root;
+	tree->leafs=tree->level=0;
+	tree->tseed=new seed;
+	addleaf(tree);
+	disptree(tree);
+}
+//受尽苦难而不厌者，方为修罗

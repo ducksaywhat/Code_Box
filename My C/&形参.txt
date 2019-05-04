@@ -1,0 +1,15 @@
+#include<iostream>
+using namespace std;
+void fun(int &a);
+void main()
+{
+	int i(0);
+	int a(5);
+	for(;i<10;i++)
+		fun(a);
+	cout<<a<<endl;
+}
+void fun(int &a)
+{
+	a++;
+}

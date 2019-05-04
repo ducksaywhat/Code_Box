@@ -1,0 +1,13 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	char a;
+	a='b';
+	char b;
+	b='c';
+	int q;
+	
+	cout<<(float) (a+b)/5<<endl;
+	
+}

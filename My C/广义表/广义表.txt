@@ -1,0 +1,86 @@
+1.
+#include<iostream>
+typedef enum{atom,list} elemtag;
+using namespace std;
+typedef struct haha{
+	elemtag tag;//0->atom 1->list
+	union
+	{
+		int date;
+		struct {haha *dp,*np;}ptr;
+	};
+}haha;
+void creatlist(haha *a)
+{
+	//a=new haha; not work atall
+	a->tag=list;
+	a->ptr.np=0;
+}
+//template <typename T>
+void add(haha *c,int b)
+{
+	haha *a=c;
+	while(a->ptr.np!=0)
+	a=a->ptr.np;
+	a->ptr.np=new haha;
+	a=a->ptr.np;
+	a->tag=list;
+	a->ptr.dp=new haha;
+	a->ptr.dp->tag=atom;
+	a->ptr.dp->date=b;
+	a->ptr.np=0;
+}
+/*template <typename T>
+void add(haha *a,T b[])
+{
+}*/
+int main()
+{
+	haha *text=new haha;
+	creatlist(text);
+	add(text,50);
+        cout<<text->ptr.np->ptr.dp->date<<endl;
+}
+2.
+#include<iostream>
+typedef enum{atom,list} elemtag;
+using namespace std;
+typedef struct haha{
+	elemtag tag;//0->atom 1->list
+	union
+	{
+		int date;
+		struct {haha *dp,*np;}ptr;
+	};
+}haha;
+void creatlist(haha* &a)
+{
+	a=new haha; //it works good
+	a->tag=list;
+	a->ptr.np=0;
+}
+//template <typename T>
+void add(haha *c,int b)
+{
+	haha *a=c;
+	while(a->ptr.np!=0)
+	a=a->ptr.np;
+	a->ptr.np=new haha;
+	a=a->ptr.np;
+	a->tag=list;
+	a->ptr.dp=new haha;
+	a->ptr.dp->tag=atom;
+	a->ptr.dp->date=b;
+	a->ptr.np=0;
+}
+/*template <typename T>
+void add(haha *a,T b[])
+{
+}*/
+int main()
+{
+	haha *text;
+	creatlist(text);
+	add(text,50);
+    cout<<text->ptr.np->ptr.dp->date<<endl;
+}

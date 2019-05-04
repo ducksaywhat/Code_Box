@@ -1,0 +1,25 @@
+#include<iostream>
+using namespace std;
+void baby(int a);
+void baby(int a,int b);
+void baby(int a,int b,int c);
+void main()
+{
+	int a(10),b(20),c(30);
+	baby(a);
+	baby(a,b);
+	baby(a,b,c);
+	cout<<"OK"<<endl;
+}
+void baby(int a)
+{
+	cout<<a<<endl;
+}
+void baby(int a,int b,int c)
+{
+	cout<<a<<endl<<b<<endl<<c<<endl;
+}
+void baby(int a,int b)
+{
+	cout<<a<<endl<<b<<endl;
+}

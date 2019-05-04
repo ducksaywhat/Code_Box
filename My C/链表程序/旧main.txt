@@ -1,0 +1,29 @@
+int main()
+{
+	cout<<"由于本程序功能仅为作者学习练习之用，所以功能并不完全，仅提供5个链表。后续可能会进一步完善"<<endl<<endl;
+	cout<<"*****************************按下回车键开启程序******************************************"<<endl;
+	getchar();
+	haha *l=new haha;
+	int i;
+	int d;
+	char c;
+	while(true){
+		disp();
+		cin>>c;
+		switch(c){
+		case 'a':{creatlist(l);};break;
+		case 'b':{displist(l);};break;
+		case 'c':{getlistelem(l);};break; 
+		case 'd':{deleteelem(l)};break;
+		case 'e':{addelem(l);};break;
+		case 'f':{cout<<"此功能暂未开启，本程序有待完善，敬请期待下一个版本"<<endl;};
+		case 'z':{};break;
+		default:cout<<"***********输入错误***********"<<endl;
+		};
+		if(c=='z'){
+			cout<<"***********感谢使用***********"<<endl;
+			break;};
+		
+	};
+	return 0;
+}

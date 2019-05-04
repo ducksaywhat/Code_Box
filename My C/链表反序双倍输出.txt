@@ -1,0 +1,56 @@
+#include<iostream>
+using namespace std;
+typedef struct haha{
+	char date;
+	haha* pf;
+	haha* pr;
+}haha;
+haha* listcreat()
+{
+	int i(0);
+	int t;
+	haha *b=new haha;
+	b->pr=0;
+	cout<<"请输入你想要创建链表的大小"<<endl;
+	cin>>t;
+	while(true)
+	{
+	haha *p=new haha;
+	cout<<"请输入链表中第"<<i+1<<"个结点数据"<<endl;
+	cin>>p->date;
+	p->pr=b;
+	b->pf=p;
+	b=p;
+	if(i++==t-1)
+	{
+		b->pf=0;
+		cout<<"链表创建成功"<<endl;
+		break;
+	}
+	}
+	return b;
+
+
+}
+void work(haha *b)
+{
+	
+	cout<<"work"<<endl;
+	while(b->pr)
+	{
+		cout<<b->date<<" "<<b->date<<"  ";
+		b=b->pr;
+
+	}
+
+}
+
+int main()
+{
+	haha l;
+	haha *b;
+	cout<<"创建一个反序复制链表"<<endl;
+	b=listcreat();
+	work(b);
+
+}

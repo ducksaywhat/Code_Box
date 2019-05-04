@@ -1,0 +1,14 @@
+#include<iostream>
+#include<string>
+#define S 'e'
+using namespace std;
+void main()
+{   string a;
+    a="asd";
+	cout<<a<<endl;
+	a=S;
+	cout<<a<<endl;
+#undef  S
+	a='S';
+	cout<<a<<endl;
+}

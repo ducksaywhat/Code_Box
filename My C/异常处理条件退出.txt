@@ -1,0 +1,25 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	int a;
+	while(true)
+	{
+	try
+	{
+		cin>>a;
+		if(a<0)throw"the a can't <o\n";
+		if(a==0)throw 12;
+		cout<<a<<endl;
+
+	}
+	catch(char *p)
+	{
+		cout<<p;
+	}
+	catch(int p)
+	{
+		exit(0);
+	}
+	}
+}

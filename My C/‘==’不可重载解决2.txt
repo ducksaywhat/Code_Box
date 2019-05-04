@@ -1,0 +1,28 @@
+#include<iostream>
+using namespace std;
+class base
+{
+public:
+	void disp()
+	{
+		cout<<"the result is "<<x<<y<<endl;
+	}
+	base(int a,int b)
+	{
+		x=a,y=b;
+	}
+bool operator==(base &);
+private:
+	int x,y;
+};
+bool base::operator==(base &c)
+{
+	return(c.x>x);
+};
+int main()
+{
+	int w;
+	base a(50,60),b(5,6);
+    if(a==b)
+	cout<<"come on bro "<<w<<endl;
+}

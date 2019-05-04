@@ -1,0 +1,114 @@
+#include<iostream>
+using namespace std;
+class al
+{
+
+public:
+	al(int a)
+	{
+		elemint=a;
+		w='i';
+	}
+	al(double a)
+	{
+		elemdouble=a;
+         w='d';
+	}
+	al(char a)
+	{
+		elemchar=a;
+		w='c';
+	}
+	int elemint;
+	double elemdouble;
+	char elemchar;
+	al *next;
+	char w;//what type
+};
+class arraylist
+{
+public:
+	arraylist()
+	{
+		length=0;
+		cout<<"one ArrayList has been created."<<endl;
+		front=0;
+	}
+	void add(int a)
+	{
+		length++;
+		al* p=new al(a);
+		if(length==1){next=p,front=p;}
+		else
+		front->next=p;
+		front=p;
+		w='i';
+	}
+/*	void add(double a)
+	{
+		length++;
+		al *p=new al(a);
+		this.next=p;
+		front=p;
+		w='d';
+	}
+	void add(char a)
+	{
+		length++;
+		al *p=new al(a);
+		this.next=p;
+		front=p;
+		front.next=0;
+		w='c';
+	}*/
+	void take(int &g,int a)
+	{
+		int i=0;
+		al *p;
+		al *tempp;
+		p=next;
+		if(a=1)
+		{
+			g=p->elemint;
+			next=p->next;
+			delete p;
+			return;
+		}
+		while(i<a-2)
+		{
+			p=p->next;
+			i++;
+		};
+		tempp=p->next;
+		p->next=p->next->next;
+		g=tempp->elemint;
+		delete tempp;
+
+	}
+
+private:
+	int length;
+	al *next;
+	al *front;
+	char w;//what type
+};
+int main()
+{
+	int aw;
+	arraylist a;
+	a.add(40);
+	a.add(65);
+	a.add(770);
+	a.take(aw,1);
+	cout<<aw<<endl;
+	a.take(aw,1);
+	cout<<aw<<endl;
+	a.take(aw,1);
+	cout<<aw<<endl;
+}
+//本程序为链表程序alpha，功能基本上像个初生婴儿。这也是可以原谅的
+//下个版本。需要增强的是多类数据的问题？类模板？解决返回值多态问题
+//多种类型值共存？*void？列表展示。列表释放清空。
+//在各种更能完善后，加入菜单功能。
+//加油
+//4.11

@@ -1,0 +1,29 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class a
+{
+public:
+	a(int a,int b)
+	{
+		cout<<"consrution complete"<<endl;
+		x=a,y=b;
+	};
+	int rtn(){ return x;};
+	void move()
+	{
+		cout<<"y ="<<y<<"x ="<<x<<endl;
+	};
+private:
+	int x,y;
+};
+void wer(int a)
+{
+	cout<<a<<endl;
+};
+void main()
+{
+	a app(50,40);
+	app.move();
+	wer(app.rtn());
+}

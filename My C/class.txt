@@ -1,0 +1,34 @@
+#include<iostream>
+using namespace std;
+
+class first
+{
+public:
+	first(int a,int b)
+	{
+		X=a,Y=b;
+		cout<<"nice job man."<<endl;
+	}
+	/*first(int a,int 10)
+	{
+		X=a;
+		cout<<"nice job my man."<<endl;
+	}*/
+	first()
+	{
+		cout<<"that's nice."<<endl;
+	}
+	void disp()
+	{
+		cout<<"X="<<X<<","<<"Y="<<Y<<endl;
+	}
+private:
+	int X,Y;
+};
+int main()
+{
+	first A(5,5);
+	//first B(5);
+	first C;
+	A.disp();
+}

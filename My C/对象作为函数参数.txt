@@ -1,0 +1,46 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class fun
+{
+public:
+	void inx(int a)
+	{
+		x=a;
+	};
+	void iny(int a)
+	{
+		y=a;
+	};
+	int getx()
+	{
+		return x;
+
+	};
+	void dispy()
+	{
+		cout<<gety()<<endl;
+	}
+private:
+	int x;
+	int y;
+	int gety()
+	{
+		return y;
+	};
+};
+void wfun(fun b)
+{
+	b.dispy();
+};
+
+int main()
+{
+	fun a,*x;
+	x=&a;
+	a.inx(50);
+	a.iny(60);
+	cout<<a.getx()<<endl;
+	a.dispy();
+	wfun(a);
+}

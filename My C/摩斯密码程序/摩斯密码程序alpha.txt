@@ -1,0 +1,63 @@
+#include<iostream>
+using namespace std;
+void morse(char *a)
+{
+	int i(0);
+	while(a[i]!='\0')
+	{
+	switch(a[i])
+	{
+	case'a':cout<<"* -"<<endl;break;
+	case'b':cout<<"- * *"<<endl;break;
+	case'c':cout<<"- * - *"<<endl;break;
+	case'd':cout<<"- * *"<<endl;break;
+	case'e':cout<<"*";break;
+	case'f':cout<<"* * - *"<<endl;break;
+	case'g':cout<<"- - *"<<endl;break;
+	case'h':cout<<"* * * *"<<endl;break;
+	case'i':cout<<"* *"<<endl;break;
+	case'j':cout<<"* - - -"<<endl;break;
+/*10*/	
+	case'k':cout<<"- * -"<<endl;break;
+	case'l':cout<<"* - * *"<<endl;break;
+	case'm':cout<<"- -"<<endl;break;
+	case'n':cout<<"- *"<<endl;break;
+	case'o':cout<<"- - -"<<endl;break;
+	case'p':cout<<"* - - *"<<endl;break;
+	case'q':cout<<"- - * -"<<endl;break;
+	case'r':cout<<"* - *"<<endl;break;
+	case's':cout<<"* * *"<<endl;break;
+	case't':cout<<"-"<<endl;break;
+/*20*/
+	case'u':cout<<"* * -"<<endl;break;
+	case'v':cout<<"* * * -"<<endl;break;
+	case'w':cout<<"* - -"<<endl;break;
+	case'x':cout<<"- * * -"<<endl;break;
+	case'y':cout<<"- * - -"<<endl;break;
+	case'z':cout<<"- - * *"<<endl;break;
+	}
+		i++;
+	}
+}
+int main()
+{
+	char *a;
+	char b='a';
+	while(true)
+	{
+	a=new char[50];
+	cout<<"本程序的功能为将你输入的英文语句转译成莫斯密码"<<endl;
+	cout<<"请勿超过50个字母"<<endl;
+	cout<<"请输入您想要转译的语句"<<endl;
+	cout<<"注意使用全部英文单词，切勿输入符号"<<endl;
+	cin>>a;
+	morse(a);
+	cout<<"以上即为转译后的结果，请问是否继续程序？"<<endl;
+	cout<<"输入'N'终止程序，输入其余按键继续程序"<<endl;
+	cin>>b;
+	if(b=='N')break;
+	delete a;
+	}
+
+
+}

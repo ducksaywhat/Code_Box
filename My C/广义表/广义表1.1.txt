@@ -1,0 +1,110 @@
+#include<iostream>
+using namespace std;
+typedef enum{atom,list} elemtag;
+typedef struct haha{
+	elemtag tag;//0->atom 1->list
+	union
+	{
+		int date;
+		struct {haha *dp,*np;}ptr;
+	};
+}haha;
+void displist2(haha *c);
+void creatlist(haha *a)
+{
+	//a=new haha; not work atall
+	a->tag=list;
+	a->ptr.np=0;
+}
+//template <typename T>
+void add(haha *a,int b)
+{
+	while(a->ptr.np!=0)
+	a=a->ptr.np;
+	a->ptr.np=new haha;
+	a=a->ptr.np;
+	a->tag=list;
+	a->ptr.dp=new haha;
+	a->ptr.dp->tag=atom;
+	a->ptr.dp->date=b;
+	a->ptr.np=0;
+}
+
+void addlist(haha *a)
+{
+	int elem;
+	//创建一个dp下的列表元素
+	while(a->ptr.np!=0)
+	a=a->ptr.np;
+	a->ptr.np=new haha;
+	a=a->ptr.np;
+	a->tag=list;
+	a->ptr.np=0;
+	a->ptr.dp=new haha;
+	a=a->ptr.dp;
+	creatlist(a);
+	cout<<"in what you want to in, space to separate，0 to end"<<endl;
+	//伪数组循环add进列表
+	cin>>elem;
+	while(elem!=0)
+	{
+		add(a,elem);
+		cin>>elem;
+	}
+}
+void displist(haha *c)
+{
+	haha *t;
+	c=c->ptr.np;
+	while(c!=0)
+	{
+	  if(c->ptr.dp->tag==atom)
+	  {
+		  cout<<c->ptr.dp->date<<endl;
+		  	  c=c->ptr.np;
+	  }
+	  else{
+		  t=c->ptr.np;
+		  c=c->ptr.dp;
+		  displist(c);
+		  //c=c->ptr.np;wrong ,out double
+		  c=t;
+	  }
+	}
+	
+}
+int main()
+{
+	haha *text=new haha;
+	creatlist(text);
+      char a;
+	  char c;
+	  int  b;
+
+     while(true)
+	 {
+		 
+		 cout<<"'a'for add,'b'for disp,'z'for exit"<<endl;
+		 cin>>a;
+		 switch(a){
+				 case'a':{
+					 cout<<"in 'a'for atom,'b'for list"<<endl;
+					 cin>>c;
+					 if(c=='a')
+					 {
+					 cout<<"in what you want to in:"<<endl;
+					 cin>>b;
+					 add(text,b);
+					 }
+					 else
+					 addlist(text);
+
+						 };break;
+				 case'b':{
+					 displist(text);};break;
+				 case'z':{};break;
+				 default:cout<<"***********wrong in***********"<<endl;
+		 }
+                  if(a=='z')break;
+	 }
+}

@@ -1,0 +1,12 @@
+#include<stdio.h>
+inline void cpp();
+void main()
+{
+	int i;
+	for(i=0;i<10;i++)
+	cpp();
+}
+inline void cpp()
+{
+	printf("asd\n");
+}

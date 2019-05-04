@@ -1,0 +1,17 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	int a(0);
+	int *w;
+	w=&a;
+	void *e;
+	e=w;
+	int *r;
+	r=(int*)e;
+	cout<<a<<endl;
+	cout<<*w<<endl;
+	//cout<<*e<<endl;//error
+	cout<<*r<<endl;
+
+}

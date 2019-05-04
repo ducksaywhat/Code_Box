@@ -1,0 +1,14 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	 typedef struct{
+		int a;
+		int b;
+	}haha;
+	haha a;
+	a.a=50;
+	a.b=60;
+	cout<<a.a<<endl<<a.b<<endl;
+
+}

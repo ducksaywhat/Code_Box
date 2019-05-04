@@ -1,0 +1,33 @@
+1.
+#include<iostream>
+using namespace std;
+class a
+{
+public:
+	a()
+	{
+		cout<<"无参构造!"<<endl;
+	}
+	void disp(int a);
+};
+void a::disp(int s)
+{
+		cout<<"the integer is:"<<s<<endl;
+};
+int main()
+{
+	a w;
+	w.disp(50);
+}
+2.
+#include<iostream>
+using namespace std;
+void aaa(int a);
+int main()
+{
+	aaa(50);
+}
+void aaa(int s)
+{
+	cout<<"the integer is:"<<s<<endl;
+}

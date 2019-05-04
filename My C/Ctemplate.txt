@@ -1,0 +1,18 @@
+#include<iostream>
+using namespace std;
+template <typename T>//一条模板表示不可定义多个模板
+T a(T a,int b)
+{
+	return a*b ;
+}
+template <typename T>//还需多次定义才行
+T b(T a,double b)
+{
+	return a*b;
+}
+int main()
+{
+	cout<<a(5,6)<<endl;
+	cout<<b(505.2,5.2)<<endl;
+
+}

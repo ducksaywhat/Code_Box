@@ -1,0 +1,19 @@
+#include<stdio.h>
+#include<string.h>
+void fun();
+void main()
+{
+	int x;
+	for(x=0;x<10;x++)
+	{
+		fun();
+	};
+}
+void fun()
+{
+	int x=5;
+	static int y=10;
+	x++;
+	y++;
+	printf("x=%d,y=%d\n",x,y);
+}

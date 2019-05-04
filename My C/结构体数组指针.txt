@@ -1,0 +1,23 @@
+#include<iostream>
+#include<string>
+using namespace std;
+void main()
+{
+	struct app
+	{
+		int q;
+		int w;
+		char e;
+	};
+	app asd[5];
+	asd[0].q=50;
+	asd[3].w=60;
+	app *dfg;
+	dfg=asd;
+	printf("%d\n",dfg[0].q);
+	printf("%d\n",(*dfg).q);
+	printf("%d\n",dfg->q);
+	printf("%d\n",dfg[3].w);
+	printf("%d\n",(*(dfg+3)).w);
+	printf("%d\n",(dfg+3)->w);
+}

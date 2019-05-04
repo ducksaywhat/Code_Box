@@ -1,0 +1,25 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+
+	int a(0);
+	char c;
+	while(true)
+	{
+		cin>>a;
+        cout<<"a="<<a<<endl;
+        cin.clear();
+		cin.sync();
+	}
+}
+
+/*
+先调用cin.clear()，然后调用cin.sync()。
+当程序想要去读一个int型却读到了一个char型输入的时候，
+cin就会将自己的内部错误标识符设定为ios::failbit（没有错误是ios::goodbit），
+cin.clear()的作用不是清空输入缓冲区，而是清空这个内部错误标识符，真正清空输入缓冲区的是cin.sync()，
+但是只清空缓冲区也不行，
+因为内部错误标识符还保留着呢，下次读取的时候一看上次有错误，这次根本不读了，所以一定要一起调用。
+*/
+//in.clear() 清除cin流，并设置goodbit状态位。

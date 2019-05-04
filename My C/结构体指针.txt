@@ -1,0 +1,15 @@
+#include<iostream>
+#include<string>
+using namespace std;
+void main()
+{
+	struct app
+	{
+		int q;
+		int w;
+		char e;
+}asd={1,34,'a'};
+	app *dfg;
+	dfg=&asd;
+	printf("%c\n",(*dfg).e);
+}

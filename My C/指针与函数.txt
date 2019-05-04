@@ -1,0 +1,24 @@
+#include<stdio.h>
+#include<string.h>
+void find(char *,int);
+void main()
+{
+	char a[50];
+	int i;
+	printf("please input a sentence\n");
+	gets(a);
+	i=strlen(a);
+	printf("%s\n",a);
+	find(a,i);
+	puts(a);
+}
+void find(char *q,int n)
+{
+	int i=0;
+	while(i<n)
+	{
+	if(*q>='A'&&*q<='Z')
+		*q='0';
+	q++,i++;
+	}
+}

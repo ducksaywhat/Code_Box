@@ -1,0 +1,32 @@
+#include<iostream>
+using namespace std;
+void main()
+{
+	int a[10];
+	int i(0);
+	int q(0);
+	int temp;
+	cout<<"please in put 10 number"<<endl;
+	while(i<10)
+	{
+		cin>>a[i];
+		i++;
+	};
+	i=0;
+	while(q<10)
+	{
+	while(i<(9-q))
+	{
+		if(a[i]>a[i+1])
+		{temp=a[i];
+		 a[i]=a[i+1];
+		 a[i+1]=temp;
+		 
+		};
+		i++;
+	}
+	q++,i=0;
+	};
+	cout<<"the max="<<a[9]<<endl;
+	cout<<"the min="<<a[0]<<endl;
+}

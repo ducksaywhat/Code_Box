@@ -1,0 +1,33 @@
+#include<iostream>
+using namespace std;
+typedef struct haha{
+	int date;
+	union
+	{
+		int inte;
+		char chare;
+	};
+}haha,*hehe;
+
+int main()
+{
+	haha a;
+	hehe b;
+	b=new haha;
+	a.date=50;
+	cout<<a.date<<endl;
+	cout<<a.chare<<endl;
+	cout<<a.inte<<endl;
+	a.chare='a';
+	cout<<a.chare<<endl;
+	cout<<a.inte<<endl;
+	a.inte=50;
+	cout<<a.chare<<endl;
+	cout<<a.inte<<endl;
+	a.inte=40;
+	cout<<a.chare<<endl;
+	cout<<a.inte<<endl;
+	b->date=55555555;
+	cout<<b->date;
+
+}

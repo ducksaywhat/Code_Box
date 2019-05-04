@@ -1,0 +1,13 @@
+#include<stdio.h>
+void main()
+{
+	int *a;
+	a=new int;
+	*a=50;
+	printf("the new =%d\n",*a);
+	printf("a=%d\n",a);
+	delete a;
+	printf("      and then     \n");
+	printf("new=%d",*a);
+	printf("a=%d\n",a);
+}

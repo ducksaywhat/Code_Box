@@ -1,0 +1,33 @@
+1.
+#include<iostream>
+using namespace std;
+int max(int x,int y)
+{
+	return (x>y)?x:y;
+}
+int main()
+{
+	int a;
+	int (*p)(int x,int y);
+	p=*max;
+	a=(*p)(50,60);
+	cout<<a<<endl;
+
+}
+2.
+#include<iostream>
+using namespace std;
+int max(int x,int y)
+{
+	return (x>y)?x:y;
+}
+int main()
+{
+	int a;
+	int (*p)(int x,int y);
+	p=max;
+	a=p(50,60);
+	cout<<a<<endl;
+
+}
+

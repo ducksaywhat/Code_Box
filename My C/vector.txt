@@ -1,0 +1,42 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+int main()
+{
+	vector<int>a;
+	int b=5;
+	a.push_back(b);
+	cout<<a[0]<<endl;
+	a.push_back(60);
+	vector<int>c;
+	c=a;//C++向量是值拷贝,a=b将会构造一个与b相等向量，并将数据拷贝进去
+	a.at(0)=55;
+	cout<<a[0]<<endl;
+	cout<<c[0]<<endl;
+	
+}
+
+
+
+
+
+/*
+1.push_back在数组后添加一个数据
+2.pop_back去掉数组后的最后一个数据
+3.at得到编号位置的数据
+4.begin得到数组头的指针
+5.end得到数组的最后一个单元+1的指针
+6.front得到数组头部的引用
+7.back得到数组最后一个元素的引用
+8.max_size得到vector最大可以是多大
+9.capacity当前vector分配的大小
+10.size当前使用数据的大小
+11.resize改变当前使用数据的大小，如果比当前的大，则填充默认值
+12.reserve改变当前vector所使用数据的大小
+13.erase删除指针指向的数据项
+14.clear清空当前的vector
+15.rbegin将vector反转后的开始指针返回
+16.rend将vector反转后的结束指针返回
+17.empty判断vector是否为空
+18.swap与另一个vector交换数据
+*/

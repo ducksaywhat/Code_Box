@@ -1,0 +1,25 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class a
+{
+public:
+	void move(int a=50,int b=10);
+	void disp()
+	{
+		cout<<"x ="<<x<<", y="<<y<<endl;
+	}
+private:
+	int x,int y;
+};
+void a::move(int a,int b)
+{
+	x=a,y=b;
+
+};
+int main()
+{
+	a app;
+	app.move();
+	app.disp();
+}

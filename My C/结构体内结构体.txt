@@ -1,0 +1,20 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	int i=0;
+	 typedef struct wodei{
+			int a;
+			int b;
+		}wodei;
+	 typedef struct haha {
+		int date;
+		wodei date2;
+	}haha;
+	 haha qwe;
+	 qwe.date=50;
+	 qwe.date2.a=60;
+	 cout<<qwe.date<<endl<<qwe.date2.a<<endl;
+	
+
+}

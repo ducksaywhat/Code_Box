@@ -1,0 +1,17 @@
+#include<stdio.h>
+#include<string.h>
+void find(char b[]);
+void main()
+{
+	char a[50];
+	int i;
+	printf("please input a sentence\n");
+	gets(a);
+	find(a);
+	puts(a);
+}
+void find (char b[])
+{
+	char a[50]="lalallalalallalallallalal";
+	strcpy(b,a);
+}

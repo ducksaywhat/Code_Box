@@ -1,0 +1,19 @@
+#include<iostream>
+using namespace std;
+void fun();
+void main()
+{
+	int i(0);
+	for(;i<12;i++)
+	fun();
+}
+void fun()
+
+{
+	int a(40);
+	static int b(30);
+	a++;
+	b++;
+	cout<<"a ="<<a<<endl;
+	cout<<"b ="<<b<<endl;
+}

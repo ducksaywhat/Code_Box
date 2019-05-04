@@ -1,0 +1,25 @@
+#include<iostream>
+using namespace std;
+class a
+{
+	a()
+	{};
+public:
+	a(int c,int b=0)
+	{
+		this->c=c;
+		this->b=b;
+	}
+	void dispa()
+	{
+		cout<<"c="<<c<<endl<<"b="<<b<<endl;
+	}
+private:
+	int c,b;
+
+};
+int main()
+{
+	a q(50);
+	q.dispa();
+}

@@ -1,0 +1,34 @@
+打开VS2013，新建一个空白的Win32控制台应用程序，具体步骤如下所示
+
+
+
+
+
+
+建立好空白工程后，单击选项工程文件，右击鼠标在打开的快捷菜单中选择“Property”，打开工程的属性页面并在属性页面中找到Vc++ Directories选项
+
+
+
+
+按照下图添加包含目录和库目录
+包含目录
+;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;
+库目录?
+;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;
+
+
+在“Link”即链接器选项下添加附加依赖项lib文件，如下图所示
+添加如下的lib文件
+d3d9.lib
+d3dx10d.lib
+d3dx9d.lib
+dxerr.lib
+dxguid.lib
+winmm.lib
+comctl32.lib
+添加完成后保存并退出设置页面。
+
+
+如果出现下面的编译错误
+MSVCRTD.lib(crtexe.obj) : error LNK2019: unresolved external symbol _main referenced in function ___tmainCRTStartup
+按照下图操作将控制台更改为Windows即可解决

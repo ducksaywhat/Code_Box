@@ -1,0 +1,26 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class a
+{
+public:
+
+	void move()
+	{
+		cout<<"x ="<<x<<endl;
+
+	}
+
+	int x;
+};
+int main()
+{
+	a q,*w;
+	w=&q;
+	w->x=50;
+	w->move();
+    //w.x=40;
+	//*w.move();
+
+	cout<<"c++ is funny!"<<endl;
+}

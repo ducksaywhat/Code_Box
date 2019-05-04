@@ -1,0 +1,29 @@
+#include<iostream>
+using namespace std;
+class base_1
+{
+public:
+	void inx1(int a)
+	{
+		x=a;
+	};
+	int x;
+};
+class base_2
+{
+public:
+	void inx2(int a)
+	{
+		x=a;
+	};
+	int x;
+};
+class base:public base_1,public base_2
+{};
+int main()
+{
+	base base3;
+	base3.inx1(50);
+	base3.inx2(49);
+	cout<<base3.base_1::x<<"and"<<base3.base_2::x<<endl;
+}

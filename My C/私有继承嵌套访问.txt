@@ -1,0 +1,67 @@
+#include<iostream>
+using namespace std;
+class baseclass
+{
+public:
+	
+		void inx(int a)
+		{
+			x=a;
+		};
+		void iny(int b)
+		{
+			y=b;
+		};
+		int getx()
+		{
+			return x;
+		};
+		int gety()
+		{
+			return y;
+		};
+private:
+	int x;
+	int y;
+};
+	class upclass:private baseclass
+	{
+	public:
+		void inxx(int a)
+		{
+			inx(a);
+		};
+		void inyy(int a)
+		{
+			iny(a);
+		};
+		int getxx()
+		{
+			return(getx());
+		};
+		int getyy()
+		{
+			return(gety());
+		};
+	};
+	class highclass:private upclass
+	{
+	public:
+		void inxxx(int a)
+		{
+			inxx(a);
+		};
+		int getxxx()
+		{
+			return(getxx());
+		};
+	};
+
+int main()
+{
+		int q,w;
+		highclass final;
+		final.inxxx(50);
+		cout<<final.getxxx()<<endl;
+		return 0;
+}

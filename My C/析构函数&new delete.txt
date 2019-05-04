@@ -1,0 +1,29 @@
+#include<iostream>
+#include<string>
+using namespace std;
+class a
+{
+public:
+	a(int a)
+	{
+		cout<<"construction complete"<<endl;
+		x=a;
+	}
+	void move()
+	{
+		cout<<"x ="<<x<<endl;
+	}
+	~a()
+	{
+		cout<<"destruction complete"<<endl;
+	}
+private:
+	int x;
+};
+int main()
+{
+	 a ewq(50), *qwe=new a(15);
+	qwe->move();
+	ewq.move();
+	delete qwe;
+}

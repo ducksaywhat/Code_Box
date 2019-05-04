@@ -1,0 +1,23 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	char a;
+	while(true)
+	{
+		cout<<"请选择你想要使用的功能"
+		cout<<"a,创建链表"<<endl;
+		cout<<"b,删除链表"<<endl;
+		cout<<"c,链表展示"<<endl;
+		cout<<"d,链表操作"<<endl;
+		cout<<"z,退出程序"<<endl;
+		cin>>a;
+		switch(a)
+		{
+		case 'a':   ;break;
+		case 'b':   ;break;
+		case 'c':   ;break;
+		case 'd':   ;break; 
+		
+		
+		

@@ -1,0 +1,170 @@
+#include<iostream>
+#define NULL 0
+using namespace std;
+typedef struct haha{
+	int date;
+	 struct haha *next;
+}haha;
+void creatlist(haha *l,int a)
+{
+	int i(0);
+	haha *b=l;
+	while(true)
+	{
+	haha *p=new haha;
+	cout<<"请输入你想要输入的第"<<i+1<<"个链表元素的数值"<<endl;
+	cin>>p->date;
+	b->next=p;
+	b=p;
+	if(i++==(a-1))
+	{
+        b->next=NULL;
+		break;
+	}
+	}
+}
+void displist(haha *l)
+{
+	int i(0);
+	haha *b=l->next;
+	while(b)
+	{
+		cout<<"该链表的第"<<i+1<<"个元素为:"<<b->date<<endl;
+		b=b->next;
+			i++;
+	};
+}
+int  getlistelem(haha *l,int i)
+{
+	haha *b=l->next;
+	int a(0);
+	while(a<i)
+	{
+		b=b->next;
+		a++;
+	}
+	return b->date;
+}
+void deleteelem(haha *l,int i)
+{
+	haha *temp;
+	haha *b=l->next;
+	int a(0);
+	while(a<i-1)
+	{
+		b=b->next;
+		a++;
+	}
+	temp=b->next;
+	b->next=b->next->next;
+	delete temp;
+}
+void addelem(haha *l,int i,int d)
+{
+	haha *b=l->next;
+	int a(0);
+	if(i==1)
+	{
+      haha *elem=new haha;
+	  elem->date=d;
+	  elem->next=l->next;
+	  l->next=elem;
+	}
+	else{
+	while(a<i-2)
+	{
+		b=b->next;
+		a++;
+	}
+	haha *elem=new haha;
+	elem->date=d;
+	elem->next=b->next;
+	b->next=elem;
+	}
+}
+void addlistinorder(haha *l1,haha *l2)
+{}
+void disp()
+{
+	    cout<<"请输入你想实现的功能"<<endl;
+		cout<<"a,创建一个链表"<<endl;
+		cout<<"b,展示一个链表"<<endl;
+		cout<<"c,从已创建的链表中获得一个元素"<<endl;
+		cout<<"d,从已创建的链表中删除一个元素"<<endl;
+		cout<<"e,往已创建的链表中添加一个元素"<<endl;
+		cout<<"f,将两个已创建的链表中的元素按照大小顺序合并成一个链表"<<endl;
+		cout<<"z,退出程序"<<endl;
+}
+
+
+
+
+
+
+
+int main()
+{
+	haha *l=new haha;
+	int i;
+	int d;
+	char c;
+	while(true){
+		disp();
+		cin>>c;
+		switch(c){
+		case 'a':{
+			//haha l;
+           cout<<"请输入想要创建的链表的大小（数字）:"<<endl;
+		   cin>>i;
+			creatlist(l,i);
+			cout<<"***********链表创建成功***********"<<endl;
+				 };break;
+		case 'b':{
+			displist(l);
+			cout<<"***********链表展示完成***********"<<endl;
+				 };break;
+		case 'c':{
+			cout<<"请输入你想要获取元素的位置:"<<endl;
+			cin>>i;
+			cout<<"该链表中的第"<<i<<"个元素为:"<<getlistelem(l,(i-1))<<endl; 
+			cout<<"***********元素获取成功***********"<<endl;
+				 };break; 
+		case 'd':{
+			cout<<"请输入你想要删除的元素的位置:"<<endl;
+			cin>>i;
+			deleteelem(l,i);
+			cout<<"***********元素删除完成***********"<<endl;
+				 };break;
+		case 'e':
+			{
+			cout<<"请输入你想要在链表中添加元素的位置:"<<endl;
+			cin>>i;
+			cout<<"请输入您想要添加元素的数值:"<<endl;
+			cin>>d;
+			addelem(l,i,d);
+            cout<<"***********元素添加完成***********"<<endl;
+
+			};break;
+		case 'f':{
+			cout<<"此功能暂未开启，本程序有待完善，敬请期待下一个版本"<<endl;
+				 };
+		case 'z':{};break;
+		default:cout<<"***********输入错误***********"<<endl;
+		};
+		if(c=='z'){
+			cout<<"***********感谢使用***********"<<endl;
+			break;};
+		
+	};
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+//用结构体实例对象作为调用函数的实参不可以，因为被调用的函数会为实参另外提供新的地址，不能满足目的。

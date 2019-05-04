@@ -1,0 +1,14 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+	 struct haha{
+		int a;
+		int b;
+	};
+	struct haha a;
+	a.a=50;
+	a.b=60;
+	cout<<a.a<<endl<<a.b<<endl;
+
+}

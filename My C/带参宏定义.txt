@@ -1,0 +1,11 @@
+#include<iostream>
+#define S(a,b)a*b;
+using namespace std;
+void main()
+{
+	int a(2),b(6),c,d;
+	c=S(a,b);
+	d=S(5,8)
+	cout<<c<<endl;
+	cout<<d<<endl;
+}
