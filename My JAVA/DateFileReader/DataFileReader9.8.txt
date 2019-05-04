@@ -1,0 +1,145 @@
+package fun2;
+import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class fun2
+{
+	public static void main(String[]args)
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame DR=new frame();
+		DR.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		DR.setTitle("DataFileReader");
+		Dimension SS=Toolkit.getDefaultToolkit().getScreenSize();
+		DR.setLocation(new Point((SS.width-800)/2,(SS.height-600)/2));
+		DR.setSize(800,600);
+		DR.setVisible(true);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	private JTextArea JTA;
+	public frame()
+	{
+		JPanel JFC=new JPanel();
+		JPanel TEXT=new JPanel();
+		JButton JFCB=new JButton("ChooseDateFile");
+		JButton JFSB=new JButton("SaveDate");
+		JFileChooser JFCS=new JFileChooser();
+		JFCB.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent e)
+			{
+				JFCS.setDialogTitle("Please choose "+"DATA"+"file.");
+				JFCS.setCurrentDirectory(new File("C:/Users/wwx/Desktop"));
+				int Result=JFCS.showOpenDialog(null);
+				if(Result==JFileChooser.APPROVE_OPTION)
+				{
+					clean();
+					File file=JFCS.getSelectedFile();
+					if(file.getName().endsWith(".txt"))
+					try 
+					{
+						JFSB.setEnabled(false);
+						BufferedReader in=new BufferedReader(
+								new InputStreamReader(new FileInputStream(file),"ASCII"));
+						String line;
+						while((line=in.readLine())!=null)
+						{
+							append(line);
+						}
+						in.close();
+					} 
+					catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+					else if(file.getName().endsWith(".dat"))
+					{
+						try 
+						{
+							JFSB.setEnabled(true);
+							DataInputStream in=new DataInputStream(new FileInputStream(file));
+							int i;
+							char t;
+							String str="";
+							int q=in.available();
+							for(int w=0;w<q;w++)
+							{
+								i=in.readByte();
+								t=(char)i;
+								if(t=='\n')
+								{
+									append(str);
+									str="";
+									continue;
+								}
+								str+=t;
+							}
+							append(str);
+							in.close();
+						}
+						catch (IOException e1) 
+						{
+							e1.printStackTrace();
+						}
+						
+					}
+					else
+					{
+						JFSB.setEnabled(false);
+					}
+				}
+			}
+				});
+		JFSB.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent e)
+			{
+				try 
+				{
+					File file=JFCS.getSelectedFile();
+					FileOutputStream os=new FileOutputStream(file);
+					String str=JTA.getText();
+					for(int i=0;i<str.length();i++)
+					{
+						os.write((int)str.charAt(i));
+						
+					}
+					os.flush();
+					os.close();
+				} 
+				catch (IOException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+				});
+		this.setLayout(new BorderLayout());
+		JFSB.setEnabled(false);
+		JFC.add(JFCB);
+		JFC.add(JFSB);
+		JTA=new JTextArea(28,70);
+		JTA.setLineWrap(false);
+		JScrollPane JSP=new JScrollPane(JTA);
+		TEXT.add(JSP);
+		this.add(TEXT);
+		this.add(JFC,BorderLayout.NORTH);
+		pack();
+	}
+	public void append(String str)
+	{
+		JTA.append(str+"\n");
+	}
+	public void clean()
+	{
+		JTA.setText("");
+	}
+}

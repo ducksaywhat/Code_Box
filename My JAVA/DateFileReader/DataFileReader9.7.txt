@@ -1,0 +1,111 @@
+package fun2;
+import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class fun2
+{
+	public static void main(String[]args)
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame DR=new frame();
+		DR.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		DR.setTitle("DataFileReader");
+		DR.setSize(800,600);
+		DR.setVisible(true);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	private JTextArea JTA;
+	public frame()
+	{
+		JPanel JFC=new JPanel();
+		JPanel TEXT=new JPanel();
+		JButton JFCB=new JButton("ChooseDateFile");
+		JFCB.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent e)
+			{
+				JFileChooser JFC=new JFileChooser();
+				JFC.setDialogTitle("Please choose "+"DATA"+"file.");
+				JFC.setCurrentDirectory(new File("C:/Users/wwx/Desktop"));
+				int Result=JFC.showOpenDialog(null);
+				if(Result==JFileChooser.APPROVE_OPTION)
+				{
+					clean();
+					File file=JFC.getSelectedFile();
+					if(file.getName().endsWith(".txt"))
+					try 
+					{
+						BufferedReader in=new BufferedReader(
+								new InputStreamReader(new FileInputStream(file),"ASCII"));
+						String line;
+						while((line=in.readLine())!=null)
+						{
+							append(line);
+						}
+						in.close();
+					} 
+					catch (IOException e1)
+					{
+						e1.printStackTrace();
+					}
+					else if(file.getName().endsWith(".dat"))
+					{
+						try 
+						{
+							DataInputStream in=new DataInputStream(new FileInputStream(file));
+							int i;
+							char t;
+							String str="";
+							int q=in.available();
+							for(int w=0;w<q;w++)
+							{
+								i=in.readByte();
+								t=(char)i;
+								if(t=='\n')
+								{
+									str+=" \\n";
+									append(str);
+									str="";
+									continue;
+								}
+								str+=t;
+							}
+							append(str);
+							in.close();
+						} catch (IOException e1) 
+						{
+							e1.printStackTrace();
+						}
+						
+					}
+				}
+			}
+				});
+		this.setLayout(new BorderLayout());
+		JFC.add(JFCB);
+		JTA=new JTextArea(28,70);
+		JTA.setLineWrap(false);
+		JScrollPane JSP=new JScrollPane(JTA);
+		TEXT.add(JSP);
+		this.add(TEXT);
+		this.add(JFC,BorderLayout.NORTH);
+		pack();
+	}
+	public void append(String str)
+	{
+		JTA.append(str+"\n");
+	}
+	public void clean()
+	{
+		JTA.setText("");
+	}
+}

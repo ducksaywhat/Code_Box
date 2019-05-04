@@ -1,0 +1,60 @@
+import java.util.*;
+import java.lang.*;
+
+abstract class shape{
+	abstract double getarea();
+	abstract String getshapeinfo();
+}
+class triangle extends shape{
+	double a;
+	double b;
+	double c;
+	triangle(double a,double b,double c)
+	{
+		this.a=a;
+		this.b=b;
+		this.c=c;
+	}
+	double getarea()
+	{
+		double p;
+		p=(a+b+c)/2;
+		return((p-a)*(p-b)*(p-c)*p);
+	}
+	String getshapeinfo()
+	{
+		return("这个三角形的面积为：");
+	}
+}
+class rectangle extends shape{
+	double a;
+	double b;
+	rectangle(double a,double b){
+		this.a=a;
+		this.b=b;
+	}
+	double getarea()
+	{
+		return(a*b);
+	}
+	String getshapeinfo(){
+		return"这个正方形的面积为：";
+	}
+}
+public class please {
+	public void disparea(shape s)
+	{
+		System.out.println(s.getshapeinfo()+s.getarea());
+	}
+	public static void main(String args[])
+	{	
+		shape s=new triangle(3,4,5);
+		please dis=new please();
+		dis.disparea(s);
+		s=new rectangle(5,6);
+		dis.disparea(s);
+		System.out.println("i'am fucking good,man");
+	}
+	
+
+}

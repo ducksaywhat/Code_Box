@@ -1,0 +1,15 @@
+
+
+public class Yuyan 
+{
+	public static void main(String[] args)
+	{
+		String[] greeting=new String[3];
+		greeting[0]="Yuyan,i love you.";
+		greeting[1]="i mean really,you know";
+		greeting[2]="by your old bro";
+		
+		for (String g:greeting)
+			System.out.println(g);
+	}
+}
