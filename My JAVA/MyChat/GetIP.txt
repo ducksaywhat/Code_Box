@@ -1,0 +1,67 @@
+package MyChat;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+
+public class GetIP 
+{
+	public static boolean iswindowos()
+	{
+		boolean iswindowos=false;
+		String osName=System.getProperty("os.name");
+		if(osName.toLowerCase().indexOf("windows")>-1)
+		{
+			iswindowos=true;
+		}
+		return iswindowos;
+	}
+	public static InetAddress getInetAddress()
+	{
+		InetAddress inetAddress=null;
+		try
+		{
+			if(iswindowos())
+			{
+				inetAddress=InetAddress.getLocalHost();
+			}
+			else
+			{
+				boolean bFindIP=false;
+				Enumeration<?>netInterfaces=(Enumeration<NetworkInterface>)NetworkInterface.getNetworkInterfaces();
+				while(netInterfaces.hasMoreElements())
+				{
+					if(bFindIP)
+					{
+						break;
+					}
+					NetworkInterface ni=(NetworkInterface)netInterfaces.nextElement();
+					Enumeration<InetAddress>ips=ni.getInetAddresses();
+					while(ips.hasMoreElements())
+					{
+						inetAddress=(InetAddress)ips.nextElement();
+						if(inetAddress.isSiteLocalAddress()
+								&&!inetAddress.isLoopbackAddress()
+								&&inetAddress.getHostAddress().indexOf(":")==-1)
+						{
+							bFindIP=true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return inetAddress;
+	}
+	public static String getLocallIP()
+	{
+		return getInetAddress().getHostAddress();
+	}
+	
+
+}
+

@@ -1,0 +1,323 @@
+package MyChat;
+import javax.swing.*;
+import javafx.event.ActionEvent;
+import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class MyChat 
+{
+	public static void main(String[]args)
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				Frame frame=new Frame();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setTitle("MyChat");
+				frame.setSize(800,600);
+				Dimension SS=Toolkit.getDefaultToolkit().getScreenSize();
+				frame.setLocation(new Point((SS.width-800)/2,(SS.height-600)/2));
+				frame.setResizable(false);
+				frame.setVisible(true);
+			}
+				});
+	}
+}
+class Frame extends JFrame
+{
+	JPanel ChatPanel=new JPanel();
+	JPanel SendPanel=new JPanel();
+	JTextArea ChatArea=new JTextArea(35,42);
+	JTextArea SendArea=new JTextArea(15,35);
+	OtherPanel OtherHostArea=new OtherPanel(this);
+	LocalPanel LocalHostArea=new LocalPanel(this);
+	JButton Send=new JButton("E");
+	Thread server;
+	public Frame()
+	{
+		Send.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(java.awt.event.ActionEvent e)
+			{
+				Sender.sendable=true;
+			}
+				});
+		SendArea.setText("Heloo!");
+        server=new Thread(new Server(this));
+        server.start();
+		this.setLayout(null);
+		ChatArea.setLineWrap(true);
+		SendArea.setLineWrap(true);
+		JScrollPane JSP1=new JScrollPane(ChatArea);
+		JScrollPane JSP2=new JScrollPane(SendArea);
+		ChatPanel.add(JSP1);
+		SendPanel.add(JSP2);
+		//ChatPanel.add(ChatArea);
+		//SendPanel.add(SendArea);
+		add(ChatPanel);
+		add(SendPanel);
+		add(OtherHostArea);
+		add(LocalHostArea);
+		add(Send);
+		ChatPanel.setBounds(20,20,460,420);
+		SendPanel.setBounds(13,440,400,130);
+		Send.setBounds(415,445,60,120);
+		OtherHostArea.setBounds(500,0,280,300);
+		LocalHostArea.setBounds(500,300,280,300);
+		pack();
+		
+	}
+	public void turnoff()
+	{
+		server.stop();
+	}
+}
+class LocalPanel extends JPanel
+{
+	Frame from;
+	JLabel IPLabel=new JLabel("Your's ID:");
+	JButton UpDate=new JButton("UPDate Your ID and Port");
+	JLabel PortLabel=new JLabel("Your's Port:8080");
+	JLabel about=new JLabel("Made by Wwx",JLabel.RIGHT);
+	public LocalPanel(Frame from)
+	{
+		this.from=from;
+		this.setLayout(new GridLayout(4,1));
+		UpDate.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(java.awt.event.ActionEvent e)
+			{
+					IPLabel.setText("Your's ID:"+GetIP.getLocallIP());
+			}
+				});
+		add(UpDate);
+		add(IPLabel);
+		add(PortLabel);
+		add(about);
+	}
+	public void Labelupdate(String string1,String string2)
+	{
+		IPLabel.setText(string1);
+		PortLabel.setText(string2);
+		
+	}
+}
+class OtherPanel extends JPanel
+{
+	Frame from;
+	JLabel IP=new JLabel("IP:",JLabel.RIGHT);
+	JLabel Port=new JLabel("Port",JLabel.RIGHT);
+	JTextField IPArea=new JTextField();
+	JTextField PortArea=new JTextField();
+	JButton Clean=new JButton("CLean");
+	JButton Connect=new JButton("Try Connect");
+	public OtherPanel(Frame from)
+	{
+		this.from=from;
+		this.setLayout(new GridLayout(3,2));
+		Clean.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(java.awt.event.ActionEvent e)
+			{
+				IPArea.setText("");
+				PortArea.setText("");
+			}
+				});
+		Connect.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(java.awt.event.ActionEvent e)
+			{
+				String ip=IPArea.getText();
+				Thread caller=new Thread(new Caller(ip,8080,from));
+				caller.start();
+			}
+				});
+		add(Clean);
+		add(Connect);
+		add(IP);
+		add(IPArea);
+		add(Port);
+		add(PortArea);
+	}
+}
+class Server implements Runnable
+{
+	static int Port=8080;
+	public Frame from;
+	static Thread sender;
+	static Thread caller;
+	public Server(Frame from)
+	{
+		this.from=from;
+	}
+	public void run()
+	{
+		try 
+		{
+			ServerSocket server=new ServerSocket(Port);
+			Socket socket=server.accept();
+			BufferedReader reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintWriter writer=new PrintWriter(socket.getOutputStream());
+			sender=new Thread(new Sender(writer,from.ChatArea,from.SendArea));
+			caller=new Thread(new Reader(reader,from.ChatArea));
+			sender.start();
+			caller.start();
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	public static void done()
+	{
+		if(sender.isAlive())sender.stop();
+		if(caller.isAlive())caller.stop();
+	}
+}
+class Caller implements Runnable
+{
+	String IP;
+	int Port;
+	Frame from;
+	static Thread sender;
+	static Thread caller;
+	public Caller(String IP,int Port,Frame from)
+	{
+		this.IP=IP;
+		this.Port=Port;
+		this.from=from;
+	}
+	public void run()
+	{
+		try 
+		{
+			from.turnoff();
+			System.out.print(IP);
+			Socket socket=new Socket(IP,8080);
+			BufferedReader reader=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintWriter writer=new PrintWriter(socket.getOutputStream());
+			sender=new Thread(new Sender(writer,from.ChatArea,from.SendArea));
+			caller=new Thread(new Reader(reader,from.ChatArea));
+			sender.start();
+			caller.start();
+		} 
+		catch (UnknownHostException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+	public static void done()
+	{
+		if(sender.isAlive())sender.stop();
+		if(caller.isAlive())caller.stop();
+	}
+}
+class Sender implements Runnable
+{
+	public PrintWriter writer;
+	public JTextArea ChatPanel;
+	public JTextArea SendPanel;
+	public static boolean sendable=true;
+	public Sender(PrintWriter writer,JTextArea ChatPanel,JTextArea SendPanel)
+	{
+		this.writer=writer;
+		this.ChatPanel=ChatPanel;
+		this.SendPanel=SendPanel;
+	}
+	public void run()
+	{
+		String output;
+		String time;
+		DateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		output=SendPanel.getText();
+		while(!output.equals("BYE")&&output!=" ")
+		{
+			time=format.format(new Date());
+			ChatPanel.append("*ME-"+time+"\n"+output+"\n");
+			send(output);
+			sendable=false;
+			SendPanel.setText(" ");
+			while(!sendable)
+			{
+				try 
+				{
+					Thread.sleep(200);
+				} catch (InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+			output=SendPanel.getText();
+		}
+		close();
+	}
+	public void send(String output)
+	{
+		writer.print(output);
+		writer.print("\n");
+		writer.flush();
+	}
+	public void close()
+	{
+		Server.done();
+		Caller.done();
+	}
+}
+class Reader implements Runnable
+{
+	public BufferedReader reader;
+	public JTextArea ChatPanel;
+	public Reader(BufferedReader reader,JTextArea ChatPanel)
+	{
+		this.reader=reader;
+		this.ChatPanel=ChatPanel;
+	}
+	public void run()
+	{
+		String input="";
+		String time;
+		DateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try 
+		{
+			input=reader.readLine();
+			while(!input.equals("BYE"))
+			{
+				time=format.format(new Date());
+				ChatPanel.append("*HE-"+time+"\n"+input+"\n");
+				input=reader.readLine();
+			}
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		close();
+	}
+	public void close()
+	{
+		Server.done();
+		Caller.done();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
