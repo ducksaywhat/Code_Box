@@ -1,0 +1,340 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+// biu biu
+class biu
+{
+	int x;
+	int y;
+	long begin;
+	int ps;//炮弹朝向
+	public biu(int x,int y,long begin,int ps)
+	{
+		this.x=x;
+		this.y=y;
+		this.begin=begin;
+		this.ps=ps;
+	}
+}
+class blinging
+{
+	int x;
+	int y;
+	int ps;
+	int time=0;
+	public blinging(int x,int y,int ps)
+	{
+		this.x=x;
+		this.y=y;
+		this.ps=ps;
+	}
+	public void done()
+	{
+		x=0;
+		y=0;
+		time=0;
+		ps=0;
+	}
+}
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				text.setSize(1200,700);
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	Image imageup=new ImageIcon("yangmiup.jpg").getImage();
+	Image imagedown=new ImageIcon("yangmidown.jpg").getImage();
+	Image imageleft=new ImageIcon("yangmileft.jpg").getImage();
+	Image imageright=new ImageIcon("yangmiright.jpg").getImage();
+	Image imagebiu=new ImageIcon("yangmibiu.png").getImage();
+	Image imageblingright=new ImageIcon("blingright.png").getImage();
+	Image imageblingup=new ImageIcon("blingup.png").getImage();
+	private ArrayList<biu>bius=new ArrayList<>();
+	private biu current;
+	int imagex=560;
+	int imagey=310;
+	private int position=1;
+	long now;
+	int Maxbius=7;//最多炮弹数
+	int blingon=0;//激光炮是否在射
+	blinging bling=new blinging(0,0,0);
+	private JButton Clean=new JButton("Clean up");
+	/*
+	private JButton Upmove=new JButton("Up");
+	private JButton Downmove=new JButton("Down");
+	private JButton Rightmove=new JButton("Right");
+	private JButton Leftmove=new  JButton("Left");
+	*///maybe use
+	private JPanel panel;
+	//private squarebuild square=new squarebuild();
+	public frame()
+	{
+		panel=new JPanel();
+		//add(square);
+		//panel.add(square);
+		panel.setLayout(null);
+		Clean.setBounds(550, 640, 100, 20);
+		add(panel);
+		panel.add(Clean);//if delete it will not work
+		Action up=new moveAction(0,-1,1);
+		Action down=new moveAction(0,1,2);
+		Action left=new moveAction(-1,0,3);
+		Action right=new moveAction(1,0,4);
+		Action upright=new moveAction(1,-1,1);
+		Action downright=new moveAction(1,1,2);
+		Action upleft=new moveAction(-1,-1,1);
+		Action downleft=new moveAction(-1,1,2);
+		Action biu=new biuAction();
+		Action blinging=new blingAction();
+		InputMap imap=panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=panel.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("W"),"upmove");
+		imap.put(KeyStroke.getKeyStroke("S"), "downmove");
+		imap.put(KeyStroke.getKeyStroke("A"), "leftmove");
+		imap.put(KeyStroke.getKeyStroke("D"), "rightmove");
+		imap.put(KeyStroke.getKeyStroke("W A"), "up&leftmove");
+		imap.put(KeyStroke.getKeyStroke("W D"), "up&rightmove");
+		imap.put(KeyStroke.getKeyStroke("S A"), "down&leftmove");
+		imap.put(KeyStroke.getKeyStroke("S D"), "down&rightmove");
+		imap.put(KeyStroke.getKeyStroke("J"),"biu");
+		imap.put(KeyStroke.getKeyStroke("K"),"bling");
+		amap.put("upmove",up);
+		amap.put("downmove",down);
+		amap.put("leftmove",left);
+		amap.put("rightmove",right);
+		amap.put("up&rightmove",upright);
+		amap.put("down&rightmove",downright);
+		amap.put("up&leftmove",upleft);
+		amap.put("down&leftmove",downleft);
+		amap.put("biu",biu);
+		amap.put("bling", blinging);
+		ActionListener biumove=new ActionListener()
+		{
+			public void actionPerformed(ActionEvent event)
+			{
+				//now=new Date().getTime();
+				int i=0;
+				while(i<bius.size())
+				{
+					biu b=bius.get(i);
+					if(((b.x<1080)&&(b.x>100))&&((b.y>70)&&(b.y<630)))
+					{
+						if(b.ps<=2)
+						{
+							if(b.ps==1)
+								b.y=b.y-20;
+							else
+								b.y=b.y+20;
+						}
+						else
+						{
+							if(b.ps==3)
+								b.x=b.x-20;
+							else
+								b.x=b.x+20;
+						}
+					}
+					else
+						bius.remove(i);
+					    i++;
+				}
+				if(blingon==1)
+				{
+					if((bling.ps==1))
+					{
+						if(bling.y-bling.time*40>50);
+						else
+							bling.done();
+					}
+					if((bling.ps==2))
+					{
+						if(bling.y+bling.time*40<650);
+						else
+							bling.done();
+					}
+					if((bling.ps==3))
+					{
+						if(bling.x-bling.time*40>100);
+						else
+							bling.done();
+					}
+					if((bling.ps==4))
+					{
+						if(bling.x+bling.time*40<1100);
+						else
+							bling.done();
+					}
+					if(bling.ps==0)blingon=0;
+					else
+						bling.time=bling.time+1;
+				}
+				repaint();
+				i=0;
+			}
+		};
+		Timer t=new Timer(100,biumove);
+		t.start();
+		
+		/*
+		 * imap.put(KeyStroke.getKeyStroke("T"),"textkeyboard");
+		 * amap.put("textkeyboard",textAction);
+		 */
+
+	}
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		Graphics2D g2=(Graphics2D)g;
+		g2.setPaint(Color.red);
+		Rectangle2D rect=new Rectangle2D.Double(100,50,1000,600);
+		g2.draw(rect);
+		g2.setPaint(Color.blue);
+		rect=new Rectangle2D.Double(99,49,1002,602);
+		g2.draw(rect);
+		g2.setPaint(Color.cyan);
+		rect=new Rectangle2D.Double(97,47,1006,606);
+		g2.draw(rect);
+		g2.setPaint(Color.black);
+		//线框
+		if(position==1)g.drawImage(imageup,imagex,imagey,80,80,null);
+		if(position==2)g.drawImage(imagedown,imagex,imagey,80,80,null);
+		if(position==3)g.drawImage(imageleft,imagex,imagey,80,80,null);
+		if(position==4)g.drawImage(imageright,imagex,imagey,80,80,null);
+		for(biu b:bius)
+		{
+		   g.drawImage(imagebiu, b.x-10, b.y-10, null);
+		}
+		if(blingon==1)
+		{
+			if((bling.ps==1))g.drawImage(imageblingup,bling.x, bling.y,40,-40*bling.time,null);
+			if((bling.ps==2))g.drawImage(imageblingup,bling.x, bling.y,40,40*bling.time,null);
+			if((bling.ps==3))g.drawImage(imageblingright,bling.x,bling.y,-40*bling.time,40,null);
+			if((bling.ps==4))g.drawImage(imageblingright,bling.x,bling.y,40*bling.time,40,null);
+		}
+	}
+	public class moveAction extends AbstractAction
+	{
+		int x;
+		int y;
+		int p;
+		public moveAction(int x,int y,int p)
+		{
+			this.x=x;
+			this.y=y;
+			this.p=p;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			if(position==p)
+			{
+			if(((imagex+x*20<1040)&&(imagex+x*20>80))&&((imagey+y*20>40)&&(imagey+y*20<590)))
+		{
+			imagex=imagex+x*20;
+			imagey=imagey+y*20;
+	        repaint();
+	        position=p;
+		}
+			}
+			else
+				position=p;
+				
+		}
+	}
+	public class biuAction extends AbstractAction
+	{
+		//炮弹属性
+		int x;
+		int y;
+		public biuAction()
+		{
+			//设置炮弹属性参数
+			//
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			Date begin=new Date();
+			if(bius.size()<Maxbius)
+			{
+			if(position==1)
+			{
+				x=40;
+				y=0;
+			}
+			if(position==2)
+			{
+				x=40;
+				y=80;
+			}
+			if(position==3)
+			{
+				x=0;
+				y=40;
+			}
+			if(position==4)
+			{
+				x=80;
+				y=40;
+			}
+			current=new biu(imagex+x,imagey+y,begin.getTime(),position);
+			bius.add(current);
+			}
+		}
+	}
+	public class blingAction extends AbstractAction
+	{
+		int x;
+		int y;
+		public blingAction()
+		{
+			
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			if(blingon==0)
+			{
+			blingon=1;
+			bling.ps=position;
+			if(position==1)
+			{
+				x=20;
+				y=0;
+			}
+			if(position==2)
+			{
+				x=20;
+				y=80;
+			}
+			if(position==3)
+			{
+				x=0;
+				y=20;
+			}
+			if(position==4)
+			{
+				x=80;
+				y=20;
+			}
+			bling.x=imagex+x;
+			bling.y=imagey+y;
+			}
+		}
+	}
+}

@@ -1,0 +1,94 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				text.setSize(1200,700);
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	/*public void paint(Graphics g)
+	{
+		super.paint(g);//key
+		Graphics2D g2=(Graphics2D) g;
+		g2.setPaint(Color.red);
+		Rectangle2D rect=new Rectangle2D.Double(100,50,1000,600);
+		g2.draw(rect);
+		g2.setPaint(Color.blue);
+		rect=new Rectangle2D.Double(99,49,1002,602);
+		g2.draw(rect);
+		g2.setPaint(Color.cyan);
+		rect=new Rectangle2D.Double(97,47,1006,606);
+		g2.draw(rect);
+	}*/
+	
+	public frame()
+	{	
+		add(new squarebuild());
+	}
+}
+class squarebuild extends JComponent
+{
+	private static final int L=20;
+	private ArrayList<Rectangle2D>squares;
+	private Rectangle2D current;
+	public squarebuild()
+	{
+		squares=new ArrayList();
+		current=null;
+		
+		addMouseListener(new MouseHandler());
+		//addMousetMotionListener(new MouseMotionListener);
+		
+	}
+	public void paintComponent(Graphics g)
+	{
+		Graphics2D g2=(Graphics2D)g;
+		g2.setPaint(Color.red);
+		Rectangle2D rect=new Rectangle2D.Double(100,50,1000,600);
+		g2.draw(rect);
+		g2.setPaint(Color.blue);
+		rect=new Rectangle2D.Double(99,49,1002,602);
+		g2.draw(rect);
+		g2.setPaint(Color.cyan);
+		rect=new Rectangle2D.Double(97,47,1006,606);
+		g2.draw(rect);
+		g2.setPaint(Color.black);
+		for(Rectangle2D r:squares)
+		{
+			g2.draw(r);
+		}
+        g2.draw(current);
+	}
+	public class MouseHandler extends MouseAdapter
+	{
+		public void mousePressed(MouseEvent event)
+		{
+			int x=event.getX();
+			int y=event.getY();
+			current=new Rectangle2D.Double(x-L/2, y-L/2, L, L);
+			squares.add(current);
+			repaint();
+			
+		}
+	}
+	
+}

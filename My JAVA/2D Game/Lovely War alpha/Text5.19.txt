@@ -1,0 +1,384 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				//text.setSize(1300,700);
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	int GAMEPANELWIDTH=1000;
+	int GAMEPANELHEIGHT=700;
+	int MESSAGEPANELWIDTH=150;
+	int MESSAGEPANELHEIGHT=700;
+	JPanel GamePanel=new JPanel();
+	JPanel LPPanel=new JPanel();//left and right player message
+	JPanel RPPanel=new JPanel();
+	JPanel SelectPanel=new SELECTpanel(this);
+	JPanel InPanel=new INpanel(this);
+	JPanel AnimalPanel=new ANIMALpanel(this);
+	JComponent gamewindow=new Gamewindow();//the game play window
+	Player player1=new Player();//the player;
+	Player player2=new Player();
+	Timer t;
+	
+	public frame()
+	{
+		GamePanel.setPreferredSize(new Dimension(GAMEPANELWIDTH,GAMEPANELHEIGHT));
+		SelectPanel.setPreferredSize(new Dimension(GAMEPANELWIDTH,GAMEPANELHEIGHT));
+		InPanel.setPreferredSize(new Dimension(GAMEPANELWIDTH,GAMEPANELHEIGHT));
+		AnimalPanel.setPreferredSize(new Dimension(GAMEPANELWIDTH,GAMEPANELHEIGHT));
+		LPPanel.setPreferredSize(new Dimension(MESSAGEPANELWIDTH,MESSAGEPANELHEIGHT));
+		RPPanel.setPreferredSize(new Dimension(MESSAGEPANELWIDTH,MESSAGEPANELHEIGHT));
+		this.setResizable(false);
+		//this.setSize(1300, 700);
+		this.setLayout(new BorderLayout());
+		GamePanel.setLayout(new BorderLayout());
+		GamePanel.add(gamewindow);
+		//add(GamePanel);
+		add(SelectPanel);
+		add(LPPanel,BorderLayout.WEST);
+		add(RPPanel,BorderLayout.EAST);
+		//just for text
+		LPPanel.setLayout(new BorderLayout());
+		RPPanel.setLayout(new BorderLayout());
+		pack();
+	}
+	public void panelswitch(int num)
+	{
+		if(num==1)
+		{
+			this.remove(SelectPanel);
+			add(InPanel);
+			pack();
+		}
+		if(num==2)
+		{
+			this.remove(InPanel);
+			add(AnimalPanel);
+			pack();	
+		}
+		if(num==3)
+		{
+			//show Dialog
+		}
+		if(num==4)
+		{
+			this.remove(AnimalPanel);
+			add(GamePanel);
+			t=new Timer(100,new biumove(player1));
+			t.addActionListener(new biumove(player2));
+			pack();
+			
+		}
+	}
+}
+class Gamewindow extends JComponent
+{
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.setColor(Color.PINK);
+		g.fillRect(0, 0,getWidth(),getHeight());
+		System.out.println(getWidth());
+		System.out.println(getHeight());
+	}
+}
+class SELECTpanel extends JPanel
+{
+	JButton start=new JButton("Start");
+	JButton exit=new JButton("exit");
+	public SELECTpanel(frame from)
+	{
+		setLayout(new GridLayout(2,1));
+		start.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				from.panelswitch(1);
+			}
+				});
+		exit.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				System.exit(0);
+			}
+				});
+		add(start);
+		add(exit);
+	}
+}
+class INpanel extends JPanel
+{
+	JButton choose=new JButton("Choose");
+	JButton setting=new JButton("Setting");
+	public INpanel(frame from)
+	{
+		setLayout(new GridLayout(2,1));
+		choose.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				from.panelswitch(2);
+			}
+				});
+		setting.addActionListener(new ActionListener()
+		{
+	        public void actionPerformed(ActionEvent event)
+	        {
+		        from.panelswitch(3);
+	        }
+		});
+		add(choose);
+		add(setting);
+	}
+}
+class ANIMALpanel extends JPanel
+{
+	JButton dbutton=new JButton("dog");
+	JButton cbutton=new JButton("cat");
+	JButton rbutton=new JButton("rabbit");
+	JPanel dpanel=new JPanel();
+	JPanel cpanel=new JPanel();
+	JPanel rpanel=new JPanel();
+	public ANIMALpanel(frame from)
+	{
+		setLayout(new GridLayout(1,3));
+		dpanel.add(dbutton);
+		dbutton.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				Images images=new Images(new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+						,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+						,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage());
+				if(from.player1.set==0)from.player1.set(0,0,0,0,"skill",0,0,images,0,0);
+				else from.player2.set(0,0,0,0,"skill",0,0,images,0,0);
+				if(from.player2.set==1)from.panelswitch(4);
+				
+			}
+				});
+		cbutton.addActionListener(new ActionListener()
+		{
+	public void actionPerformed(ActionEvent event)
+	{
+		Images images=new Images(new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+				,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+				,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage());
+		if(from.player1.set==0)from.player1.set(0,0,0,0,"skill",0,0,images,0,0);
+		else from.player2.set(0,0,0,0,"skill",0,0,images,0,0);
+		if(from.player2.set==1)from.panelswitch(4);
+		
+	}
+		});
+		rbutton.addActionListener(new ActionListener()
+		{
+	public void actionPerformed(ActionEvent event)
+	{
+		Images images=new Images(new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+				,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage()
+				,new ImageIcon("background.jpg").getImage(),new ImageIcon("background.jpg").getImage());
+		if(from.player1.set==0)from.player1.set(0,0,0,0,"skill",0,0,images,0,0);
+		else from.player2.set(0,0,0,0,"skill",0,0,images,0,0);
+		if(from.player2.set==1)from.panelswitch(4);
+		
+	}
+		});
+		cpanel.add(cbutton);
+		rpanel.add(rbutton);
+		add(dpanel);
+		add(cpanel);
+		add(rpanel);
+	}
+}
+class Player
+{
+	int DMG;//伤害
+	int HP;//生命值
+	int MP;//耐久
+	int SP;//移动速度
+	String skill;//特殊技能
+	int PS;//当前位置
+	int ON;//爆气
+	Images images;
+	int set=0;
+	ArrayList<biu>bius=new ArrayList<>();
+	int x;
+	int y;
+	public void set(int a,int b,int c,int d,String e,int f,int g,Images images,int x,int y)
+	{
+		DMG=a;
+		HP=b;
+		MP=c;
+		SP=d;
+		skill=e;
+		PS=f;
+		ON=g;
+		this.images=images;
+		set=1;
+		this.x=x;
+		this.y=y;
+	}
+	public void hurt(int h)
+	{
+		HP-=h;
+	}
+}
+class Images
+{
+	Image upmove;
+	Image downmove;
+	Image leftmove;
+	Image rightmove;
+	Image biu;
+	Image bling;
+	public Images(Image up,Image down,Image left,Image right,Image biu,Image bling)
+	{
+		upmove=up;
+		downmove=down;
+		leftmove=left;
+		rightmove=right;
+		this.biu=biu;
+		this.bling=bling;
+	}
+}
+class biu
+{
+	int x;
+	int y;
+	int PS;
+	public biu(int x,int y,int PS)
+	{
+		this.x=x;
+		this.y=y;
+		this.PS=PS;
+	}
+}
+class biuAction extends AbstractAction
+{
+	int playerx;
+	int playery;
+	int x;
+	int y;
+	Player player;
+	int ps;
+	biu current;
+	public biuAction(Player player)
+	{
+		this.player=player;
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		ps=player.PS;
+		playerx=player.x;
+		playery=player.y;
+		if(true)
+		{
+			if(ps<=2)
+			{
+		if(ps==1)
+		{
+			x=40;
+			y=0;
+		}
+		if(ps==2)
+		{
+			x=40;
+			y=80;
+		}
+			}
+			else
+			{
+		if(ps==3)
+		{
+			x=0;
+			y=40;
+		}
+		if(ps==4)
+		{
+			x=80;
+			y=40;
+		}
+			}
+		current=new biu(playerx+x,playery+y,ps);
+		player.bius.add(current);
+		}
+	}
+}
+class biumove implements ActionListener
+{
+	
+	Player player;
+	ArrayList<biu>bius;
+	int ps;
+	public biumove(Player player)
+	{
+		this.player=player;
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		this.bius=player.bius;
+		int i=0;
+		while(i<bius.size())
+		{
+			biu b=bius.get(i);
+			if(((b.x<1000)&&(b.x>0))&&((b.y>0)&&(b.y<600)))
+			{
+				if(b.PS<=2)
+				{
+					if(b.PS==1)
+						b.y=b.y-20;
+					else
+						b.y=b.y+20;
+				}
+				else
+				{
+					if(b.PS==3)
+						b.x=b.x-20;
+					else
+						b.x=b.x+20;
+				}
+			}
+			else
+				bius.remove(i);
+			    i++;
+		}
+		
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

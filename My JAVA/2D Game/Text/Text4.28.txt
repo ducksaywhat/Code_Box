@@ -1,0 +1,147 @@
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				//it determin the frame can not be change or not
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	public JButton Tstopbutton;
+	public JButton Tstartbutton;
+	public JButton yellowbutton;
+	public JButton whitebutton;
+	public JButton yangmibutton;
+	public JButton Textbutton;
+	public JPanel panel;
+	ActionListener text=new ActionListener()
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			Date now=new Date();
+			System.out.println(now);
+		}
+	};
+	private Timer t=new Timer(1000,text);
+	public frame()
+	{
+		pack();
+		Action textAction=new textabuild("Text Action",new ImageIcon("image4.gif.jpg"),"it's just a text");
+		Action yangmi=new Imageabuild("yangmi",null,"press it show yangmi");
+		Action white=new Colorabuild("white",null,"press it change the backgroundcolor to white",Color.WHITE);
+		Action yellow=new Colorabuild("yellow",null,"press it change the backgroundcolor to yellow",Color.YELLOW);
+		Action Tstart=new Tstartabuild("tStart",null,"press it start the Timer");
+		Action Tstop=new Tstopabuild("tStop",null,"press it stop the Timer");
+		Tstopbutton=new JButton(Tstop);
+		Tstartbutton=new JButton(Tstart);
+		yellowbutton=new JButton(yellow);
+		whitebutton=new JButton(white);
+		yangmibutton=new JButton(yangmi);
+		Textbutton=new JButton(textAction);
+		panel=new JPanel();
+		panel.add(yellowbutton);
+		panel.add(whitebutton);
+		panel.add(yangmibutton);
+		panel.add(Tstartbutton);
+		panel.add(Tstopbutton);
+		panel.add(Textbutton);
+		add(panel);
+		//text keyboard
+		InputMap imap=panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=panel.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("T"),"textkeyboard");
+		//it works if it set here
+		amap.put("textkeyboard",textAction);
+		Tstopbutton.setEnabled(false);
+	}
+	class Colorabuild extends AbstractAction
+	{
+		private Color backgroundColor;
+		public Colorabuild(String name,Icon icon,String Description,Color c)
+		{
+			putValue(Action.NAME,name);
+			putValue(Action.SMALL_ICON,icon);
+			putValue(Action.SHORT_DESCRIPTION,Description);
+			backgroundColor=c;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    panel.setBackground(backgroundColor);
+		}
+	}
+	class Imageabuild extends AbstractAction
+	{
+		private Image image;
+		public Imageabuild(String name,Icon icon,String Description)
+		{
+			putValue(Action.NAME,name);
+			putValue(Action.SMALL_ICON,icon);
+			putValue(Action.SHORT_DESCRIPTION,Description);
+			image=new ImageIcon("image.jpg").getImage();
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    panel.getGraphics().drawImage(image, 200, 80,363,420, null);
+		}
+	}
+	class textabuild extends AbstractAction
+	{
+		public textabuild(String name,Icon icon,String Description)
+		{
+			putValue(Action.NAME,name);
+			putValue(Action.SMALL_ICON,icon);
+			putValue(Action.SHORT_DESCRIPTION,Description);
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			System.out.println("button working");
+		}
+	}
+	class Tstartabuild extends AbstractAction
+	{
+		public Tstartabuild(String name,Icon icon,String Description)
+		{
+			putValue(Action.NAME,name);
+			putValue(Action.SMALL_ICON,icon);
+			putValue(Action.SHORT_DESCRIPTION,Description);
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			t.start();
+			Tstartbutton.setEnabled(false);
+			Tstopbutton.setEnabled(true);
+		}
+	}
+	class Tstopabuild extends AbstractAction
+	{
+		public Tstopabuild(String name,Icon icon,String Description)
+		{
+			putValue(Action.NAME,name);
+			putValue(Action.SMALL_ICON,icon);
+			putValue(Action.SHORT_DESCRIPTION,Description);
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			t.stop();
+			Tstopbutton.setEnabled(false);
+			Tstartbutton.setEnabled(true);	
+		}
+	}
+	public Dimension getPreferredSize(){return new Dimension(800,600);}
+}

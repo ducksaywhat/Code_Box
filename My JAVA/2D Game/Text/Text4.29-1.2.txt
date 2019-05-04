@@ -1,0 +1,147 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				text.setSize(1200,700);
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	/*
+	private JButton Upmove=new JButton("Up");
+	private JButton Downmove=new JButton("Down");
+	private JButton Rightmove=new JButton("Right");
+	private JButton Leftmove=new  JButton("Left");
+	*///maybe use
+	//private JPanel panel=new JPanel();
+	//private JPanel panel=new JPanel();
+	private squarebuild square=new squarebuild();
+	public frame()
+	{
+		add(square);
+		/*panel.add(square);
+		moveAction up=new moveAction(-1,0);
+		InputMap imap=panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=panel.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("W"),"upmove");
+		imap.put(KeyStroke.getKeyStroke("S"), "downmove");
+		imap.put(KeyStroke.getKeyStroke("A"), "leftmove");
+		imap.put(KeyStroke.getKeyStroke("D"), "rightmove");
+		imap.put(KeyStroke.getKeyStroke("W A"), "up&leftmove");
+		imap.put(KeyStroke.getKeyStroke("W D"), "up&rightmove");
+		imap.put(KeyStroke.getKeyStroke("S A"), "down&leftmove");
+		imap.put(KeyStroke.getKeyStroke("S D"), "down&rightmove");
+		amap.put("upmove",up);
+		*/
+		
+		/*
+		 * imap.put(KeyStroke.getKeyStroke("T"),"textkeyboard");
+		 * amap.put("textkeyboard",textAction);
+		 */
+
+	}
+	public void paint(Graphics g)
+	{
+		
+	}
+}
+class squarebuild extends JComponent
+{
+	//private static final int L=20;
+	//private ArrayList<Rectangle2D>squares;
+	//private Rectangle2D current;
+	private Image image=new ImageIcon("yangmi1.jpg").getImage();
+	public int imagex;
+	public int imagey;
+	JPanel panel=new JPanel();
+	public squarebuild()
+	{
+		add(panel);
+		imagex=560;
+		imagey=310;
+		moveAction up=new moveAction(-1,0);
+		InputMap imap=panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=panel.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("W"),"upmove");
+		imap.put(KeyStroke.getKeyStroke("S"), "downmove");
+		imap.put(KeyStroke.getKeyStroke("A"), "leftmove");
+		imap.put(KeyStroke.getKeyStroke("D"), "rightmove");
+		imap.put(KeyStroke.getKeyStroke("W A"), "up&leftmove");
+		imap.put(KeyStroke.getKeyStroke("W D"), "up&rightmove");
+		imap.put(KeyStroke.getKeyStroke("S A"), "down&leftmove");
+		imap.put(KeyStroke.getKeyStroke("S D"), "down&rightmove");
+		amap.put("upmove",up);
+	}
+	
+	public void imagemove(int x,int y)
+	{
+		imagex=imagex+x;
+		imagey=imagey+y;
+	}
+	public void paintComponent(Graphics g)
+	{
+		//Ïß¿ò
+		Graphics2D g2=(Graphics2D)g;
+		g2.setPaint(Color.red);
+		Rectangle2D rect=new Rectangle2D.Double(100,50,1000,600);
+		g2.draw(rect);
+		g2.setPaint(Color.blue);
+		rect=new Rectangle2D.Double(99,49,1002,602);
+		g2.draw(rect);
+		g2.setPaint(Color.cyan);
+		rect=new Rectangle2D.Double(97,47,1006,606);
+		g2.draw(rect);
+		g2.setPaint(Color.black);
+		//Ïß¿ò
+		g.drawImage(image,imagex,imagey,80,80,null);
+
+	}
+	/*public class MouseHandler extends MouseAdapter
+	{
+		public void mousePressed(MouseEvent event)
+		{
+			int x=event.getX();
+			int y=event.getY();
+			current=new Rectangle2D.Double(x-L/2, y-L/2, L, L);
+			squares.add(current);
+			repaint();
+			
+		}
+	}*/
+	class moveAction extends AbstractAction
+	{
+		int xmove;
+		int ymove;
+		public moveAction(int x,int y)
+		{
+			//if(((square.imagex+x*20<1060)&&(square.imagex+x*20>140))&&((square.imagey+y*20>90)&&(square.imagey+y*20<610)))
+				//{
+				//square.imagemove(x*20, y*20);
+				//square.repaint();
+				//}
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			System.out.println("button working");
+		}
+	}
+	
+}

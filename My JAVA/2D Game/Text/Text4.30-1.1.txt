@@ -1,0 +1,119 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				text.setSize(1200,700);
+				text.setResizable(false);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	int imagex=560;
+	int imagey=310;
+	private JButton Clean=new JButton("Clean up");
+	/*
+	private JButton Upmove=new JButton("Up");
+	private JButton Downmove=new JButton("Down");
+	private JButton Rightmove=new JButton("Right");
+	private JButton Leftmove=new  JButton("Left");
+	*///maybe use
+	private JPanel panel;
+	//private squarebuild square=new squarebuild();
+	public frame()
+	{
+		panel=new JPanel();
+		//add(square);
+		//panel.add(square);
+		panel.setLayout(null);
+		Clean.setBounds(550, 640, 100, 20);
+		add(panel);
+		panel.add(Clean);//if delete it will not work
+		Action up=new moveAction(0,-1);
+		Action down=new moveAction(0,1);
+		Action left=new moveAction(-1,0);
+		Action right=new moveAction(1,0);
+		Action upright=new moveAction(1,-1);
+		Action downright=new moveAction(1,1);
+		Action upleft=new moveAction(-1,-1);
+		Action downleft=new moveAction(-1,1);
+		InputMap imap=panel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=panel.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("W"),"upmove");
+		imap.put(KeyStroke.getKeyStroke("S"), "downmove");
+		imap.put(KeyStroke.getKeyStroke("A"), "leftmove");
+		imap.put(KeyStroke.getKeyStroke("D"), "rightmove");
+		imap.put(KeyStroke.getKeyStroke("W A"), "up&leftmove");
+		imap.put(KeyStroke.getKeyStroke("W D"), "up&rightmove");
+		imap.put(KeyStroke.getKeyStroke("S A"), "down&leftmove");
+		imap.put(KeyStroke.getKeyStroke("S D"), "down&rightmove");
+		amap.put("upmove",up);
+		amap.put("downmove",down);
+		amap.put("leftmove",left);
+		amap.put("rightmove",right);
+		amap.put("up&rightmove",upright);
+		amap.put("down&rightmove",downright);
+		amap.put("up&leftmove",upleft);
+		amap.put("down&leftmove",downleft);
+		
+		/*
+		 * imap.put(KeyStroke.getKeyStroke("T"),"textkeyboard");
+		 * amap.put("textkeyboard",textAction);
+		 */
+
+	}
+	public void paint(Graphics g)
+	{
+		Image image=new ImageIcon("yangmi1.jpg").getImage();
+		super.paint(g);
+		Graphics2D g2=(Graphics2D)g;
+		g2.setPaint(Color.red);
+		Rectangle2D rect=new Rectangle2D.Double(100,50,1000,600);
+		g2.draw(rect);
+		g2.setPaint(Color.blue);
+		rect=new Rectangle2D.Double(99,49,1002,602);
+		g2.draw(rect);
+		g2.setPaint(Color.cyan);
+		rect=new Rectangle2D.Double(97,47,1006,606);
+		g2.draw(rect);
+		g2.setPaint(Color.black);
+		//Ïß¿ò
+		g.drawImage(image,imagex,imagey,80,80,null);
+	}
+	public class moveAction extends AbstractAction
+	{
+		int x;
+		int y;
+		public moveAction(int x,int y)
+		{
+			this.x=x;
+			this.y=y;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			if(((imagex+x*20<1040)&&(imagex+x*20>80))&&((imagey+y*20>40)&&(imagey+y*20<590)))
+		{
+			imagex=imagex+x*20;
+			imagey=imagey+y*20;
+	     repaint();
+		}
+			System.out.println("button working");
+		}
+	}
+}

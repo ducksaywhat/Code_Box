@@ -1,0 +1,1892 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import java.lang.Math;
+class GAMErule
+{
+	static int Roundtime=90;
+	static int Blocks=4;
+	static int wintimes=2;
+	static int unknowbox=0;//not use
+	static int keymode=1;
+}
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("Lovely war alpha1.0.0");
+				text.setIconImage(new ImageIcon("CCatIcon.png").getImage());
+				text.setLocation((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()-text.getWidth())/2,0);
+				text.setResizable(false);
+				text.setVisible(true);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	int GAMEPANELWIDTH=1000;
+	int GAMEPANELHEIGHT=700;
+	int WHOLEWIDTH=1300;
+	int WHOLEHEIGHT=700;
+	GAMEpanel GamePanel;
+	Player player1=new Player();//the player;
+	Player player2=new Player();
+	JPanel SelectPanel;
+	JPanel SETTINGPanel=new SETTINGpanel(this);
+	JPanel AnimalPanel;
+	JPanel GameoverPanel;
+	JPanel HelpPanel;
+	public frame()
+	{
+		Toolkit tk=Toolkit.getDefaultToolkit();
+        Image img=tk.getImage("Cursor.png");
+        Cursor myCursor=tk.createCustomCursor(img, new Point(15,15), "");
+        setCursor(myCursor);
+		this.setResizable(false);
+		//this.setSize(1300, 700);
+		this.setLayout(new BorderLayout());
+		SelectPanel=new SELECTpanel(this);
+		SelectPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+		add(SelectPanel);
+		pack();
+	}
+	public void panelswitch(int num)
+	{
+		if(num==0)
+		{
+			return;
+		}
+		if(num==1)
+		{
+			this.remove(SelectPanel);
+			add(SETTINGPanel);
+			pack();
+		}
+		if(num==2)
+		{
+			AnimalPanel=new ANIMALpanel(this);
+			AnimalPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			this.remove(SelectPanel);
+			SelectPanel=null;
+			add(AnimalPanel);
+			pack();	
+		}
+		if(num==3)
+		{
+			//show Dialog
+		}
+		if(num==4)
+		{
+			this.remove(AnimalPanel);
+			GamePanel=new GAMEpanel(WHOLEWIDTH,WHOLEHEIGHT,this);
+			add(GamePanel);
+			AnimalPanel=null;
+			GamePanel.requestFocus();
+			GamePanel.gameready();
+			pack();		
+		}
+		if(num==5)
+		{
+			this.remove(GamePanel);
+			GamePanel=null;
+			GameoverPanel=new GAMEOVERPanel(this);
+			add(GameoverPanel);
+			GameoverPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			GameoverPanel.requestFocus();
+			pack();
+		}
+		if(num==6)
+		{
+			this.remove(GameoverPanel);
+			GameoverPanel=null;
+			player1=new Player();
+			player2=new Player();
+			SelectPanel=new SELECTpanel(this);
+			SelectPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			add(SelectPanel);
+			SelectPanel.requestFocus();
+			pack();
+		}
+		if(num==7)
+		{
+			this.remove(AnimalPanel);
+			AnimalPanel=null;
+			SelectPanel=new SELECTpanel(this);
+			SelectPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			add(SelectPanel);
+			pack();		
+		}
+		if(num==8)
+		{
+			this.remove(SelectPanel);
+			HelpPanel=new HELPPanel(this);
+			add(HelpPanel);
+			SelectPanel=null;
+			HelpPanel.requestFocus();
+			HelpPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			pack();	
+		}
+		if(num==9)
+		{
+			this.remove(HelpPanel);
+			SelectPanel=new SELECTpanel(this);
+			SelectPanel.setPreferredSize(new Dimension(WHOLEWIDTH,WHOLEHEIGHT));
+			add(SelectPanel);
+			HelpPanel=null;
+			SelectPanel.requestFocus();
+			pack();
+		}
+	}
+}
+class HELPcomponent extends JComponent
+{
+	HELPPanel from;
+	ArrayList<Image>HelpPage=new ArrayList<>();
+	int p;
+	public HELPcomponent(HELPPanel from)
+	{
+		this.from=from;
+		HelpPage.add(new ImageIcon("HELPPage1.png").getImage());
+		HelpPage.add(new ImageIcon("HELPPage2.png").getImage());
+		HelpPage.add(new ImageIcon("HELPPage3.png").getImage());
+	}
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		p=from.i;
+		g.drawImage(HelpPage.get(p), 0, 0, 1300,700,null);
+	}
+}
+class HELPPanel extends JPanel
+{
+	frame from;
+	int i;
+	HELPcomponent background;
+	public HELPPanel(frame from)
+	{
+		this.from=from;
+		i=0;
+		background=new HELPcomponent(this);
+		this.setLayout(new BorderLayout());
+		add(background);
+		addMouseListener(new MouseHandler());
+	}
+	class MouseHandler extends MouseAdapter
+	{
+		Rectangle L=new Rectangle(0,270,100,100);
+		Rectangle R=new Rectangle(1200,270,100,100);
+		Rectangle X=new Rectangle(1200,0,100,100);
+		public void mousePressed(MouseEvent event)
+		{
+			Point2D p=event.getPoint();
+			if((L.contains(p))&&(i!=0))
+			{
+				i--;
+				background.repaint();
+			}
+			else if((R.contains(p))&&(i!=2))
+			{
+				i++;
+				background.repaint();
+			}
+			else if(X.contains(p))
+				from.panelswitch(9);
+		}
+	}
+}
+class GAMEOVERPanel extends JPanel
+{
+	frame from;
+	int i;
+	GAMEOVERcomponent background;
+	Timer clock;
+	public GAMEOVERPanel(frame from)
+	{
+		this.from=from;
+		i=3;
+		clock=new Timer(1000,new ActionListener()
+		{
+	public void actionPerformed(ActionEvent event)
+	{
+		background.repaint(i);
+		i--;
+		if(i==0)
+		{
+			from.panelswitch(6);
+			clock.stop();
+		}
+	}
+		});
+		if(from.player1.score>from.player2.score)
+			background=new GAMEOVERcomponent(1);
+		else
+			background=new GAMEOVERcomponent(2);
+		setLayout(new BorderLayout());
+		add(background);
+		clock.start();
+	}
+}
+class GAMEOVERcomponent extends JComponent
+{
+	int i=0;
+	int p;
+	public GAMEOVERcomponent(int i)
+	{
+		p=i;
+	}
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.drawImage(new ImageIcon("ANIMALbackground.png").getImage(),0,0, getWidth(), getHeight(), null);
+		if(i==0)
+		{
+			g.drawImage(new ImageIcon("GAMEover.png").getImage(),500,150 ,300, 400,null);
+			i++;
+		}
+		else
+		{
+			if(p==1)
+				g.drawImage(new ImageIcon("P1win.png").getImage(),500,200 ,300, 300,null);
+			else
+				g.drawImage(new ImageIcon("P2win.png").getImage(),500,200 ,300, 300,null);
+				
+		}
+	}
+}
+class SELECTpanel extends JPanel
+{
+	frame from;
+	SELECTComponent background=new SELECTComponent();
+	Timer backgroundchanger=new Timer(500,new ActionListener()
+			{
+		public void actionPerformed(ActionEvent event)
+		{
+			background.repaint();
+		}
+			});
+	public SELECTpanel(frame from)
+	{
+		this.from=from;
+		setLayout(new BorderLayout());
+		addMouseListener(new MouseHandler());
+		add(background);
+		backgroundchanger.start();
+	}
+	class MouseHandler extends MouseAdapter
+	{
+		Rectangle start=new Rectangle(600,200,120,50);
+		Rectangle help=new Rectangle(600,375,120,50);
+		Rectangle setting=new Rectangle(600,425,120,50);
+		Rectangle about=new Rectangle(620,670,90,30);
+		public void mousePressed(MouseEvent event)
+		{
+			Point2D p=event.getPoint();
+			if(start.contains(p))
+			{
+				from.panelswitch(2);
+				backgroundchanger.stop();
+			}
+			if(help.contains(p))
+			{
+				from.panelswitch(8);
+				backgroundchanger.stop();
+			}
+			if(setting.contains(p))
+			{
+				from.panelswitch(0);
+				backgroundchanger.stop();
+			}
+			if(about.contains(p))
+			{
+				from.panelswitch(0);
+				backgroundchanger.stop();
+			}
+		}
+	}
+}
+class SELECTComponent extends JComponent
+{
+	int i=1;
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		if(i==1)
+		    g.drawImage(new ImageIcon("SELECTbackground1.png").getImage(),0,0,1300,700,null);
+		if(i==2)
+			g.drawImage(new ImageIcon("SELECTbackground2.png").getImage(),0,0,1300,700,null);
+		if(i==3)
+			g.drawImage(new ImageIcon("SELECTbackground3.png").getImage(),0,0,1300,700,null);
+		if(i==4)
+			g.drawImage(new ImageIcon("SELECTbackground4.png").getImage(),0,0,1300,700,null);
+		if(i==5)
+			g.drawImage(new ImageIcon("SELECTbackground5.png").getImage(),0,0,1300,700,null);
+		if(i==6)
+			g.drawImage(new ImageIcon("SELECTbackground6.png").getImage(),0,0,1300,700,null);
+		i++;
+		if(i==7)i=1;
+	}
+}
+class SETTINGpanel extends JPanel
+{
+	public SETTINGpanel(frame from)
+	{
+	}
+}
+class ANIMALComponent extends JComponent
+{
+	int LC=0;
+	int LD=0;
+	int LR=0;
+	int RC=0;
+	int RD=0;
+	int RR=0;
+	int P1=0;
+	int P2=0;
+	Image background=new ImageIcon("ANIMALbackground.png").getImage();
+	Image Cat=new ImageIcon("CatIcon.png").getImage();
+	Image Dog=new ImageIcon("DogIcon.png").getImage();
+	Image Rabbit=new ImageIcon("RabbitIcon.png").getImage();
+	Image CCat=new ImageIcon("CCatIcon.png").getImage();
+	Image CDog=new ImageIcon("CDogIcon.png").getImage();
+	Image CRabbit=new ImageIcon("CRabbitIcon.png").getImage();
+	Image Back=new ImageIcon("Back.png").getImage();
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.drawImage(background,0,0,1300,700,null);	
+		if(LC==0)
+			g.drawImage(Cat,160,50,150,150,null);
+		else
+			g.drawImage(CCat,160,50,150,150,null);
+		if(LD==0)
+			g.drawImage(Dog,160,250,150,150,null);
+		else
+			g.drawImage(CDog,160,250,150,150,null);
+		if(LR==0)
+			g.drawImage(Rabbit,160,450,150,150,null);
+		else
+			g.drawImage(CRabbit,160,450,150,150,null);
+		if(RC==0)
+			g.drawImage(Cat,980,50,150,150,null);
+		else
+			g.drawImage(CCat,980,50,150,150,null);
+		if(RD==0)
+			g.drawImage(Dog,980,250,150,150,null);
+		else
+			g.drawImage(CDog,980,250,150,150,null);
+		if(RR==0)
+			g.drawImage(Rabbit,980,450,150,150,null);
+		else
+			g.drawImage(CRabbit,980,450,150,150,null);
+		g.drawImage(Back,1200,600,80,100,null);
+	}
+	public void back0()
+	{
+        LC=0;
+		LD=0;
+		LR=0;
+		RC=0;
+		RD=0;
+		RR=0;
+		if(P1==1)LC=1;
+		if(P1==2)LD=1;
+		if(P1==3)LR=1;
+		if(P2==1)RC=1;
+		if(P2==2)RD=1;
+		if(P2==3)RR=1;
+	}
+}
+class ANIMALpanel extends JPanel
+{
+	ANIMALComponent background=new ANIMALComponent();
+	Player Player1,Player2;
+	frame from;
+	Images Dimages=new Images(new ImageIcon("DogUp.png").getImage(),new ImageIcon("DogDown.png").getImage()
+			,new ImageIcon("DogLeft.png").getImage(),new ImageIcon("DogRight.png").getImage()
+			,new ImageIcon("DogbiuUp.png").getImage(),new ImageIcon("DogbiuDown.png").getImage(),new ImageIcon("DogbiuLeft.png").getImage()
+			,new ImageIcon("DogbiuRight.png").getImage(),new ImageIcon("DogUDBlingbullet.png").getImage()
+			,new ImageIcon("DogLRBlingbullet.png").getImage(),new ImageIcon("DogIcon.png").getImage());
+	Images Cimages=new Images(new ImageIcon("CatUp.png").getImage(),new ImageIcon("CatDown.png").getImage()
+			,new ImageIcon("CatLeft.png").getImage(),new ImageIcon("CatRight.png").getImage()
+			,new ImageIcon("CatbiuUp.png").getImage(),new ImageIcon("CatbiuDown.png").getImage(),new ImageIcon("CatbiuLeft.png").getImage()
+			,new ImageIcon("CatbiuRight.png").getImage(),new ImageIcon("CatUDBlingbullet.png").getImage()
+			,new ImageIcon("CatLRBlingbullet.png").getImage(),new ImageIcon("CatIcon.png").getImage());
+	Images Rimages=new Images(new ImageIcon("RabbitUp.png").getImage(),new ImageIcon("RabbitDown.png").getImage()
+			,new ImageIcon("RabbitLeft.png").getImage(),new ImageIcon("RabbitRight.png").getImage()
+			,new ImageIcon("RabbitbiuUp.png").getImage(),new ImageIcon("RabbitbiuDown.png").getImage(),new ImageIcon("RabbitbiuLeft.png").getImage()
+			,new ImageIcon("RabbitbiuRight.png").getImage(),new ImageIcon("RabbitUDBlingbullet.png").getImage()
+			,new ImageIcon("RabbitLRBlingbullet.png").getImage(),new ImageIcon("RabbitIcon.png").getImage());
+	public ANIMALpanel(frame from)
+	{
+		Player1=from.player1;
+		Player2=from.player2;
+		setLayout(new BorderLayout());
+		addMouseListener(new MouseHandler());
+		add(background);
+		this.from=from;
+	}
+	class MouseHandler extends MouseAdapter
+	{
+		Rectangle LCR=new Rectangle(160,50,150,150);
+		Rectangle LDR=new Rectangle(160,250,150,150);
+		Rectangle LRR=new Rectangle(160,450,150,150);
+		Rectangle RCR=new Rectangle(980,50,150,150);
+		Rectangle RDR=new Rectangle(980,250,150,150);
+		Rectangle RRR=new Rectangle(980,450,150,150);
+		Rectangle Back=new Rectangle(1200,600,80,100);
+		public void mousePressed(MouseEvent event)
+		{
+			Point2D p=event.getPoint();
+			if(p.getX()<=650&&Player1.set==0)
+			{
+			if(LCR.contains(p))
+			{
+				if(background.LC==1)
+				{
+					background.P1=1;
+					Player1.set(1,5,100,22,1,4,5,Cimages,100,280);
+				}
+				background.back0();
+				background.LC=1;
+			}
+			else if(LDR.contains(p))
+			{
+				if(background.LD==1)
+				{
+					background.P1=2;
+					Player1.set(2,7,100,18,2,4,8,Dimages,100,280);
+				}
+				background.back0();
+				background.LD=1;
+			}
+			else if(LRR.contains(p))
+			{
+				if(background.LR==1)
+				{
+					background.P1=3;
+					Player1.set(1,5,100,25,3,4,5,Rimages,100,280);
+				}
+				background.back0();
+				background.LR=1;
+			}
+			else background.back0();
+			}
+			else if(Player2.set==0)
+			{
+			if(RCR.contains(p))
+			{
+				if(background.RC==1)
+				{
+					background.P2=1;
+					Player2.set(1,5,100,22,1,3,5,Cimages,100,280);
+				}
+				background.back0();
+				background.RC=1;
+			}
+			else if(RDR.contains(p))
+			{
+				if(background.RD==1)
+				{
+					background.P2=2;
+					Player2.set(2,7,100,20,2,3,8,Dimages,100,280);
+				}
+				background.back0();
+				background.RD=1;
+			}
+			else if(RRR.contains(p))
+			{
+				if(background.RR==1)
+				{
+					background.P2=3;
+					Player2.set(1,5,100,25,3,3,5,Rimages,100,280);
+				}
+				background.back0();
+				background.RR=1;
+			}
+			else background.back0();
+			}
+			background.repaint();
+			if(Back.contains(p))
+			{
+				Player1.set=Player2.set=0;
+				from.panelswitch(7);
+			}
+			if(Player1.set==1&&Player2.set==1)
+				from.panelswitch(4);
+		}
+		
+	}
+}
+class Playerwindow extends JComponent
+{
+	Image background=new ImageIcon("playerbackground.png").getImage();
+	Image iconImage;
+	Image heartImage=new ImageIcon("FHeart.png").getImage();
+	Image blings;
+	int fnum;
+	int hnum;
+	int blingsnum;
+	Image hheartImage;
+	Player player;
+	int  P;//left or right?
+	int xx;
+	int yy;
+	public Playerwindow(int P,Player player)
+	{
+		this.P=P;
+		this.player=player;
+		yy=350;
+		iconImage=player.images.icon;
+		if(P==1)
+		{
+			hheartImage=new ImageIcon("HRHeart.png").getImage();
+			xx=0;
+		}
+		else
+		{
+			hheartImage=new ImageIcon("HLHeart.png").getImage();
+			xx=100;
+		}
+		blings=new ImageIcon("Blingsnum.png").getImage();
+	}
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.drawImage(background,0,0,150,700,null);
+		g.drawImage(iconImage,0,200,150,150,null);
+		fnum=player.HP/2;//full heart
+		hnum=player.HP%2;//half heart
+		blingsnum=player.blings;
+		int i=0;
+		if(P==1)
+		{
+			xx=0;
+			yy=350;
+		while(i<fnum)
+		{
+			g.drawImage(heartImage, xx, yy, 50, 40, null);
+			xx+=(50);
+			if(i==2)
+			{
+				yy+=40;
+				xx=0;
+				break;
+			}
+			i++;
+		}
+		fnum-=3;
+		i=0;
+		while(i<fnum)
+		{
+			g.drawImage(heartImage, xx, yy, 50, 40, null);
+			if(i==2)break;
+			xx+=(50);
+			i++;
+		}
+		if(hnum==1)g.drawImage(hheartImage,xx,yy,50,40,null);
+		g.setColor(Color.CYAN);
+		g.fillRect(0,430,player.MP,20);
+		}
+		else
+		{
+			xx=100;
+			yy=350;
+			while(i<fnum)
+			{
+				g.drawImage(heartImage, xx, yy, 50, 40, null);
+				xx-=(50);
+				if(i==2)
+				{
+					yy+=40;
+					xx=100;
+					break;
+				}
+				i++;
+			}
+			fnum-=3;
+			i=0;
+			while(i<fnum)
+			{
+				g.drawImage(heartImage, xx, yy, 50, 40, null);
+				if(i==2)break;
+				xx+=(50);
+				i++;
+			}
+			if(hnum==1)g.drawImage(hheartImage,xx,yy,50,40,null);
+			g.setColor(Color.CYAN);
+			g.fillRect(150-player.MP,430,player.MP,20);	
+		}
+		//
+		//
+		//blings
+		if(blingsnum>0)
+		{
+		i=0;
+		if(P==1)
+		{
+		xx=0;
+		yy=450;
+		while(i<blingsnum)
+		{
+			g.drawImage(blings,xx, yy, 50, 40, null);
+			xx+=(50);
+			if(i==2)
+			{
+				yy+=40;
+				xx=0;
+				i++;
+				continue;
+			}
+			i++;
+		}
+		}
+		else
+		{
+			xx=100;
+			yy=450;
+			while(i<blingsnum)
+			{
+				g.drawImage(blings, xx, yy, 50, 40, null);
+				xx-=(50);
+				if(i==2)
+				{
+					xx=100;
+					yy+=40;
+					i++;
+					continue;
+				}
+				i++;
+	
+			}
+		}
+		}
+	}
+	
+}
+class Gamewindow extends JComponent
+{
+	Image background=new ImageIcon("gamebackground.png").getImage();
+	Image udblinggas=new ImageIcon("UDBlinggas.png").getImage();
+	Image lrblinggas=new ImageIcon("LRBlinggas.png").getImage();
+	Player player1,player2;
+	Images P1Images;
+	Images P2Images;
+	timeimage clockimages=new timeimage();
+	int P1PS,P2PS;
+	int P1x,P1y,P2x,P2y;
+	ArrayList<biu> P1bius,P2bius;
+	static ArrayList<block>blocks;
+	static ArrayList<unknowbox>boxes=new ArrayList<>();
+	public Gamewindow(Player player1,Player player2)
+	{
+		this.player1=player1;
+		this.player2=player2;
+		P1Images=player1.images;
+		P2Images=player2.images;
+		P1bius=player1.bius;
+		P2bius=player2.bius;
+		blocks=blockbuilder.blockbuild();//the biggest num of blocks
+	}
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		g.drawImage(background, 0, 0, 1000, 700, null);
+		P1PS=player1.PS;
+		P1x=player1.x;
+		P1y=player1.y;
+		P2PS=player2.PS;
+		P2x=player2.x;
+		P2y=player2.y;
+		int min;
+		int s;
+		int time=GAMEpanel.gametime;
+		min=time/60;
+		s=time%60;
+		g.drawImage(clockimages.timeimages.get(0), 350, 0, 58, 60, null);
+		g.drawImage(clockimages.timeimages.get(min), 410, 0, 58, 60, null);
+		g.drawImage(clockimages.clock_, 470, 0, 60, 60, null);
+		g.drawImage(clockimages.timeimages.get(s/10), 530, 0, 58, 60, null);
+		g.drawImage(clockimages.timeimages.get(s%10), 590, 0, 58, 60, null);
+		for(block b:blocks)
+		{
+			g.drawImage(b.blockimage, b.x, b.y, 80,50,null);
+		}
+		if(P1PS<=2)
+		{
+		if(P1PS==1)g.drawImage(P1Images.upmove,P1x,P1y,80,80,null);
+		else g.drawImage(P1Images.downmove,P1x,P1y,80,80,null);
+		}
+		else
+		{
+		if(P1PS==3)g.drawImage(P1Images.leftmove,P1x,P1y,80,80,null);
+		else g.drawImage(P1Images.rightmove,P1x,P1y,80,80,null);
+		}
+		if(P2PS<=2)
+		{
+		if(P2PS==1)g.drawImage(P2Images.upmove,P2x,P2y,80,80,null);
+		else g.drawImage(P2Images.downmove,P2x,P2y,80,80,null);
+		}
+		else
+		{
+		if(P2PS==3)g.drawImage(P2Images.leftmove,P2x,P2y,80,80,null);
+		else g.drawImage(P2Images.rightmove,P2x,P2y,80,80,null);
+		}
+		for(biu b:P1bius)
+		{
+			int ps=b.PS;
+			if(ps<=2)
+			{
+				if(ps==1)g.drawImage(P1Images.upbiu, b.x, b.y, 40,40,null);
+				else g.drawImage(P1Images.downbiu, b.x, b.y, 40,40,null);
+			}
+			else
+			{
+				if(ps==3)g.drawImage(P1Images.leftbiu, b.x, b.y, 40,40,null);
+				else g.drawImage(P1Images.rightbiu, b.x, b.y, 40,40,null);
+			}
+		}
+		for(biu b:P2bius)
+		{
+			int ps=b.PS;
+			if(ps<=2)
+			{
+				if(ps==1)g.drawImage(P2Images.upbiu, b.x, b.y, 40,40,null);
+				else g.drawImage(P2Images.downbiu, b.x, b.y, 40,40,null);
+			}
+			else
+			{
+				if(ps==3)g.drawImage(P2Images.leftbiu, b.x, b.y, 40,40,null);
+				else g.drawImage(P2Images.rightbiu, b.x, b.y, 40,40,null);
+			}
+		}
+		if(!boxes.isEmpty())
+			for(unknowbox box:boxes)
+			{
+				g.drawImage(box.Unkonwboximage, box.x, box.y,45,45, null);
+			}
+		if(player1.bling.PS!=0)
+		{
+			Bling bling =player1.bling;
+			int xx=bling.x;
+			int yy=bling.y;
+			int bx=bling.bx;
+			int by=bling.by;
+			int PS=bling.PS;
+			if(PS<=2)
+			{
+				if(PS==1)
+				{
+					g.drawImage(P1Images.udbling, xx, yy, 100,100, null);
+					g.drawImage(udblinggas,bx,by,40,-(by-100-yy),null);
+					
+				}
+				else
+				{
+					g.drawImage(P1Images.udbling, xx, yy+100, 100,-100, null);
+					g.drawImage(udblinggas,bx,by,40,yy-by,null);
+				}
+			}
+			else
+			{
+				if(PS==3)
+				{
+					g.drawImage(P1Images.lrbling, xx+100, yy,-100, 100, null);
+					g.drawImage(lrblinggas,bx,by,-(bx-100-xx),40,null);
+				}
+				else
+				{
+					g.drawImage(P1Images.lrbling, xx, yy, 100, 100, null);
+					g.drawImage(lrblinggas,bx,by,xx-bx,40,null);
+				}
+			}
+			
+		}
+		if(player2.bling.PS!=0)
+		{
+			Bling bling =player2.bling;
+			int xx=bling.x;
+			int yy=bling.y;
+			int bx=bling.bx;
+			int by=bling.by;
+			int PS=bling.PS;
+			if(PS<=2)
+			{
+				if(PS==1)
+				{
+					g.drawImage(P2Images.udbling, xx, yy, 100,100, null);
+					g.drawImage(udblinggas,bx,by,40,-(by-100-yy),null);
+					
+				}
+				else
+				{
+					g.drawImage(P2Images.udbling, xx, yy+100,100,-100, null);
+					g.drawImage(udblinggas,bx,by,40,yy-by,null);
+				}
+			}
+			else
+			{
+				if(PS==3)
+				{
+					g.drawImage(P2Images.lrbling, xx+100, yy,-100, 100, null);
+					g.drawImage(lrblinggas,bx,by,-(bx-100-xx),40,null);
+				}
+				else
+				{
+					g.drawImage(P2Images.lrbling, xx, yy,100,100, null);
+					g.drawImage(lrblinggas,bx,by,xx-bx,40,null);
+				}
+			}
+			
+		}
+		time=GAMEpanel.readytime;
+		if(time!=0)
+		{
+			g.drawImage(clockimages.readyimages.get(time-1),400, 250,200,200,null);
+		}
+	}
+	
+}
+class GAMEpanel extends JPanel
+{
+	Gamewindow gamewindow;//the game play window
+	static Playerwindow Lplayerwindow;
+	static Playerwindow Rplayerwindow;
+	static int gametime=0;
+	static int readytime=3;
+	boolean reading=false;
+	frame from;
+	Player player1,player2;
+	int bplayer1HP,bplayer2HP;
+	Timer biutimer;
+	Timer unknowboxtimer;
+	Timer MPtimer;
+	Timer blingtimer;
+	Timer gametimer;
+	Timer readytimer;
+	public GAMEpanel(int PANELWIDTH,int PANELHEIGHT,frame from)
+	{
+	    this.setLayout(new BorderLayout());
+	    this.setPreferredSize(new Dimension(PANELWIDTH,PANELHEIGHT));
+	    this.from=from;
+	    player1=from.player1;
+	    player2=from.player2;
+	    bplayer1HP=player1.HP;
+	    bplayer2HP=player2.HP;
+	    player1.from=this;
+	    player2.from=this;
+	    Lplayerwindow=new Playerwindow(1,player1);
+	    Rplayerwindow=new Playerwindow(-1,player2);
+		biutimer=new Timer(50,new biumove(player1,player2));
+		biutimer.addActionListener(new biumove(player2,player1));
+		biutimer.start();
+		blingtimer=new Timer(50,new blingmove(player1,player2));
+		blingtimer.addActionListener(new blingmove(player2,player1));
+		blingtimer.start();
+		gametimer=new Timer(1000,new clock());
+		readytimer=new Timer(1000,new readyclock());
+		unknowboxtimer=new Timer(5000,new unknowboxadd());
+		unknowboxtimer.start();
+		MPtimer=new Timer(180,new MPrecoverying());
+		MPtimer.start();
+		//gamewindow.setPreferredSize(new Dimension(1000,700));
+		Lplayerwindow.setPreferredSize(new Dimension(150,700));
+		Rplayerwindow.setPreferredSize(new Dimension(150,700));
+	    gamewindow=new Gamewindow(from.player1,from.player2);
+	    add(Lplayerwindow,BorderLayout.WEST);
+	    add(Rplayerwindow,BorderLayout.EAST);
+	    add(gamewindow);
+	    InputMap imap=this.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+	    ActionMap amap=this.getActionMap();
+	    if(GAMErule.keymode==1)
+	    {
+	        imap.put(KeyStroke.getKeyStroke("W"),"P1UpMove");
+	        imap.put(KeyStroke.getKeyStroke("S"),"P1DownMove");
+	        imap.put(KeyStroke.getKeyStroke("A"),"P1LeftMove");
+	    	imap.put(KeyStroke.getKeyStroke("D"),"P1RightMove");
+	    	imap.put(KeyStroke.getKeyStroke("J"),"P1Biu");
+	        imap.put(KeyStroke.getKeyStroke("K"),"P1Bling");
+	        imap.put(KeyStroke.getKeyStroke("L"),"P1Boost");
+	        imap.put(KeyStroke.getKeyStroke("UP"),"P2UpMove");
+	        imap.put(KeyStroke.getKeyStroke("DOWN"),"P2DownMove");
+	        imap.put(KeyStroke.getKeyStroke("LEFT"),"P2LeftMove");
+	        imap.put(KeyStroke.getKeyStroke("RIGHT"),"P2RightMove");
+	        imap.put(KeyStroke.getKeyStroke("NUMPAD1"),"P2Biu");
+		    imap.put(KeyStroke.getKeyStroke("NUMPAD2"),"P2Bling");
+		    imap.put(KeyStroke.getKeyStroke("NUMPAD3"),"P2Boost");
+	    }
+	    else
+	    {
+		    imap.put(KeyStroke.getKeyStroke("W"),"P1UpMove");
+		    imap.put(KeyStroke.getKeyStroke("S"),"P1DownMove");
+		    imap.put(KeyStroke.getKeyStroke("A"),"P1LeftMove");
+		    imap.put(KeyStroke.getKeyStroke("D"),"P1RightMove");
+		    imap.put(KeyStroke.getKeyStroke("Q"),"P1Biu");
+		    imap.put(KeyStroke.getKeyStroke("E"),"P1Bling");
+		    imap.put(KeyStroke.getKeyStroke("R"),"P1Boost");
+		    imap.put(KeyStroke.getKeyStroke("I"),"P2UpMove");
+		    imap.put(KeyStroke.getKeyStroke("K"),"P2DownMove");
+		    imap.put(KeyStroke.getKeyStroke("J"),"P2LeftMove");
+		    imap.put(KeyStroke.getKeyStroke("L"),"P2RightMove");
+		    imap.put(KeyStroke.getKeyStroke("U"),"P2Biu");
+		    imap.put(KeyStroke.getKeyStroke("O"),"P2Bling");
+		    imap.put(KeyStroke.getKeyStroke("P"),"P2Boost");
+	    }
+	    amap.put("P1UpMove",new moveAction(0,-1,1,player1,player2));
+	    amap.put("P1DownMove",new moveAction(0,1,2,player1,player2));
+	    amap.put("P1LeftMove",new moveAction(-1,0,3,player1,player2));
+	    amap.put("P1RightMove",new moveAction(1,0,4,player1,player2));
+	    amap.put("P1Biu",new biuAction(player1));
+	    amap.put("P1Bling",new blingAction(player1));
+	    amap.put("P1Boost",new boostAction(player1));
+	    amap.put("P2UpMove",new moveAction(0,-1,1,player2,player1));
+	    amap.put("P2DownMove",new moveAction(0,1,2,player2,player1));
+	    amap.put("P2LeftMove",new moveAction(-1,0,3,player2,player1));
+	    amap.put("P2RightMove",new moveAction(1,0,4,player2,player1));
+	    amap.put("P2Biu",new biuAction(player2));
+	    amap.put("P2Bling",new blingAction(player2));
+	    amap.put("P2Boost",new boostAction(player2));
+	}
+	public void gamestart()
+	{
+		readytimer.stop();
+		gametime=GAMErule.Roundtime;
+		gametimer.start();
+	}
+	public void gameready()
+	{
+		gamewindow.boxes.clear();
+		player1.HP=bplayer1HP;
+		player2.HP=bplayer2HP;
+		player1.x=100;
+		player1.y=280;
+		player1.blings=1;
+		player2.x=820;
+		player2.y=280;
+		player2.blings=1;
+		player1.bius.clear();
+		player2.bius.clear();
+		player1.blings=1;
+		player2.blings=1;
+		gametime=0;
+		readytime=3;
+		readytimer.start();
+	}
+	public void gameover()
+	{
+		gametimer.stop();
+		if(player1.HP>player2.HP)
+		{
+			player1.score++;
+			if(player1.score==GAMErule.wintimes)
+				gameend();
+			else
+				gameready();
+				
+			
+		}//when player1 win
+		else if(player2.HP>player1.HP)
+		{
+			player2.score++;
+			if(player2.score==GAMErule.wintimes)
+				gameend();
+			else
+				gameready();
+			
+		}//when player2 win
+		//keyListener
+		else extragame();
+	}
+	public void gameend()
+	{
+        biutimer.stop();;
+        unknowboxtimer.stop();;
+		MPtimer.stop();;
+		blingtimer.stop();;
+		gametimer.stop();
+		readytimer.stop();
+		//
+	    biutimer=null;
+	    unknowboxtimer=null;
+	    MPtimer=null;
+	    blingtimer=null;
+		gametimer=null;
+		readytimer=null;
+		from.panelswitch(5);
+	}
+	public void extragame()
+	{
+		gameready();
+	}
+	class moveAction extends AbstractAction
+	{
+		int xx;//move to where
+		int yy;
+		int dc;
+		Player from;
+		Player other;
+		int x;
+		int y;
+		int ox;
+		int oy;
+		ArrayList<unknowbox>boxes=Gamewindow.boxes;
+		int sp;
+		public moveAction(int x,int y,int p,Player from,Player other)
+		{
+			xx=x;
+			yy=y;
+			dc=p;
+			this.from=from;
+			this.other=other;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			x=from.x;
+			y=from.y;
+			ox=other.x;
+			oy=other.y;
+			sp=from.SP;
+			Rectangle thisone=new Rectangle(x+xx*sp,y-10+sp*yy,75,70);
+			Rectangle otherone=new Rectangle(ox,(oy-10),75,70);
+			if(from.PS==dc)
+			{
+				if(from.MP>=3)
+				{
+				int num=0;
+				int max=GAMErule.Blocks;
+				while(num<max)
+				{
+					block bb=Gamewindow.blocks.get(num);
+					if((thisone.intersects(new Rectangle((bb.x+5),bb.y,70,30))))
+					return;
+					num++;
+				}
+				num=0;
+				while(num<boxes.size())
+				{
+					unknowbox box=boxes.get(num);
+					Rectangle boxrect=new Rectangle(box.x,box.y,45,45);
+					if(boxrect.intersects(thisone))
+					{
+						if(3<box.type&&box.type<=10)
+						{
+							from.cure(1);
+						}
+						if(0<box.type&&box.type<=3)
+						{
+							from.hurt(1);
+						}
+						boxes.remove(num);
+						num--;
+					}
+					num++;
+				}
+			if((((x+xx*sp<920)&&(x+xx*sp>0))&&((y+yy*sp>0)&&(y+yy*sp<620)))&&((!thisone.intersects(otherone))))
+			{
+			from.move(xx*sp, yy*sp);
+			from.tired(3);
+			gamewindow.repaint();
+			}
+			}
+			}
+			else
+				from.PS=dc;
+			gamewindow.repaint();
+		}
+	}
+	class biumove implements ActionListener
+	{
+		Player biuplayer;
+		Player otherplayer;
+		ArrayList<biu>bius;
+		Bling bling;
+		int playerx,playery;
+		int ps;
+		Rectangle thisone;
+		Rectangle otherone;
+		public biumove(Player biuplayer,Player otherplayer)
+		{
+			this.biuplayer=biuplayer;
+			this.otherplayer=otherplayer;
+			bling=biuplayer.bling;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			playerx=otherplayer.x;
+			playery=otherplayer.y;
+			otherone=new Rectangle(playerx,(playery+5),85,75);
+			this.bius=biuplayer.bius;
+			int i=0;
+			while(i<bius.size())
+			{
+				biu b=bius.get(i);
+				thisone=new Rectangle((b.x-5),(b.y+5),40,25);
+				if(((b.x<960)&&(b.x>0))&&((b.y>0)&&(b.y<660)))
+				{
+					if(biuplayer.BOOST!=3)
+					{
+					if(b.PS<=2)
+					{
+						if(b.PS==1)
+							b.y=b.y-20;
+						else
+							b.y=b.y+20;
+					}
+					else
+					{
+						if(b.PS==3)
+							b.x=b.x-20;
+						else
+							b.x=b.x+20;
+					}
+					}
+					else
+					{
+						if(b.PS<=2)
+						{
+							if(b.PS==1)
+							{
+								if((playery>b.y))
+								b.y=b.y-20;
+								else
+								{
+									if(playerx>b.x+20)
+									{
+									b.y=b.y-20;
+									b.x=b.x+8;
+									}
+									else if(playerx<b.x+60)
+									{
+										b.y=b.y-20;
+										b.x=b.x-8;
+									}
+									else
+										b.y=b.y-20;
+										
+								}
+							}
+						
+							else
+							{
+									if(playery<b.y)
+									b.y=b.y+20;
+									else
+									{
+										if(playerx>b.x+20)
+										{
+										b.y=b.y+20;
+										b.x=b.x+8;
+										}
+										else if(playerx<b.x+60)
+										{
+											b.y=b.y+20;
+											b.x=b.x-8;
+										}
+										else
+											b.y=b.y+20;
+									}
+								}
+							}
+						
+						else
+						{
+							if(b.PS==3)
+							{
+								if(playerx>b.x)
+									b.x=b.x-20;
+									else
+									{
+										if(playery>b.y-20)
+										{
+										b.x=b.x-20;
+										b.y=b.y+8;
+										}
+										else if(playery<b.y-60)
+										{
+											b.y=b.y-8;
+											b.x=b.x-20;
+										}
+										else
+											b.x=b.x-20;
+									}
+							}
+							else
+							{
+									if(playerx<b.x)
+										b.y=b.y+20;
+										else
+										{
+											if(playery>b.y-20)
+											{
+											b.x=b.x+20;
+											b.y=b.y+8;
+											}
+											else if(playery<b.y-60)
+											{
+												b.y=b.y-8;
+												b.x=b.x+20;
+											}
+											else
+												b.y=b.y+20;
+										}
+								
+							}
+						}
+					}
+					if(thisone.intersects(otherone))
+					{
+						biuplayer.bius.remove(i);
+						otherplayer.hurt(biuplayer.DMG);
+						gamewindow.repaint();
+						i++;
+						continue;
+					}
+					int num=0;
+					int max=GAMErule.Blocks;
+					while(num<max)
+					{
+						block bb=Gamewindow.blocks.get(num);
+						if((thisone.intersects(new Rectangle(bb.x,(bb.y+10),70,20))))
+							biuplayer.bius.remove(i);
+						num++;
+					}
+					gamewindow.repaint();
+				}
+				else
+				{
+					bius.remove(i);
+					gamewindow.repaint();			
+				}
+				    i++;
+			}
+			
+		}
+	}
+	class blingmove implements ActionListener
+	{
+		Player biuplayer;
+		Player otherplayer;
+		int playerx,playery;
+		Bling bling;
+		Rectangle thisone;
+		Rectangle otherone;
+		public blingmove(Player biuplayer,Player otherplayer)
+		{
+			this.biuplayer=biuplayer;
+			this.otherplayer=otherplayer;
+			bling=biuplayer.bling;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			playerx=otherplayer.x;
+			playery=otherplayer.y;
+			otherone=new Rectangle(playerx,(playery+5),85,75);
+			if(bling.PS!=0)
+			{
+				int PS=bling.PS;
+				if(PS<=2)
+				{
+					if(PS==1)
+						bling.y=bling.y-45;
+					else
+						bling.y=bling.y+45;
+				}
+				else
+				{
+					if(PS==3)
+						bling.x=bling.x-45;
+					else
+						bling.x=bling.x+45;
+				}
+				thisone=new Rectangle(bling.x,bling.y,100,100);
+				if(thisone.intersects(otherone))
+				{
+					bling.PS=0;
+					otherplayer.hurt(3);
+					gamewindow.repaint();
+				}
+				if(bling.x<=-150||bling.x>=1000||bling.y>=700||bling.y<=-100)
+				{
+					bling.PS=0;
+					gamewindow.repaint();
+				}
+				gamewindow.repaint();
+				
+			}
+			
+			
+		}
+	}
+	class unknowboxadd implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			unknowboxbuilder.unknowboxbuild();
+			gamewindow.repaint();
+		}
+	}
+	class MPrecoverying implements ActionListener
+	{
+		public void actionPerformed(ActionEvent Event)
+		{
+			player1.recover(2);
+			player2.recover(2);
+			Lplayerwindow.repaint();
+			Rplayerwindow.repaint();
+		}
+	}
+	class clock implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			gametime--;
+			gamewindow.repaint();
+			if(gametime==-1)
+			{
+				gameover();
+			}
+			
+		}
+	}
+	class readyclock implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			readytime--;
+			gamewindow.repaint();
+			if(readytime==0)
+			{
+				gamestart();
+			}
+		}
+	}
+	
+}
+class Player
+{
+	int DMG;//伤害
+	int HP;//生命值
+	int MP;//耐久
+	int SP;//移动速度
+	int type;//角色
+	int PS;//当前位置
+	int BOOST;//爆气
+	Images images;
+	int set=0;
+	ArrayList<biu>bius=new ArrayList<>();
+	int x;
+	int y;
+	Bling bling=new Bling(0,0,0,0,0);
+	int blings=0;
+	GAMEpanel from;
+	int score=0;
+	int biuMAX;
+	Timer timer;
+	public void set(int a,int b,int c,int d,int e,int f,int g,Images images,int x,int y)
+	{
+		DMG=a;
+		HP=b;
+		MP=c;
+		SP=d;
+		type=e;
+		PS=f;
+		biuMAX=g;
+		BOOST=0;
+		this.images=images;
+		set=1;
+		this.x=x;
+		this.y=y;
+	}
+	public void move(int xx,int yy)
+	{
+		x+=xx;
+		y+=yy;
+	}
+	public void blingreload()
+	{
+		int xx=0;
+		int yy=0;
+		int bx=0;
+		int by=0;
+		if(PS==1)
+		{
+			xx=x-10;
+			yy=y-100;
+			bx=x+20;
+			by=y;
+		}
+		if(PS==2)
+		{
+			xx=x-10;
+			yy=y+80;
+			bx=x+20;
+			by=y+80;
+		}
+		if(PS==3)
+		{
+			xx=x-100;
+			yy=y-10;
+			bx=x;
+			by=y+20;
+		}
+		if(PS==4)
+		{
+			xx=x+80;
+			yy=y-10;
+			bx=x+80;
+			by=y+20;
+		}
+		bling.blingset(xx,yy,bx,by,PS);
+		blings--;
+	}
+	public void hurt(int h)
+	{
+		HP-=h;
+		if(HP<0)
+			from.gameover();
+	}
+	public void cure(int h)
+	{
+		if(HP+h>12)
+			HP=12;
+		else
+		    HP+=h;
+	}
+	public void BOOSTON()
+	{
+		if(BOOST==0)
+		{
+		if(MP>=100)
+		{
+		if(type==1)
+		{
+			biuMAX=15;
+			BOOST=1;
+			timer=new Timer(1000,new clock());
+			timer.start();
+		}
+		else if(type==2)
+		{
+			blings+=2;
+		}
+		else if(type==3)
+		{
+			BOOST=3;
+			timer=new Timer(1000,new clock());
+			timer.start();
+		}
+		tired(100);
+		}
+		}
+	}
+	public void BOOSTOFF()
+	{
+		timer.stop();
+		timer=null;
+		if(type==1)
+		{
+			biuMAX=5;
+			BOOST=0;
+		}
+		else if(type==3)
+		{
+			BOOST=0;
+		}
+		
+	}
+	public void tired(int m)
+	{
+		MP-=m;
+	}
+	public void recover(int m)
+	{
+		if((MP+m)>=150)
+			MP=150;
+		else
+		    MP+=m;
+	}
+	class clock implements ActionListener
+	{
+		int t;
+		public clock()
+		{
+			t=10;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			t--;
+			if(t==0)
+			{
+				BOOSTOFF();
+			}
+		}
+	}
+}
+class Images
+{
+	Image upmove;
+	Image downmove;
+	Image leftmove;
+	Image rightmove;
+	Image upbiu;
+	Image downbiu;
+	Image leftbiu;
+	Image rightbiu;
+	Image udbling;
+	Image lrbling;
+	Image icon;
+	public Images(Image up,Image down,Image left,Image right,Image upbiu,Image downbiu,
+			Image leftbiu,Image rightbiu,Image udbling,Image lrbling,Image icon)
+	{
+		upmove=up;
+		downmove=down;
+		leftmove=left;
+		rightmove=right;
+		this.upbiu=upbiu;
+		this.downbiu=downbiu;
+		this.leftbiu=leftbiu;
+		this.rightbiu=rightbiu;
+		this.udbling=udbling;
+		this.lrbling=lrbling;
+		this.icon=icon;
+	}
+}
+class timeimage
+{
+	ArrayList<Image>timeimages=new ArrayList<>();
+	Image clock_=new ImageIcon("Clock_.png").getImage();
+	ArrayList<Image>readyimages=new ArrayList<>();
+	public timeimage()
+	{
+		timeimages.add(new ImageIcon("Clock0.png").getImage());
+		timeimages.add(new ImageIcon("Clock1.png").getImage());
+		timeimages.add(new ImageIcon("Clock2.png").getImage());
+		timeimages.add(new ImageIcon("Clock3.png").getImage());
+		timeimages.add(new ImageIcon("Clock4.png").getImage());
+		timeimages.add(new ImageIcon("Clock5.png").getImage());
+		timeimages.add(new ImageIcon("Clock6.png").getImage());
+		timeimages.add(new ImageIcon("Clock7.png").getImage());
+		timeimages.add(new ImageIcon("Clock8.png").getImage());
+		timeimages.add(new ImageIcon("Clock9.png").getImage());
+		//
+		readyimages.add(new ImageIcon("Ready1.png").getImage());
+		readyimages.add(new ImageIcon("Ready2.png").getImage());
+		readyimages.add(new ImageIcon("Ready3.png").getImage());	
+	}
+	
+}
+class biu
+{
+	int x;
+	int y;
+	int PS;
+	public biu(int x,int y,int PS)
+	{
+		this.x=x;
+		this.y=y;
+		this.PS=PS;
+	}
+	public void reload(int x,int y,int PS)
+	{
+		this.PS=PS;
+		this.x=x;
+		this.y=y;
+	}
+}
+class Bling
+{
+	int x;
+	int y;
+	int bx;
+	int by;
+	int PS=0;
+	public Bling(int x,int y,int bx,int by,int PS)
+	{
+		this.x=x;
+		this.y=y;
+		this.bx=bx;
+		this.by=by;
+		this.PS=PS;
+	}
+	public void blingset(int x,int y,int bx,int by,int PS)
+	{
+		this.x=x;
+		this.y=y;
+		this.bx=bx;
+		this.by=by;
+		this.PS=PS;
+	}
+}
+class blingAction extends AbstractAction
+{
+	Player from;
+	public blingAction(Player from)
+	{
+		this.from=from;
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		if((from.bling.PS==0)&&(from.blings>0))
+		{
+		int ps=from.PS;
+		int x=from.x;
+		int y=from.y;
+		if(ps<=2)
+		{
+			//if(100<=x&&x<=900&&100<=y&&y<=600)
+			{
+				from.blingreload();
+			}
+			
+		}
+		else
+		{
+			//if(100<=y&&y<=600&&100<=x&&x<=900)
+			{
+				from.blingreload();
+			}
+		}
+		}
+		
+	}
+	
+	
+}
+class biuAction extends AbstractAction
+{
+	int playerx;
+	int playery;
+	int x;
+	int y;
+	Player player;
+	int ps;
+	biu current;
+	int MAX;
+	ArrayList<biu>bius;
+	public biuAction(Player player)
+	{
+		this.player=player;
+		MAX=player.biuMAX;
+		bius=player.bius;
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		ps=player.PS;
+		playerx=player.x;
+		playery=player.y;
+		if(player.BOOST!=1)
+		{
+		if(bius.size()<MAX)
+		{
+			if(ps<=2)
+			{
+		if(ps==1)
+		{
+			x=20;
+			y=-40;
+		}
+		else
+		{
+			x=20;
+			y=80;
+		}
+			}
+			else
+			{
+		if(ps==3)
+		{
+			x=-40;
+			y=20;
+		}
+		else
+		{
+			x=80;
+			y=20;
+		}
+			}
+			current=new biu(playerx+x,playery+y,ps);
+	        bius.add(current);
+		}
+		}
+	     else
+	{
+	if(bius.size()<15)
+	{
+		if(ps<=2)
+		{
+	if(ps==1)
+	{
+		x=20;
+		y=-40;
+	}
+	else
+	{
+		x=20;
+		y=80;
+	}
+		}
+		else
+		{
+	if(ps==3)
+	{
+		x=-40;
+		y=20;
+	}
+	else
+	{
+		x=80;
+		y=20;
+	}
+		}
+		if(ps<=2)
+		{
+		current=new biu(playerx+x+45,playery+y,ps);
+        bius.add(current);
+        current=new biu(playerx+x,playery+y,ps);
+        bius.add(current);
+        current=new biu(playerx+x-45,playery+y,ps);
+        bius.add(current);
+		}
+		else
+		{
+			current=new biu(playerx+x,playery+y+45,ps);
+	        bius.add(current);
+	        current=new biu(playerx+x,playery+y,ps);
+	        bius.add(current);
+	        current=new biu(playerx+x,playery+y-45,ps);
+	        bius.add(current);
+		}
+	}
+	}
+	}
+}
+class boostAction extends AbstractAction
+{
+	Player player;
+	public boostAction(Player player)
+	{
+		this.player=player;
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		player.BOOSTON();
+	}
+	
+}
+class block
+{
+	int x;
+	int y;
+	Image blockimage;
+	Image Grassimage=new ImageIcon("Grass.png").getImage();
+	Image Rock1image=new ImageIcon("Rock1.png").getImage();
+	Image Rock2image=new ImageIcon("Rock2.png").getImage();
+	public block(int x,int y,int type)
+	{
+		this.x=x;
+		this.y=y;
+		if(type==1)blockimage=Grassimage;
+		else if(type==2)blockimage=Rock1image;
+		else blockimage=Rock2image;
+	}
+}
+class blockbuilder
+{
+	static int Max=GAMErule.Blocks;//the biggest num of blocks
+	public static ArrayList<block> blockbuild()
+	{
+		int xx;
+		int yy;
+		ArrayList<block>blocks=new ArrayList<>();
+		block a;
+		int i=0;
+		again:
+		while(i<Max)
+		{
+			xx=(100+(int)(800*Math.random()));
+			yy=(100+(int)(400*Math.random()));
+			a=new block(xx,yy,(int)(3*Math.random()));
+			int num=0;
+			while(num<blocks.size())
+			{
+				Rectangle blockrect=new Rectangle((xx-50),(yy-50),200,200);
+				if((blockrect.intersects(new Rectangle(blocks.get(num).x,blocks.get(num).y,80,80)))
+					||(blockrect.intersects(new Rectangle(100,280,80,80))||(blockrect.intersects(new Rectangle(820,280,80,80)))))
+					continue again;
+				num++;
+			}
+			blocks.add(a);
+			i++;
+		}
+		return blocks;
+	}
+}
+class unknowbox
+{
+	int x;
+	int y;
+	int type;
+	Image Unkonwboximage=new ImageIcon("Unknowbox.png").getImage();
+	public unknowbox(int x,int y,int type)
+	{
+		this.x=x;
+		this.y=y;
+		this.type=type;
+	}
+}
+class unknowboxbuilder
+{
+	public static void unknowboxbuild()
+	{
+		int xx;
+		int yy;
+		ArrayList<unknowbox>boxes=Gamewindow.boxes;
+		unknowbox box;
+		again:
+		while(true)
+		{
+			xx=(100+(int)(800*Math.random()));
+			yy=(100+(int)(400*Math.random()));
+			box=new unknowbox(xx,yy,(int)(10*Math.random()));
+			Rectangle boxrect=new Rectangle(xx,yy,250,250);
+			int num=0;
+			while(num<GAMErule.Blocks)
+			{
+				block block=Gamewindow.blocks.get(num);
+				if((boxrect.intersects(new Rectangle(block.x,block.y,80,80))))
+					continue again;
+				num++;
+			}
+			boxes.add(box);
+			break;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

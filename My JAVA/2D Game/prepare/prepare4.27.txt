@@ -1,0 +1,136 @@
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	ActionListener text=new ActionListener()
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			Date now=new Date();
+			System.out.println(now);
+		}
+	};
+	//private Image buttonimage=new ImageIcon("image4.jpg").getImage();
+	private JPanel button;
+	private JButton yangmi=new JButton("—Ó√›");
+	private JButton white=new JButton("white");
+	private JButton yellow=new JButton("Yellow");
+	private JButton Tstart=new JButton("TimeOn");
+	private JButton Tclose=new JButton("TimeOff");
+	private Timer t=new Timer(1000,text);
+	//private Container textC=this.getContentPane();
+	public frame()
+	{
+		pack();
+		Action textAction=new textAction("Text Action",new ImageIcon("image4.gif.jpg"));
+		JButton Textbutton=new JButton(textAction);
+		//text for keyboard
+		//InputMap imap=button.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		//ActionMap amap=button.getActionMap();
+		//imap.put(KeyStroke.getKeyStroke("ctrl T"),"textkeyboard");
+		//it does not works if it set here
+		button=new JPanel();
+		button.add(yellow);
+		button.add(white);
+		button.add(yangmi);
+		button.add(Tstart);
+		button.add(Tclose);
+		button.add(Textbutton);
+		add(button);
+		//text keyboard
+		InputMap imap=button.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+		ActionMap amap=button.getActionMap();
+		imap.put(KeyStroke.getKeyStroke("T"),"textkeyboard");
+		//it works if it set here
+		action yellowaction=new action(Color.YELLOW);
+		action whiteaction=new action(Color.white);
+		action1 yangmiaction=new action1();
+		Timeraction Tstartaction=new Timeraction();
+		Timeraction1 Tcloseaction=new Timeraction1();
+		yellow.addActionListener(yellowaction);
+		white.addActionListener(whiteaction);
+		white.addActionListener(yangmiaction);
+		//white.addActionListener(yellowaction);
+		yangmi.addActionListener(yangmiaction);
+		Tstart.addActionListener(Tstartaction);
+		Tclose.addActionListener(Tcloseaction);
+		amap.put("textkeyboard",textAction);
+		Tclose.setEnabled(false);
+	}
+	class Timeraction implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			t.start();
+			Tstart.setEnabled(false);
+			Tclose.setEnabled(true);
+		}
+	}
+	class Timeraction1 implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			t.stop();
+			Tclose.setEnabled(false);
+			Tstart.setEnabled(true);	
+		}
+	}
+	class action implements ActionListener
+	{
+		private Color backgroundColor;
+		public action(Color c)
+		{
+			backgroundColor=c;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    button.setBackground(backgroundColor);
+		    yangmi.setEnabled(true);
+		}
+	}
+	class action1 implements ActionListener
+	{
+		private Image image;
+		public action1()
+		{
+			image=new ImageIcon("image.jpg").getImage();
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    button.getGraphics().drawImage(image, 200, 80,363,420, null);
+		}
+	}
+	public Dimension getPreferredSize(){return new Dimension(800,600);}
+}
+class textAction extends AbstractAction
+{
+	public textAction(String name,Icon icon)
+	{
+		putValue(Action.NAME,name);
+		putValue(Action.SMALL_ICON,icon);
+		putValue(Action.SHORT_DESCRIPTION,"it's just a text button.");
+	}
+	public void actionPerformed(ActionEvent event)
+	{
+		System.out.println("button working");
+	}
+}

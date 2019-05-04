@@ -1,0 +1,94 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("New one");
+				text.setVisible(true);
+				//text.setSize(550, 550);
+				text.setResizable(false);
+			}
+				});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	JPanel panel3=new JPanel();
+	
+	public frame()
+	{
+		JLabel label1=new JLabel("User name",JLabel.RIGHT);
+		JLabel label2=new JLabel("Password",JLabel.RIGHT);
+		JTextField name=new JTextField();
+		JPasswordField password=new JPasswordField();
+		panel1.setLayout(new GridLayout(2,2));
+		panel1.add(label1);
+		panel1.add(name);
+		panel1.add(label2);
+		panel1.add(password);
+		add(panel1,BorderLayout.NORTH);
+		JTextArea text=new JTextArea(8,20);
+		panel2.add(text);
+		add(panel2);
+		JButton button1=new JButton("Show");
+		button1.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				text.append("user name:"+name.getText()+"\n"+"password:"+new String(password.getPassword())+"\n");
+			}
+				});
+		JButton button2=new JButton("Clean");
+		button2.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				text.setText("");
+			}
+				});
+		panel3.add(button1);
+		panel3.add(button2);
+		add(panel3,BorderLayout.SOUTH);
+		pack();
+		
+		
+		
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
