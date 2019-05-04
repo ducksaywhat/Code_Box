@@ -1,0 +1,243 @@
+#include "d3dUtility.h"
+#include "camera.h"
+#include "fps.h"
+#include "psystem.h"
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+
+//
+// Globals
+//
+
+IDirect3DDevice9* Device = 0;
+
+const int Width = 800;
+const int Height = 600;
+
+Camera   TheCamera(Camera::LANDOBJECT);
+
+FPSCounter* FPS = 0;
+psys::PSystem* Sno = 0;
+psys::PSystem* Gun = 0;
+psys::PSystem* Exp = 0;
+
+//
+// Framework Functions
+//
+bool Setup()
+{
+	// seed random number generator
+	srand((unsigned int)time(0));
+	//
+	// Create Snow System.
+	//
+
+	d3d::BoundingBox boundingBox;
+	boundingBox._min = D3DXVECTOR3(-10.0f, -10.0f, -10.0f);
+	boundingBox._max = D3DXVECTOR3(50.0f, 50.0f, 50.0f);
+	Sno = new psys::Snow(&boundingBox, 5000);
+	Sno->init(Device, "C:/Users/wwx/Desktop/snowflake.dds");
+	//
+	// Create Laser.
+	//
+
+	Gun = new psys::ParticleGun(&TheCamera);
+	Gun->init(Device, "C:/Users/wwx/Desktop/flare_alpha.dds");
+	//
+	// Create the Firework system.
+	//
+	D3DXVECTOR3 origin(0.0f, 10.0f, 50.0f);
+	Exp = new psys::Firework(&origin, 6000);
+	Exp->init(Device, "C:/Users/wwx/Desktop/flare.bmp");
+	//
+	// Create the terrain.
+	//
+
+	D3DXVECTOR3 lightDirection(0.0f, 1.0f, 0.0f);
+	//
+	// Create the font.
+	//
+
+	FPS = new FPSCounter(Device);
+
+	//
+	// Set texture filters.
+	//
+
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	//
+	// Set projection matrix.
+	//
+
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DX_PI * 0.25f, // 45 - degree
+		(float)Width / (float)Height,
+		1.0f,
+		1000.0f);
+	Device->SetTransform(D3DTS_PROJECTION, &proj);
+
+	return true;
+}
+
+void Cleanup()
+{
+	d3d::Delete<psys::PSystem*>(Sno);
+	d3d::Delete<psys::PSystem*>(Exp);
+	d3d::Delete<psys::PSystem*>(Gun);
+	d3d::DrawBasicScene(0, 1.0f);
+	FPS->FPSover();
+	delete FPS;
+	//d3d::Delete<FPSCounter*>(FPS);//why here?
+}
+
+bool Display(float timeDelta)
+{
+	//
+	// Update the scene:
+	//
+	if (Device)
+	{
+		if (::GetAsyncKeyState('W') & 0x8000f)
+			TheCamera.walk(10.0f * timeDelta);
+
+		if (::GetAsyncKeyState('S') & 0x8000f)
+			TheCamera.walk(-10.0f * timeDelta);
+
+		//if (::GetAsyncKeyState(VK_LEFT) & 0x8000f)
+		//	TheCamera.yaw(-1.0f * timeDelta);
+
+		//if (::GetAsyncKeyState(VK_RIGHT) & 0x8000f)
+		//	TheCamera.yaw(1.0f * timeDelta);
+
+		if (::GetAsyncKeyState('A') & 0x8000f)
+			TheCamera.strafe(-10.0f * timeDelta);
+
+		if (::GetAsyncKeyState('D') & 0x8000f)
+			TheCamera.strafe(10.0f * timeDelta);
+
+		//if (::GetAsyncKeyState('W') & 0x8000f)
+		//	TheCamera.pitch(1.0f * timeDelta);
+
+		//if (::GetAsyncKeyState('S') & 0x8000f)
+		//	TheCamera.pitch(-1.0f * timeDelta);
+		//D3DXVECTOR3 pos;
+		//TheCamera.getPosition(&pos);
+		//TheCamera.setPosition(&pos);
+		Sno->update(timeDelta);
+		//cursor
+		POINT point;
+		GetCursorPos(&point);
+		POINT pointold;
+		pointold.x = 670;
+		pointold.y = 350;
+		double posx, posy;
+		posx = (point.x - pointold.x)* timeDelta*0.3;
+		posy = (point.y - pointold.y)* timeDelta*0.3;
+		TheCamera.yaw(posx * timeDelta);
+		TheCamera.pitch(posy * timeDelta);
+		SetCursorPos(670, 350);
+		//
+		D3DXMATRIX V;
+		TheCamera.getViewMatrix(&V);
+		Device->SetTransform(D3DTS_VIEW, &V);
+		Gun->update(timeDelta);
+		Exp->update(timeDelta);
+
+		if (Exp->isDead())
+			Exp->reset();
+
+		//
+		// Draw the scene:
+		//
+
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0xff000000, 1.0f, 0);
+		Device->BeginScene();
+
+		D3DXMATRIX I;
+		D3DXMatrixIdentity(&I);
+		// order important, render snow last.
+		Device->SetTransform(D3DTS_WORLD, &I);
+
+		d3d::DrawBasicScene(Device, 1.0f);
+		Device->SetTransform(D3DTS_WORLD, &I);
+		Sno->render();
+		Gun->render();
+		Exp->render();
+
+		//if (TheTerrain)
+		//	TheTerrain->draw(&I, false);
+
+		if (FPS)
+			FPS->render(0xffffffff, timeDelta);
+
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+	}
+	return true;
+}
+
+//
+// WndProc
+//
+LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		break;
+
+	case WM_KEYDOWN:
+	{
+		if (wParam == VK_ESCAPE)
+			::DestroyWindow(hwnd);
+		// Note: we use the message system over GetAsyncKeyState because
+		// GetAsyncKeyState was adding particles to fast.  The message
+		// system is slower and doesnt add them as fast.  This isn't
+		// the best solution, but works for illustration purposes.
+		else if (wParam == VK_SPACE)
+			Gun->addParticle();
+	}
+		break;
+	}
+	return ::DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+//
+// WinMain
+//
+int WINAPI WinMain(HINSTANCE hinstance,
+	HINSTANCE prevInstance,
+	PSTR cmdLine,
+	int showCmd)
+{
+	if (!d3d::InitD3D(hinstance,
+		Width, Height, true, D3DDEVTYPE_HAL, &Device))
+	{
+		::MessageBox(0, "InitD3D() - FAILED", 0, 0);
+		return 0;
+	}
+
+	if (!Setup())
+	{
+		::MessageBox(0, "Setup() - FAILED", 0, 0);
+		return 0;
+	}
+	ShowCursor(FALSE);
+	RECT rect;
+	HWND hwnd = GetForegroundWindow();
+	GetWindowRect(hwnd, &rect);
+	SetCursorPos(rect.left + 400, rect.top + 300);
+	d3d::EnterMsgLoop(Display);
+	Cleanup();
+
+	Device->Release();
+
+	return 0;
+}

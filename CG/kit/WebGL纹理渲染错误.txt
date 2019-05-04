@@ -1,0 +1,17 @@
+报错内容 ：texture bound to texture unit 0 is not renderable. It maybe non-power-of-2 a
+
+
+上面的这句话说的是，纹理没有渲染成功。是因为你使用的图片的分辨率不属于2的幂数。 
+这句话是什么意思呢，就是说
+，你的图片的分辨率不是标准的2x2 4x4 8x8 16x16 32x32 64x64 128x128 256x256。。。这种分辨率的图片。 
+
+问题来了，我们正常的图片又不是全部都是这种格式的，那怎么办呢？ 
+所以，我们使用webgl设置图形纹理的时候，
+在设置水平和垂直如何填充的时候，设置成水平和垂直拉伸，代码如下：
+
+ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+ 
+ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+
+原文：https://blog.csdn.net/qq_30100043/article/details/77885107?utm_source=copy 

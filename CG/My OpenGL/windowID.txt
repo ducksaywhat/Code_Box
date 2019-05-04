@@ -1,0 +1,5 @@
+int windowid=glutCreateWindow("An Example OpenGL Program");
+	printf("WindowId:%d\n",windowid);
+	//glutDestroyWindow(windowid);删除id指定的窗口
+	//glutSetWindow(windowid);指定id指定的窗口使用
+	//currentWindowID = glutGetWindow(windowid);获得当前使用的window'id

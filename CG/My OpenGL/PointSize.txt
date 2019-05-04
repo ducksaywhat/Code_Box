@@ -1,0 +1,10 @@
+glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0-c, 1.0, 0.0+c);
+	glPointSize(10.0f);
+	glBegin(GL_POINTS);
+	glVertex2i(60,60);
+	//glPointSize(50.0f);ÎÞÐ§²Ù×÷
+	glVertex2i(160, 160);
+	glEnd();
+	glFlush();
+	errorCheck();

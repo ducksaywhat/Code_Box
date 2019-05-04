@@ -1,0 +1,21 @@
+void lineSegment()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.7,0.0,0.0);
+	//glEnable(GL_CULL_FACE);
+	glPolygonMode(GL_BACK,GL_LINE);
+	glFrontFace(GL_CCW);
+	//glPolygonMode(GL_BACK, GL_NONE);
+	glBegin(GL_POLYGON);
+	glVertex2d(-10, -5);
+	glVertex2d(0, 10);
+	glVertex2d(10, -5);
+	glEnd();
+	
+	glFlush();
+	errorCheck();
+	GLint h[4];
+	glGetIntegerv(GL_VIEWPORT,h);
+	printf("1:%d\n2:%d\n3:%d\n4:%d\n", h[0], h[1], h[2], h[3]);
+	//glutIconifyWindow();×îÐ¡»¯
+}

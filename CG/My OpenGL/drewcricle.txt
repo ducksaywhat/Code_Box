@@ -1,0 +1,96 @@
+#include <gl\glut.h>
+#include<iostream>
+GLenum errorCheck();
+void winReshpeFcn(int newWidth, int newHeight);
+static int c = 0.0;
+struct screenPt
+{
+	GLint x;
+	GLint y;
+};
+void init()
+{
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);//使用正投影  
+	gluOrtho2D(0.0, 800.0, 0.0, 600.0);//坐标范围  
+}
+void lineSegment2(screenPt pt1, screenPt pt2)
+{
+	glBegin(GL_LINES);
+	glVertex2i(pt1.x,pt1.y);
+	glVertex2i(pt2.x,pt2.y);
+	glEnd();
+}
+void lineSegment()
+{
+	int i = 0;
+	const GLdouble twoPi = 6.283185;
+	//const Glint a
+	GLfloat r, theta, dtheta = 1.0 / 175.0;
+	screenPt curvePt[2];
+	glColor3f(1.0, 0.0, 0.0);
+	curvePt[0].x = 200 + 175;
+	curvePt[0].y = 250; 
+	glBegin(GL_POINTS);
+	glVertex2i(curvePt[0].x, curvePt[0].y);
+	glEnd();
+	glBegin(GL_POINTS);
+	glVertex2i(curvePt[0].x-175, curvePt[0].y);
+	glEnd();
+	theta = dtheta;
+	glColor3f(0.0, 0.0, 0.0);
+	while (theta < twoPi)
+	{
+		r = 175 * cos(theta);
+		//r = 175;
+		curvePt[1].x = 200 + r*cos(theta);
+		curvePt[1].y = 250 + r*sin(theta);
+		lineSegment2(curvePt[0], curvePt[1]);
+
+		curvePt[0].x = curvePt[1].x;
+		curvePt[0].y = curvePt[1].y;
+		theta += dtheta;
+
+	}
+	glFlush();
+	errorCheck();
+	c += 0.1;
+}
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 100);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("An Example OpenGL Program");
+	//glutPositionWindow(50,50);
+	//fprintf(stderr, "There something bad happend:%s", "asdasdasdasdas");
+	init();
+	glutDisplayFunc(lineSegment);
+	glutReshapeFunc(winReshpeFcn);
+	glutMainLoop();
+}
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s", string);
+	}
+	else
+	{
+		//printf("Good run!\n");
+	}
+	return code;
+}
+void winReshpeFcn(int newWidth, int newHeight)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+}

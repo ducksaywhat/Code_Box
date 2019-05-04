@@ -1,0 +1,16 @@
+void lineSegment()
+{
+	glEnable(GL_LINE_STIPPLE);
+	glShadeModel(GL_SMOOTH);
+	//glLineStipple(1,0x1C47);
+	//glLineStipple(1, 0x00FF);
+	glLineStipple(1, 0x0101);
+	glColor3f(1.0,0.0,0.0);
+	glLineWidth(140.0);
+	glBegin(GL_LINES);
+	glVertex2i(50,180);
+	glVertex2i(550, 180);
+	glEnd();
+	glFlush();
+	errorCheck();
+}

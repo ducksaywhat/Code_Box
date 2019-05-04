@@ -1,0 +1,91 @@
+#include <gl\glut.h>
+#include<iostream>
+#include <stdio.h>
+GLenum errorCheck();
+void winReshpeFcn(int newWidth, int newHeight);
+void winReshpeFcn1(int newWidth, int newHeight);
+static float c = 0.0;
+struct screenPt
+{
+	GLint x;
+	GLint y;
+};
+void init()
+{
+	glViewport(0, 0, 800, 600);
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);//使用正投影  
+	gluOrtho2D(-15.0,15.0, -15.0,15.0);//坐标范围  
+}
+void lineSegment2(screenPt pt1, screenPt pt2)
+{
+	
+	glBegin(GL_LINES);
+	glVertex2i(pt1.x,pt1.y);
+	glVertex2i(pt2.x,pt2.y);
+	glEnd();
+}
+void lineSegment()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.7,0.0,0.0);
+	glRectd(0,0,10,10);
+	glFlush();
+	errorCheck();
+}
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 100);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("An Example OpenGL Program");
+	//glutPositionWindow(50,50);
+	//fprintf(stderr, "There something bad happend:%s", "asdasdasdasdas");
+	init();
+	//glClearColor(1.0, 1.0, 1.0, 0.0);
+	glutDisplayFunc(lineSegment);
+	glutReshapeFunc(winReshpeFcn1);
+	glutMainLoop();
+	
+}
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s\n", string);
+	}
+	else
+	{
+		//printf("Good run!\n");
+	}
+	return code;
+}
+void winReshpeFcn(int newWidth, int newHeight)
+{
+	//glViewport(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
+	
+	glClear(GL_COLOR_BUFFER_BIT);
+
+}
+void winReshpeFcn1(int w, int h)
+{
+	GLfloat ratio = (GLfloat)w / (GLfloat)h;
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (w <= h)//保持形状不变  
+		gluOrtho2D(-15.0, 15.0, -15.0 / ratio, 15.0 / ratio);
+	else
+		gluOrtho2D(-15.0*ratio, 15.0*ratio, -15.0, 15.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+}

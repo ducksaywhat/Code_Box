@@ -1,0 +1,105 @@
+#include <gl\glut.h>
+#include<iostream>
+#include <stdio.h>
+GLenum errorCheck();
+void winReshpeFcn(int newWidth, int newHeight);
+static float c = 0.0;
+struct screenPt
+{
+	GLint x;
+	GLint y;
+};
+void init()
+{
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);//使用正投影  
+	gluOrtho2D(0.0, 800.0, 0.0, 600.0);//坐标范围  
+}
+void lineSegment2(screenPt pt1, screenPt pt2)
+{
+	
+	glBegin(GL_LINES);
+	glVertex2i(pt1.x,pt1.y);
+	glVertex2i(pt2.x,pt2.y);
+	glEnd();
+}
+void lineSegment()
+{
+	//glLineWidth(2.0);
+	glEnable(GL_LINE_STIPPLE);
+	glShadeModel(GL_SMOOTH);
+	//glLineStipple(1,0x1C47);
+	//glLineStipple(1, 0x00FF);
+	glLineStipple(1, 0x0101);
+	glColor3f(1.0,0.0,0.0);
+	glLineWidth(140.0);
+	glBegin(GL_LINES);
+	glVertex2i(150, 50);
+	glVertex2i(600, 50);
+	glEnd();
+	//////////////
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(150.0,-50.0,0.0);
+	glRotatef(90.0,0,0,1);
+	
+	/////////////
+	glColor3f(0.0, 0.0, 1.0);
+	glBegin(GL_LINES);
+	glVertex2i(150,50);
+	glVertex2i(600, 50);
+	glEnd();
+	glLoadIdentity();
+	glRecti(200, 200, 300, 300);
+	
+	glColor3f(1.0, 0.0, 1.0);
+	glLoadIdentity();
+	glTranslatef(170.0, 15.0, 0.0);
+	glScalef(0.5, 0.5, 1.0);
+	
+	glRecti(200, 200, 300, 300);
+	/////////////
+	
+	glFlush();
+	errorCheck();
+}
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 100);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("An Example OpenGL Program");
+	//glutPositionWindow(50,50);
+	//fprintf(stderr, "There something bad happend:%s", "asdasdasdasdas");
+	init();
+	//glClearColor(1.0, 1.0, 1.0, 0.0);
+	glutDisplayFunc(lineSegment);
+	glutReshapeFunc(winReshpeFcn);
+	glutMainLoop();
+	
+}
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s\n", string);
+	}
+	else
+	{
+		//printf("Good run!\n");
+	}
+	return code;
+}
+void winReshpeFcn(int newWidth, int newHeight)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+}

@@ -1,0 +1,48 @@
+#include <gl\glut.h>
+#include<iostream>
+GLenum errorCheck();
+void init()
+{
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);//使用正投影  
+	gluOrtho2D(0.0, 800.0, 0.0, 600.0);//坐标范围  
+}
+void lineSegment()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1.0, 0.4, 0.2);
+	//glBegin(GL_LINE_LOOP);
+	glRecti(200, 100, 50, 250);
+	//glEnd();
+	glFlush();
+	errorCheck();
+}
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 100);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("An Example OpenGL Program");
+	//glutPositionWindow(50,50);
+	//fprintf(stderr, "There something bad happend:%s", "asdasdasdasdas");
+	init();
+	glutDisplayFunc(lineSegment);
+	glutMainLoop();
+}
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s", string);
+	}
+	else
+	{
+		//printf("Good run!\n");
+	}
+	return code;
+}

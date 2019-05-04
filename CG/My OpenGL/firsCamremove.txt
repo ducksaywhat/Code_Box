@@ -1,0 +1,149 @@
+#include <gl\glut.h>
+#include<iostream>
+#include <stdio.h>
+GLenum errorCheck();
+void winReshpeFcn(int newWidth, int newHeight);
+void winReshpeFcn1(int newWidth, int newHeight);
+void winReshpeFcn2(int newWidth, int newHeight);
+static float c = 0.0;
+//LookAt
+//Pos
+GLfloat 
+x00 = 50.0,
+y00 = 50.0,
+z00 = 50.0;
+//Ref
+GLfloat 
+xref = 50.0,
+yref = 50.0, 
+zref = 0.0;
+//Up
+GLfloat 
+Vx = 0.0, 
+Vy = 1.0, 
+Vz = 0.0;
+GLfloat
+xwMin = -40.0,
+xwMax = 40.0,
+ywMin = -60.0,
+ywMax = 60.0,
+dnear = 25.0,
+dfar = 125.0;
+struct screenPt
+{
+	GLint x;
+	GLint y;
+};
+void init()
+{
+	//glViewport(0, 0, 800, 600);
+	glClearColor(1.0, 1.0, 1.0, 0.0);
+	glMatrixMode(GL_MODELVIEW);
+	gluLookAt(x00,y00,z00,xref,yref,zref,Vx,Vy,Vz);
+	//gluLookAt(100.0, 50.0, 50.0, 50.0, 50.0, 0.0, 0, 1.0, 0.0);
+	glMatrixMode(GL_PROJECTION);//使用正投影  
+	//gluOrtho2D(-15.0,15.0, -15.0,15.0);//坐标范围
+	glFrustum(xwMin,xwMax,ywMin,ywMax,dnear,dfar);
+	
+}
+void lineSegment2(screenPt pt1, screenPt pt2)
+{
+	
+	glBegin(GL_LINES);
+	glVertex2i(pt1.x,pt1.y);
+	glVertex2i(pt2.x,pt2.y);
+	glEnd();
+}
+void lineSegment()
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(x00, y00, z00, xref, yref, zref, Vx, Vy, Vz);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0,1.0,0.0);
+	glPolygonMode(GL_FRONT,GL_FILL);
+	glPolygonMode(GL_BACK, GL_LINE);
+	glBegin(GL_QUADS);
+	glVertex3f(0.0,0.0,0.0);
+	glVertex3f(100.0,c,0.0);
+	glVertex3f(100.0,c+100.0,0.0);
+	glVertex3f(0.0,100.0,0.0);
+	glEnd();
+	glFlush();
+
+}
+void mouseFcn(GLint button,GLint action,GLint x,GLint y)
+{
+	printf("asdasd");
+	switch (button)
+	{
+	case GLUT_RIGHT_BUTTON:
+		x00 += 1;
+		//c += 5;
+		glutPostRedisplay();
+		break;
+	case GLUT_LEFT_BUTTON:
+		x00 -= 1;
+		//c -= 5;
+		glutPostRedisplay();
+		break;
+	}
+}
+void main(int argc, char** argv)
+{
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowPosition(50, 100);
+	glutInitWindowSize(800, 600);
+	int windowid=glutCreateWindow("An Example OpenGL Program");
+	init();
+	glutDisplayFunc(lineSegment);
+	glutReshapeFunc(winReshpeFcn2);
+	glutMouseFunc(mouseFcn);
+	glutMainLoop();
+	
+}
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s\n", string);
+	}
+	else
+	{
+		//printf("Good run!\n");
+	}
+	return code;
+}
+void winReshpeFcn(int newWidth, int newHeight)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glViewport(0, 0, newWidth, newHeight);
+	gluOrtho2D(-15.0, 15, -15.0, 15);
+	//glViewport(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+}
+void winReshpeFcn1(int w, int h)
+{
+	GLfloat ratio = (GLfloat)w / (GLfloat)h;
+	glViewport(0, 0, w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	if (w <= h)//保持形状不变  
+		gluOrtho2D(-15.0, 15.0, -15.0 / ratio, 15.0 / ratio);
+	else
+		gluOrtho2D(-15.0*ratio, 15.0*ratio, -15.0, 15.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+}
+void winReshpeFcn2(int newWidth, int newHeight)
+{
+	glViewport(0, 0, newWidth, newHeight);
+}

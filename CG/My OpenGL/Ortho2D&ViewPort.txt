@@ -1,0 +1,14 @@
+在OpenGL中对于2D情况，世界窗口由函数gluOrtho2D()设定，视口由函数glViewport()设定。
+gluOrtho2D函数原型：
+void gluOrtho2D(Gldouble left, Gldouble right, Gldouble bottom, Gldouble top);
+left：世界坐标的最左边，right，bottom,top类似。
+当然这个可以任意的，比如你想观察x>0 和 y>0的区域，
+你可以设置gluOrtho2D（0，200,0,200）。
+当然你也可以颠倒窗口gluOrtho2D（0，200,200,0）。这个和上一个关于X对称。
+
+glViewport函数的原型：
+void glViewport(Glint x, Glint y, Glint width, Glint, height);
+这里各参数的含义很显然的，窗口左下角(left,bottom)，右上角(right,top)。下面的 视口的左下角（x,y），右上角（x+width,y+height)。设置绘图区位于打开窗口的位置。这里默认左下角的坐标为（0,0）。
+窗口和视口有 一个比例因子，这就好像一张尺寸小的图片被用来作为电脑屏幕时要铺满一样。
+如果gluOrtho2D大小 < glViewport的话则原图被比例的放大一样；
+反之则会变小，总之最终都会适应视口。因为视口最终显示出来。

@@ -1,0 +1,16 @@
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+glColor4f(1.0, 0.0, 0.0,1.0);
+glBegin(GL_POLYGON);
+glVertex2i(40,250);
+glVertex2i(40,400);
+glVertex2i(505,160);
+glEnd();
+glColor4f(0.0, 1.0, 0.0, 1.0);
+glBegin(GL_POLYGON);
+glVertex2i(105, 150);
+glVertex2i(105, 580);
+glVertex2i(205, 160);
+glEnd();
+glFlush();
+errorCheck();

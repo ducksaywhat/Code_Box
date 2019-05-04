@@ -1,0 +1,8 @@
+d3d9.lib?
+d3dx10.lib?
+d3dx9d.lib?
+dxerr.lib?
+dxguid.lib?
+winmm.lib?
+comctl32.lib
+d3dx9.lib

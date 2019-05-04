@@ -1,0 +1,418 @@
+//#include <d3d9.h>
+#include"d3dUtility.h"
+IDirect3DDevice9 *Device = 0;
+IDirect3DVertexBuffer9* vb;
+IDirect3DIndexBuffer9*  ib;
+IDirect3DVertexBuffer9* vbb;
+IDirect3DIndexBuffer9*  ibb;
+D3DXMATRIX Rx, Ry, Rz, RT;
+IDirect3DTexture9 * Tex1 = 0;
+IDirect3DTexture9 * Tex2 = 0;
+IDirect3DTexture9 * Wall = 0;
+IDirect3DTexture9 * Glass = 0;
+IDirect3DVertexBuffer9* wall1;
+IDirect3DVertexBuffer9* wall2;
+IDirect3DVertexBuffer9* glass;
+//
+//view
+D3DXMATRIX V;
+//
+float y = 0;
+float x = 0;
+float z = 0;
+float X = 0;
+float Y = 0;
+float Z = 0;
+void aMirror();
+struct Vertex
+{
+	Vertex(){};
+	Vertex(float x, float y, float z, float u, float v)
+	{
+		_x = x;
+		_y = y;
+		_z = z;
+		_u = u;
+		_v = v;
+	}
+	float _x, _y, _z;
+	float _u, _v;
+	static const DWORD FVF;
+};
+const DWORD Vertex::FVF = D3DFVF_XYZ | D3DFVF_TEX1;
+bool Setup()
+{
+	D3DXMatrixRotationX(&Rx, 0.0f);
+	D3DXMatrixRotationY(&Ry, 0.0f);
+	D3DXMatrixRotationZ(&Rz, 0.0f);
+	D3DXMatrixTranslation(&RT, 0, 0, 0);
+	Device->CreateVertexBuffer(
+		8 * sizeof(Vertex),
+		D3DUSAGE_WRITEONLY,
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&vb, 0);
+	Device->CreateIndexBuffer(
+		36 * sizeof(WORD),
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
+		&ib,
+		0);
+	Device->CreateVertexBuffer(
+		4 * sizeof(Vertex),
+		D3DUSAGE_WRITEONLY,
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&vbb, 0);
+	Device->CreateIndexBuffer(
+		6 * sizeof(WORD),
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
+		&ibb,
+		0);
+	Device->CreateVertexBuffer(
+		6 * sizeof(Vertex),
+		D3DUSAGE_WRITEONLY,
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&wall1, 0);
+	Device->CreateVertexBuffer(
+		6 * sizeof(Vertex),
+		D3DUSAGE_WRITEONLY,
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&wall2, 0);
+	Device->CreateVertexBuffer(
+		6 * sizeof(Vertex),
+		D3DUSAGE_WRITEONLY,
+		Vertex::FVF,
+		D3DPOOL_MANAGED,
+		&glass, 0);
+	Vertex* vertices = 0;
+	vb->Lock(0, 0, (void**)&vertices, 0);
+	vertices[0] = Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(-1.0f, 1.0f, -1.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(1.0f, 1.0f, -1.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(1.0f, -1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[4] = Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[5] = Vertex(-1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[6] = Vertex(1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[7] = Vertex(1.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+	vb->Unlock();
+	WORD* indices = 0;
+	ib->Lock(0, 0, (void**)&indices, 0);
+	//
+	indices[0] = 0; indices[1] = 1; indices[2] = 2;
+	indices[3] = 0; indices[4] = 2; indices[5] = 3;
+	//
+	indices[6] = 4; indices[7] = 6; indices[8] = 5;
+	indices[9] = 4; indices[10] = 7; indices[11] = 6;
+	//
+	indices[12] = 4; indices[13] = 5; indices[14] = 1;
+	indices[15] = 4; indices[16] = 1; indices[17] = 0;
+	//
+	indices[18] = 3; indices[19] = 2; indices[20] = 6;
+	indices[21] = 3; indices[22] = 6; indices[23] = 7;
+	//
+	indices[24] = 1; indices[25] = 5; indices[26] = 6;
+	indices[27] = 1; indices[28] = 6; indices[29] = 2;
+	//
+	indices[30] = 4; indices[31] = 0; indices[32] = 3;
+	indices[33] = 4; indices[34] = 3; indices[35] = 7;
+	ib->Unlock();
+	vbb->Lock(0, 0, (void**)&vertices, 0);
+	vertices[0] = Vertex(-15.0f, -5.0f, -15.0f, 1.0f, 0.0f);
+	vertices[1] = Vertex(15.0f, -5.0f, -15.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(-15.0f, -5.0f, 15.0f, 1.0f, 1.0f);
+	vertices[3] = Vertex(15.0f, -5.0f, 15.0f, 0.0f, 1.0f);
+	vbb->Unlock();
+	ibb->Lock(0, 0, (void**)&indices, 0);
+	indices[0] = 0; indices[1] = 3; indices[2] = 1;
+	indices[3] = 0; indices[4] = 2; indices[5] = 3;
+	ibb->Unlock();
+	//
+	//
+	//
+	//
+	wall1->Lock(0, 0, (void**)&vertices, 0);
+	vertices[0] = Vertex(15.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(15.0f, 5.0f, -15.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(5.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(5.0f, -5.0f, -15.0f, 1.0f, 1.0f);
+	vertices[4] = Vertex(15.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[5] = Vertex(5.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	wall1->Unlock();
+	wall2->Lock(0, 0, (void**)&vertices, 0);
+	vertices[0] = Vertex(-5.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(-5.0f, 5.0f, -15.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(-15.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(-15.0f, -5.0f, -15.0f, 1.0f, 1.0f);
+	vertices[4] = Vertex(-5.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[5] = Vertex(-15.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	wall2->Unlock();
+	glass->Lock(0, 0, (void**)&vertices, 0);
+	vertices[0] = Vertex(5.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(5.0f, 5.0f, -15.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(-5.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(-5.0f, -5.0f, -15.0f, 1.0f, 1.0f);
+	vertices[4] = Vertex(5.0f, -5.0f, -15.0f, 0.0f, 1.0f);
+	vertices[5] = Vertex(-5.0f, 5.0f, -15.0f, 1.0f, 0.0f);
+	glass->Unlock();
+	D3DXVECTOR3 position(10.0f, 10.0f, 10.0f);
+	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	D3DXMatrixLookAtLH(&V, &position, &target, &up);
+	Device->SetTransform(D3DTS_VIEW, &V);
+	D3DXMATRIX proj;
+	D3DXMatrixPerspectiveFovLH(
+		&proj,
+		D3DX_PI*0.5f,
+		(float)800 / (float)600,
+		1.0f, 1000.0f);
+	Device->SetTransform(D3DTS_PROJECTION, &proj);
+	D3DXCreateTextureFromFile(
+		Device,
+		"C:/Users/wwx/Desktop/image/Image1.0/CCatICon.png",
+		&Tex1);
+	D3DXCreateTextureFromFile(
+		Device,
+		"C:/Users/wwx/Desktop/Ground.jpg",
+		&Tex2);
+	D3DXCreateTextureFromFile(
+		Device,
+		"C:/Users/wwx/Desktop/Wall.jpg",
+		&Wall);
+	D3DXCreateTextureFromFile(
+		Device,
+		"C:/Users/wwx/Desktop/Glass.jpg",
+		&Glass);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	//Device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	Device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	Device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	//Device->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	Device->SetRenderState(D3DRS_LIGHTING, false);
+	return true;
+}
+void Cleanup()
+{
+	d3d::Release<IDirect3DVertexBuffer9*>(vb);
+	d3d::Release<IDirect3DVertexBuffer9*>(vbb);
+	d3d::Release<IDirect3DTexture9*>(Wall);
+	d3d::Release<IDirect3DTexture9*>(Glass);
+	d3d::Release<IDirect3DTexture9*>(Tex1);
+	d3d::Release<IDirect3DTexture9*>(Tex2);
+}
+void yturn(int p)
+{
+	if (y >= 6.28)
+		y = 0;
+	if (p == 1)
+	{
+		y += 3.14f / 20.0f;
+		if (y >= 6.28)
+			y = 0;
+	}
+	else
+	{
+		y -= 3.14f / 20.0f;
+		if (y <= -6.28)
+			y = 0;
+	}
+	D3DXMatrixRotationY(&Ry, y);
+}
+void xturn(int p)
+{
+	if (x >= 6.28)
+		x = 0;
+	if (p == 1)
+	{
+		x += 3.14f / 20.0f;
+		if (x >= 6.28)
+			x = 0;
+	}
+	else
+	{
+		x -= 3.14f / 20.0f;
+		if (x <= -6.28)
+			x = 0;
+	}
+	D3DXMatrixRotationX(&Rx, x);
+}
+void FBMOVE(int p)
+{
+	if (p == 1)
+	{
+		Z += 0.5f;
+	}
+	else
+	{
+		Z -= 0.5f;
+	}
+	D3DXMatrixTranslation(&RT, X, Y, Z);
+}
+void UDMOVE(int p)
+{
+	if (p == 1)
+	{
+		Y += 0.5f;
+	}
+	else
+	{
+		Y -= 0.5f;
+	}
+	D3DXMatrixTranslation(&RT, X, Y, Z);
+}
+bool Display(float timeDelta)
+{
+	if (Device)
+	{
+		//
+		static float radius = 20.0f;
+
+		/*if (::GetAsyncKeyState(VK_LEFT) & 0x8000f)
+			TeapotPosition.x -= 3.0f * timeDelta;
+
+		if (::GetAsyncKeyState(VK_RIGHT) & 0x8000f)
+			TeapotPosition.x += 3.0f * timeDelta;
+			*/
+
+		if (::GetAsyncKeyState(VK_NUMPAD8) & 0x8000f)
+			radius -= 2.0f * timeDelta;
+
+		if (::GetAsyncKeyState(VK_NUMPAD5) & 0x8000f)
+			radius += 2.0f * timeDelta;
+
+
+		static float angle = (3.0f * D3DX_PI) / 2.0f;
+
+		if (::GetAsyncKeyState(VK_NUMPAD4) & 0x8000f)
+			angle -= 0.5f * timeDelta;
+
+		if (::GetAsyncKeyState(VK_NUMPAD6) & 0x8000f)
+			angle += 0.5f * timeDelta;
+
+		D3DXVECTOR3 position(cosf(angle) * radius, 3.0f, sinf(angle) * radius);
+		D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+		D3DXMATRIX V;
+		D3DXMatrixLookAtLH(&V, &position, &target, &up);
+		Device->SetTransform(D3DTS_VIEW, &V);
+		//
+		//Device->SetTransform(D3DTS_VIEW, &V);
+		//D3DXMATRIX p = Rx*Ry*RT;
+		//Device->SetTransform(D3DTS_WORLD, &p);
+		//Device->SetTransform(D3DTS_VIEW, &p);
+		D3DXMATRIX p = Rx*Ry*RT;
+		Device->SetTransform(D3DTS_WORLD, &p);
+		Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+			0xfffffe0, 1.0f, 0);
+		Device->BeginScene();
+		//
+		Device->SetFVF(Vertex::FVF);
+		Device->SetIndices(0);
+		Device->SetTexture(0, Wall);
+		Device->SetStreamSource(0, wall1, 0, sizeof(Vertex));
+		Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 4);
+		Device->SetStreamSource(0, wall2, 0, sizeof(Vertex));
+		Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 4);
+		Device->SetTexture(0, Glass);
+		Device->SetStreamSource(0, glass, 0, sizeof(Vertex));
+		Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 4);
+		//
+		Device->SetFVF(Vertex::FVF);
+		Device->SetStreamSource(0, vbb, 0, sizeof(Vertex));
+		Device->SetIndices(ibb);
+		//Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+		Device->SetTexture(0, Tex2);
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 4, 0, 2);
+		Device->SetStreamSource(0, vb, 0, sizeof(Vertex));
+		Device->SetIndices(ib);
+		//Device->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+		Device->SetTexture(0, Tex1);
+		Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+		aMirror();
+		Device->EndScene();
+		Device->Present(0, 0, 0, 0);
+	}
+	return true;
+}
+LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		break;
+
+	case WM_KEYDOWN:
+		if (wParam == VK_LEFT)
+			FBMOVE(-1);
+		else if (wParam == VK_RIGHT)
+			FBMOVE(1);
+		else if (wParam == VK_UP)
+			UDMOVE(1);
+		else if (wParam == VK_DOWN)
+			UDMOVE(-1);
+		else if (wParam == VK_ESCAPE)
+			::DestroyWindow(hwnd);
+		break;
+	case WM_CHAR:
+	{
+		if (wParam == 'A' || wParam == 'a')
+			yturn(1);
+		else if (wParam == 'D' || wParam == 'd')
+			yturn(-1);
+		if (wParam == 'W' || wParam == 'w')
+			xturn(1);
+		else if (wParam == 'S' || wParam == 's')
+			xturn(-1);
+		break;
+	}
+	}
+	return ::DefWindowProc(hwnd, msg, wParam, lParam);
+}
+int WINAPI WinMain(HINSTANCE hinstance,
+	HINSTANCE prevInstance,
+	PSTR cmdLine,
+	int showCmd)
+{
+	if (!d3d::InitD3D(hinstance, 800, 600,
+		true, D3DDEVTYPE_HAL, &Device))
+	{
+		::MessageBox(0, "InitD3D()-FAILED", 0, 0);
+		return 0;
+	}
+	if (!Setup())
+	{
+		::MessageBox(0, "Setup()-FAILED", 0, 0);
+		return 0;
+	}
+	d3d::EnterMsgLoop(Display);
+	Cleanup();
+	Device->Release();
+	return 0;
+}
+void aMirror()
+{
+	//return;
+	D3DXMATRIX W, T, R;
+	D3DXPLANE plane(0.0f, 0.0f, 1.0f, 15.0f);
+	D3DXMatrixReflect(&R, &plane);
+	D3DXMatrixTranslation(&T, 0.0f, 0.0f, 0.0f);
+	W = T*R;
+	Device->Clear(0, 0, D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+	//Device->SetStreamSource(0, vb, 0, sizeof(Vertex));
+	//Device->SetIndices(ib);
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_DESTCOLOR);
+	Device->SetTransform(D3DTS_WORLD, &W);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+	Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+	Device->SetRenderState(D3DRS_STENCILENABLE, false);
+	Device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+}

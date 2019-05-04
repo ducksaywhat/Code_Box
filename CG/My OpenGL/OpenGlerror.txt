@@ -1,0 +1,17 @@
+GLenum errorCheck()
+{
+	GLenum code;
+	const GLubyte *string;
+	code = glGetError();
+	if (code != GL_NO_ERROR)
+	{
+		string = gluErrorString(code);
+		fprintf(stderr, "OpenGLerror:%s", string);
+	}
+	/*else
+	{
+		printf("Good run!\n");
+	}
+	*/
+	return code;
+}
