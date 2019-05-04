@@ -1,0 +1,133 @@
+package test;
+import java.awt.*;
+import java.awt.Event;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.*;
+import javax.swing.event.*;
+public class test 
+{
+	public static void main(String[]args)
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				Frame frame=new Frame();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setTitle("COLOR");
+				frame.setVisible(true);
+				Dimension ScreamSize=Toolkit.getDefaultToolkit().getScreenSize();
+				frame.setLocation(new Point((ScreamSize.width-800)/2,(ScreamSize.height-600)/2));
+				frame.setSize(800,600);
+				frame.setVisible(true);
+			}
+				});{
+		}
+	}
+}
+class Frame extends JFrame
+{
+	JPanel Panel =new JPanel();
+	CPanel CPanel=new CPanel();
+	JComponent ColorComponent=new CpaintComponent();
+	JButton button=new JButton("COLOR");
+	public Frame()
+	{
+		Panel.setLayout(new GridLayout(2,2));
+		button.addActionListener(new Caction(this));
+		CPanel.setSize(500,400);
+		ColorComponent.setSize(500,400);
+		Panel.add(new JLabel("Let's see the color",JLabel.CENTER));
+		Panel.add(button);
+		Panel.add(ColorComponent);
+		Panel.add(CPanel);
+		add(Panel);
+		pack();
+		
+	}
+}
+class CpaintComponent extends JComponent
+{
+	static Color color=Color.red;
+	public CpaintComponent(){};
+	public void paintComponent(Graphics g)
+	{
+		g.setColor(color);
+		g.fillRect(0, 0, getWidth(),getHeight());
+	}
+}
+class CPanel extends JPanel
+{
+	JTextField Text1=new JTextField();
+	JTextField Text2=new JTextField();
+	JTextField Text3=new JTextField();
+	JTextField Text4=new JTextField();
+	public CPanel()
+	{
+		setLayout(new GridLayout(4,1));
+		add(new JLabel("R:",JLabel.RIGHT));
+		add(Text1);
+		add(new JLabel("G:",JLabel.RIGHT));
+		add(Text2);
+		add(new JLabel("B:",JLabel.RIGHT));
+		add(Text3);
+		add(new JLabel("16:",JLabel.RIGHT));
+		add(Text4);
+		setText();
+	}
+	public void setText()
+	{
+		int r,g,b;
+		r=CpaintComponent.color.getRed();
+		g=CpaintComponent.color.getGreen();
+		b=CpaintComponent.color.getBlue();
+		Text1.setText("   "+r);
+		Text2.setText("   "+g);
+		Text3.setText("   "+b);
+		String R,G,B;
+		R=Integer.toHexString(r);
+		G=Integer.toHexString(g);
+		B=Integer.toHexString(b);
+		R=(R.length()==1?"0"+R:R).toUpperCase();
+		G=(G.length()==1?"0"+G:G).toUpperCase();
+		B=(B.length()==1?"0"+B:B).toUpperCase();
+		Text4.setText("  #"+R+G+B);
+	}
+}
+class Caction implements ActionListener
+{
+	Frame from;
+	JDialog dialog;
+	JColorChooser chooser=new JColorChooser();
+	public Caction(Frame from)
+	{
+		this.from=from;
+
+	   dialog=JColorChooser.createDialog(from, "Choose Color", false, chooser,
+			new ActionListener()
+			{
+		public void actionPerformed(ActionEvent e)
+		{
+			CpaintComponent.color=chooser.getColor();
+			from.CPanel.setText();
+			from.ColorComponent.repaint();
+			}
+			}, 
+			null);
+	}
+
+	public void actionPerformed(ActionEvent e)
+	{
+		chooser.setColor(CpaintComponent.color);
+		dialog.setVisible(true);
+	}
+}
+
+
+
+
