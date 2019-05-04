@@ -1,0 +1,29 @@
+#include<vector>
+class Solution {
+public:
+    int LastRemaining_Solution(int n, int m)
+    {
+    if(n==0||m==0)return -1;
+    vector<int> kids;
+	for (int i = 0; i < n; i++)
+	{
+		kids.push_back(i);
+	}
+    int indx = 0;
+	while (kids.size() > 1)
+	{
+		if (indx == 0)
+		{
+			indx = + m % kids.size();
+		}
+		else
+		{
+			indx = (indx -1+ m) % kids.size();
+		}
+		if (indx == 0)kids.pop_back();
+		else
+			kids.erase(kids.begin() + indx - 1, kids.begin() + indx);
+	}
+	return kids.front();
+    }
+};

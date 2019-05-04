@@ -1,0 +1,15 @@
+int kmp(string key) {
+	int* map = new int[key.length()]();
+	map[0] = -1;
+	int i = -1, j = 0;
+	for (; j < key.length();) {
+		if (i == -1|| key[i] == key[j]) {
+			map[++j] = ++i;
+		}
+		else
+		{
+			i = map[i];
+		}
+	}
+	return 0;
+}

@@ -1,0 +1,28 @@
+public class Solution {
+    int count;
+    public int JumpFloorII(int target) {
+        count=0;
+        jump(target,0);
+        return count;
+    }
+    public void jump(int target , int n)
+    {
+        if(n==target)
+        {count++;return;}
+        if(n>target)return;
+        for(int i =1;i<=target-n;i++)
+        {
+            jump(target,n+i);
+        }
+    }
+}//看了下优秀的代码  优化了好多啊.....
+
+
+jumpfloor(int num)
+{
+	if(num<=0)
+	{
+	return 0;
+	}
+	return 1<<(target-1);
+}

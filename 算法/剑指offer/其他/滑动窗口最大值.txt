@@ -1,0 +1,20 @@
+class Solution {
+public:
+    vector<int> maxInWindows(const vector<int>& num, unsigned int size)
+    {
+        deque <int> q;
+        vector<int> ans;
+        for(int i=0;i<num.size();i++)
+        {
+            while(!q.empty()&&num[i]>num[q.back()])
+                q.pop_back();
+            if(q.size() && i-q.front()+1>size)
+                q.pop_front();
+            q.push_back(i);
+            if(size&&i+1>=size)
+                ans.push_back(num[q.front()]);
+            
+        }
+        return ans;
+    }
+};

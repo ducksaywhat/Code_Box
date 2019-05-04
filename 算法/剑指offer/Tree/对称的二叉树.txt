@@ -1,0 +1,12 @@
+public class Solution {
+    boolean isSymmetrical(TreeNode pRoot){
+        if(pRoot==null)return true;
+        return BinaryCheck(pRoot.left,pRoot.right);
+    }
+    boolean BinaryCheck(TreeNode lpRoot,TreeNode rpRoot){
+        if(lpRoot==null&&rpRoot==null)return true;
+        else if(lpRoot==null||rpRoot==null) return false;
+        if(lpRoot.val!=rpRoot.val)return false;
+        return BinaryCheck(lpRoot.left,rpRoot.right)&&BinaryCheck(lpRoot.right,rpRoot.left);
+    }
+}

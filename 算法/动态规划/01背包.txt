@@ -1,0 +1,27 @@
+int main(){
+	int w[4]{ 2,3,4,5 };
+	int v[4]{ 3,4,5,6 };
+	int map[5][9];
+	for (int i = 0; i < 9; i++) {
+		map[0][i] = 0;
+	}
+	for (int i = 0; i < 5; i++) {
+		map[i][0] = 0;
+	}
+	for (int i = 1; i < 5; i++) {
+		for (int j = 1; j < 9; j++) {
+			if (j >= w[i-1]) {
+				map[i][j] = max(map[i - 1][j], map[i - 1][j - w[i-1]] + v[i-1]);
+			}
+			else {
+				map[i][j] = map[i-1][j];
+			}
+		}
+	}
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 9; j++) {
+			cout << map[i][j]<<" ";
+		}
+		cout << endl;
+	}
+}

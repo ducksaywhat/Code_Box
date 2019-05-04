@@ -1,0 +1,32 @@
+public class Solution {
+    Stack<Integer> stack = new Stack<Integer>();
+    public boolean IsPopOrder(int [] pushA,int [] popA) {
+        int Pushindex=0 ,Popindex=0;
+        //Pushindex = FindIndex(pushA,popA[0]);
+        while(Popindex<popA.length){
+            int findex=FindIndex(pushA,popA[Popindex]);
+            if(findex<0)return false;
+            if(findex>Pushindex){
+                int lastindex=Pushindex;
+                Pushindex = findex;
+                pushin(pushA,Pushindex-1,lastindex);
+                Pushindex++;
+            }else if(findex==Pushindex){
+                Pushindex++;
+            }
+            else if(findex<Pushindex)
+            {
+                if(popA[Popindex]!=stack.pop())return false;
+            }Popindex++;
+        }return true;
+    }
+    public int FindIndex(int []array,int num){
+        for(int i=0;i<array.length;i++)
+            if(array[i]==num)return i;
+        return -1;    }
+    public void pushin(int[]push,int n,int l){
+          for(;l<=n;l++){
+          stack.push(push[l]);
+      }
+    }
+}//后面晚七点考巨人.....加油啊 好好休息这几天。

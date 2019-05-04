@@ -1,0 +1,15 @@
+public class Solution {
+    public ListNode ReverseList(ListNode head) {
+        if(head==null)return null;
+        ListNode temp=head.next;
+        head.next=null;
+        return Rlist(head,temp);
+    }
+    public ListNode Rlist(ListNode head,ListNode nhead){
+        if(nhead==null)return head;
+        ListNode temp=nhead.next;
+        nhead.next=head;
+        return Rlist(nhead,temp);
+        
+    }
+}//没有消除开始的head的next导致形成了一个环。

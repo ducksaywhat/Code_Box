@@ -1,0 +1,15 @@
+void mysort(int *arr,int l)
+{
+	int i, j, k;
+	for (i = 1; i < l; i++)
+	{
+		for (j = i; j > 0; j--)
+		{
+			if (arr[i] >= arr[j-1])break;
+		}
+		int t = arr[i];
+		for (k = i; k > j; k--)
+			arr[k] = arr[k-1];
+		arr[j] = t;
+	}
+}

@@ -1,0 +1,14 @@
+void mysort(int *arr,int s,int e)
+{
+	if ((e - s) <= 1)return;
+	int mid = arr[e - 1];
+	int sid = s, bid = e - 1;
+	while (sid != bid)
+	{
+		if (arr[sid] > mid)swap(arr, sid, --bid);
+		else sid++;
+	}
+	swap(arr, bid, e - 1);
+	mysort(arr, s, sid);
+	mysort(arr, sid+1, e);
+}

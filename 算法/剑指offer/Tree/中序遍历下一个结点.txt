@@ -1,0 +1,25 @@
+public class Solution {
+    boolean find = false;
+    public TreeLinkNode GetNext(TreeLinkNode pNode)
+    {
+        TreeLinkNode father = GetFather(pNode);
+        find = false;
+        return findnext(father,pNode);
+    }
+    public TreeLinkNode GetFather(TreeLinkNode pNode)
+    {
+        if(pNode.next==null)return pNode;
+        return GetFather(pNode.next);
+    }
+     public TreeLinkNode findnext(TreeLinkNode father,TreeLinkNode target)
+     {
+         if(father ==null)return null;
+         TreeLinkNode lfind = findnext(father.left,target);
+         if(lfind!=null)return lfind;
+         if(find)return father;
+         if(father==target)find = true;
+         TreeLinkNode rfind = findnext(father.right,target);
+         if(rfind!=null)return rfind;
+         return null;
+     }
+}

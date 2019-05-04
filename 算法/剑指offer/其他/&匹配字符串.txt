@@ -1,0 +1,23 @@
+class Solution {
+public:
+    bool match(char* str, char* pattern)
+    {
+        if (*str == '\0' && *pattern == '\0')
+            return true;
+        if (*str != '\0' && *pattern == '\0')
+            return false;
+        if(*(pattern+1)=='*')
+        {
+            if((*pattern==*str)||(*str!='\0'&&*pattern=='.'))
+                return (match(str+1,pattern)||match(str,pattern+2));
+            else return match(str,pattern+2);
+        }
+        else
+        {
+            if((*pattern==*str)||(*str!='\0'&&*pattern=='.'))
+                return match(str+1,pattern+1);
+            else return false;
+        }
+    }
+};//看了看评论里的大神跟着写了写 很好的学习...
+//今天星期二了 还剩下八道题....呃啊....加油...

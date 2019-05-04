@@ -1,0 +1,27 @@
+class Solution {
+public:
+    ListNode* EntryNodeOfLoop(ListNode* pHead)
+    {
+        if(!pHead)return 0;
+        ListNode *slow=pHead->next;
+        ListNode *fast=pHead->next;
+        if(!fast)return 0;
+        fast= fast->next;
+        while(fast!=0)
+        {
+            if(fast==slow)break;
+            slow=slow->next;
+            fast= fast->next;
+            if(!fast)return 0;
+            fast= fast->next;
+        }
+        if(!fast)return 0;
+        fast = pHead;
+        while(fast!=slow)
+        {
+            fast=fast->next;
+            slow=slow->next;
+        }
+        return fast;
+    }
+};

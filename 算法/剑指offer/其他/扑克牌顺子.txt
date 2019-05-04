@@ -1,0 +1,28 @@
+#include<algorithm>
+class Solution {
+public:
+    bool IsContinuous( vector<int> numbers ) {
+        if(numbers.size()==0)return false;
+        sort(numbers.begin(), numbers.end());
+        int laizi = 0;
+        int index = -1;
+        for(int i= 0;i<numbers.size();i++ )
+        {
+            if(numbers[i]==0)laizi++;
+            else
+            {
+                if(index==-1)index = numbers[i];
+                else
+                {
+                    if((++index)!=numbers[i])
+                    {
+                        if(laizi--<=0)return false;
+                        //index++;
+                        i--;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+};

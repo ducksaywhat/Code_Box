@@ -1,0 +1,24 @@
+class Solution {
+public:
+    vector<int> multiply(const vector<int>& A) {
+    vector<int>ans(A.size(),1);
+        for(int i =0;i<A.size();i++)
+        {
+            for(int j=0;j<i;j++)
+            {
+                ans[i]*=A[j];
+            }
+        }
+        for(int i=0;i<A.size();i++)
+        {
+            for(int j=A.size()-1;j>i;j--)
+            {
+                ans[i]*=A[j];
+            }
+        }
+        return ans;
+    }
+};
+//看了评论里的高人的解答
+//还剩下九个题
+//做完就继续学习C++然后去做那些游戏公司的面试题。准备IGG的笔试！

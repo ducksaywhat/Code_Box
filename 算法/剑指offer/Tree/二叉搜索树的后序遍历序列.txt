@@ -1,0 +1,16 @@
+public class Solution {
+    public boolean VerifySquenceOfBST(int [] sequence) {
+        if(sequence.length==0)return false;
+        return cheack(sequence,0,sequence.length-1);
+    }
+    public boolean cheack(int [] sequence,int start,int end)
+    {
+        //if(start<=end||end<0)return true;
+        if(start>=end)return true;
+        int biggest = sequence[end];
+        int i =start;
+        for(;(sequence[i]<biggest)&&(i<end);i++);
+        for(int j=i;j<end;j++)if(sequence[j]<biggest)return false;
+        return cheack(sequence,start,i-1)&&cheack(sequence,i,end-1);
+    }
+}

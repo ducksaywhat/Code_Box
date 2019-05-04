@@ -1,0 +1,25 @@
+public class Solution {
+    public int MoreThanHalfNum_Solution(int [] array) {
+        int temp=array[0];
+        int times= 0;
+        for(int i=1;i<array.length;i++)
+        {
+            if(array[i]==temp)times++;
+            else {
+                times--;
+                if(times<0){
+                    times=0;
+                    temp = array[i];
+                }
+            }
+        }
+        if(0>times)return 0;
+        times=0;
+        for(int i=1;i<array.length;i++)
+        {
+            if(array[i]==temp)times++;
+        }
+        if(times>=array.length/2)return temp;
+        return 0;
+    }
+}//第一次一把过.....

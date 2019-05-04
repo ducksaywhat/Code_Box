@@ -1,0 +1,21 @@
+void mysort(int *arr,int s,int e)
+{
+	for (int i = 0; i < e; i++)
+		heap(arr, i, e,0);
+}
+int heap(int *arr,int s,int e, int i)
+{
+	int left, right;
+	if ((s+i*2+1) < e)
+	{
+		left = heap(arr, s, e, i * 2+1);
+		if (left < arr[s+i])swap(arr, s+i, s+ i * 2 + 1);
+	}
+	if ((s+i*2+2) < e)
+	{
+		right = heap(arr, s, e, i * 2 + 2);
+		if (right < arr[s+i])swap(arr, s+i, s+ i * 2 + 2);
+	}
+	return arr[s + i];
+
+}

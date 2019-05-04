@@ -1,0 +1,51 @@
+public class Solution {
+    int count;
+    public int InversePairs(int [] array) {
+        if(array.length<2)return 0;
+        count = 0;
+        mergesort(array,0,array.length-1);
+        return count;
+    }
+    public void mergesort(int []array,int i,int j)
+    {
+        if(i>=j)return ;
+        int mid = i+((j-i)>>1);
+        mergesort(array,i,mid);
+        mergesort(array,mid+1,j);
+        merge(array,i,mid,j);
+    }
+    public void merge(int []array,int i,int m,int j)
+    {
+        int[]help = new int[j-i+1];
+        int q=i,p=m+1;
+        int indx = 0;
+        while(q<=m&&p<=j)
+        {
+            if(array[q]<=array[p])
+            {
+                help[indx++]=array[q++];
+            }
+                
+            else 
+            {
+                count+=m-q+1;
+                count%=1000000007;
+                help[indx++]=array[p++];
+            }
+        }
+        while(q<=m)
+        {
+            help[indx++]=array[q++];
+        }
+        while(p<=j)
+        {
+            help[indx++]=array[p++];
+        }
+        
+        for(int o=0;o<help.length;o++)
+        {
+            array[i+o]=help[o];
+        }
+        
+    }
+}

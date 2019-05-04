@@ -1,0 +1,48 @@
+import java.util.*;
+public class Solution {
+    boolean bottom;
+    boolean getit;
+    int countnow;
+    TreeNode target;
+    TreeNode KthNode(TreeNode pRoot, int k){
+        bottom=false;
+        getit=false;
+        countnow=0;
+        target = null;
+        getit(pRoot,k);
+        return target;
+        
+    }
+    void getit(TreeNode pRoot, int k){
+        if(getit)return;
+        if(pRoot==null)
+        {bottom=true;return;}
+        getit(pRoot.left,k);
+        if(bottom){
+            if(++countnow==k)
+            {target= pRoot;
+             getit=true;
+             return;
+            }
+        }
+        getit(pRoot.right,k);
+    }
+
+}
+
+
+
+//¾«¼ò°æ±¾
+public class Solution {
+    int countnow=0;
+    TreeNode KthNode(TreeNode pRoot, int k){
+        if(pRoot==null)return null;
+        TreeNode a;
+        a=KthNode(pRoot.left,k);
+        if(a!=null)return a;
+        if(++countnow==k)return pRoot;
+        a=KthNode(pRoot.right,k);
+        if(a!=null)return a;
+        return null;
+    }
+}

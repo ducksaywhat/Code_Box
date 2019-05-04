@@ -1,0 +1,19 @@
+class Solution {
+public:
+    vector<int> FindNumbersWithSum(vector<int> array,int sum) {
+        int i= 0,j=array.size()-1;
+        vector<int> ans  =vector<int>();
+        while(i<j)
+        {
+            if(array[i]+array[j]==sum)
+            {
+                ans.push_back(array[i]);
+                ans.push_back(array[j]);
+                return ans;
+            }
+            else if(array[i]+array[j]<sum)i++;
+            else j--;
+        }
+        return ans;
+    }
+};

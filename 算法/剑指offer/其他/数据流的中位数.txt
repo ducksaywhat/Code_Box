@@ -1,0 +1,36 @@
+#include <queue>
+class Solution {
+    private:
+    priority_queue <int,vector<int>,greater<int> > big;
+    priority_queue <int,vector<int>,less<int> > small;
+public:
+    void Insert(int num)
+    {
+        if(small.empty()||num<small.top())
+        {
+            small.push(num);
+        }
+        else
+        {
+            big.push(num);
+        }
+        if (small.size() > big.size() &&(small.size() - big.size())> 1)
+		{
+			big.push(small.top());
+			small.pop();
+		}
+		else if(small.size() < big.size() && (big.size() - small.size())>1)
+		{
+			small.push(big.top());
+			big.pop();
+		}
+    }
+
+    double GetMedian()
+    { 
+        if((small.size()+big.size())%2==0)return (small.top()+big.top())/2.0;
+        else if(small.size()>big.size())return small.top();
+        else return big.top();
+    }
+
+};//size£¨£©·µ»ØµÄÊÇÉ¶°¡

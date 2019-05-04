@@ -1,0 +1,28 @@
+import java.util.*;
+public class Solution {
+    public int FirstNotRepeatingChar(String str) {
+        if(str.length()==0)return -1;;
+        HashMap<Character,Integer> times = new HashMap<Character,Integer>();
+        HashMap<Character,Integer> index = new HashMap<Character,Integer>();
+        char[]chars = str.toCharArray();
+        int inx = 0;
+        for(char c:chars)
+        {
+            if(times.containsKey(c))
+            times.put(c, times.get(c)+1);
+            else
+            {
+                times.put(c,1);
+                index.put(c,inx);
+            }
+            inx++;
+        }
+        int min = 200000;
+        for (Map.Entry<Character, Integer> entry : times.entrySet()) {
+            if(entry.getValue()==1)
+            min = Math.min(index.get(entry.getKey()),min);
+         } 
+        if(min>=199710)return -1;
+        return min;
+    }
+}

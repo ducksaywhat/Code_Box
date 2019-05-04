@@ -1,0 +1,19 @@
+void mysort(int *arr,int l)
+{
+	int i,j;
+	for ( i = 0; i < l; i++)
+	{
+		int min = arr[i];
+		int maxindx = i;
+		for ( j = i; j < l; j++)
+		{
+			if (arr[j] < min)
+			{
+				min = arr[j];
+				maxindx = j;
+			}
+		}
+		arr[maxindx] = arr[i];
+		arr[i] = min;
+	}
+}

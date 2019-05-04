@@ -1,0 +1,14 @@
+public class Solution {
+    public int minNumberInRotateArray(int [] array) {
+        if(array.length==0)return 0;
+        for(int i =array.length-1;i>0;i--)
+        {
+            if(array[i-1]>array[i])return array[i];
+        }
+        return 1;
+        //return array[0];
+    }
+}
+
+
+//这题放这里面是搞笑的吗....好搞笑....但是！别大意！！！有意思的题要来啦！！！！！！

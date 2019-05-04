@@ -1,0 +1,27 @@
+class Solution {
+public:
+    ListNode* deleteDuplication(ListNode* pHead)
+    {
+        if(!pHead)return 0;
+        ListNode*slow = pHead;
+        ListNode*fast = pHead->next;
+        if(!fast)return slow;
+            if(slow->val==fast->val)
+            {
+                while(fast->next&&(fast->val==fast->next->val))
+                    fast=fast->next;
+                if(!fast->next)
+                {
+                    return 0;
+                }
+                else
+                {
+                    slow=deleteDuplication(fast->next);
+                }
+            }else
+            {
+                slow->next=deleteDuplication(fast);
+            }
+        return slow;
+    }
+};ÎÒÕæµÄÅ£±Æ£¡

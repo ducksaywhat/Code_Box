@@ -1,0 +1,32 @@
+public class Solution {
+    ArrayList<ArrayList<Integer>>ans=null;//new ArrayList<ArrayList<Integer>>();
+    ArrayList<Integer>temp=null;//new ArrayList<Integer>();
+    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root,int target) {
+        ans=new ArrayList<ArrayList<Integer>>();
+        temp=new ArrayList<Integer>();
+        seeek(root,target,0);
+        ans.sort(new Comparator<ArrayList<Integer>>(){
+	        	@Override
+				public int compare(ArrayList<Integer> a, ArrayList<Integer> b){
+					return b.size()-a.size();
+				}
+	        });
+        return ans;
+    }
+    public void seeek(TreeNode root,int target,int now)
+    {
+        if(root==null)return;
+        temp.add(root.val);
+        now+=root.val;
+        if(target==now&&root.left==null&&root.right==null)
+        {
+            ans.add(new ArrayList<Integer>(temp));
+            temp.remove(temp.size()-1);
+            return;
+        }
+        //if(target<now)return;
+        seeek(root.left,target,now);
+        seeek(root.right,target,now);
+        temp.remove(temp.size()-1);
+    }
+}

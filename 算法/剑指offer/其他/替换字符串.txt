@@ -1,0 +1,25 @@
+public class Solution {
+    public String replaceSpace(StringBuffer str) {
+    	return str.toString().replaceAll(" ", "%20");
+    }
+}
+//偷懒用了API  哈哈哈哈
+
+
+
+//看了评论  用从后往前便利，调整字符串长度，
+先便利一遍，记录空格字数 count
+
+
+for(int i = length-1;i>=0;--i)
+{
+	if(str[i]!='0')
+		str[i+2*count] = str[i];
+	else
+	{
+		count--;
+		str[i+2*count]='%';
+		str[i+2*count+1]='2';
+		str[i+2*count+2]='0';
+	}
+}

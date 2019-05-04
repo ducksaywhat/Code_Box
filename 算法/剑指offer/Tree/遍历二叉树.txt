@@ -1,0 +1,21 @@
+public class Solution {
+    public ArrayList<ArrayList<Integer> > Print(TreeNode pRoot) {
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<ArrayList<Integer>>();
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        for(int d=0;PrintDepth(pRoot,temp,d,0);d++){
+                ans.add(new ArrayList<Integer>(temp));
+                temp.clear();
+            }
+         return ans;
+    }
+    public boolean PrintDepth(TreeNode pRoot,ArrayList<Integer> arr,int d,int n)
+    {
+        if(pRoot==null)return false;
+        if(d==n){
+        arr.add(pRoot.val);
+        return true;
+        }
+        return PrintDepth(pRoot.left,arr,d,n+1)|PrintDepth(pRoot.right,arr,d,n+1);
+
+    }
+}

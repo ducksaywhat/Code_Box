@@ -1,0 +1,30 @@
+public class Solution {
+    public ListNode Merge(ListNode list1,ListNode list2) {
+        ListNode newl=null;
+        ListNode head=null;
+        while(list1!=null||list2!=null){
+            if(list1==null||(list2!=null&&list1.val>=list2.val)){
+                if(newl==null){
+                   newl= new ListNode(list2.val);
+                    head=newl;
+                   list2=list2.next;
+                    continue;
+                }
+                newl.next = new ListNode(list2.val);
+                newl=newl.next;
+                list2=list2.next;continue;
+            }
+            else{
+                if(newl==null){
+                   newl= new ListNode(list1.val);
+                    head=newl;
+                   list1=list1.next;
+                    continue;
+                }
+                newl.next = new ListNode(list1.val);
+                newl=newl.next;
+                list1=list1.next;
+            }
+        }return head;
+    }
+}//题本身不难....有点疲惫了....还有两道题  做完完事啦！！

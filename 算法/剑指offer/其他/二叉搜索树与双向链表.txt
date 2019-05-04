@@ -1,0 +1,25 @@
+import java.util.*;
+public class Solution {
+    ArrayList<TreeNode> ans=null;
+    public TreeNode Convert(TreeNode pRootOfTree) {
+        if(pRootOfTree==null)return null;
+        ans = new ArrayList<TreeNode>();
+        gititthensleep(pRootOfTree);
+        for(int i =0;i<ans.size();i++){
+            ans.get(i).left=getroot(i-1);
+            ans.get(i).right=getroot(i+1);
+        }
+        return ans.get(0);
+    }
+    public void gititthensleep(TreeNode root){
+        if(root==null)return;
+        gititthensleep(root.left);
+        ans.add(root);
+        gititthensleep(root.right);
+        
+    }
+    public TreeNode getroot(int n){
+        if(n<0||n>=ans.size())return null;
+        return ans.get(n);
+    }
+}

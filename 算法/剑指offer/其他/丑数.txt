@@ -1,0 +1,20 @@
+import java.util.*;
+public class Solution {
+    public int GetUglyNumber_Solution(int index) {
+        if(index<1)return 0;
+        ArrayList<Integer> a =new ArrayList<Integer>();
+        a.add(1);
+        int i=0,j=0,k=0;
+        int count = 1;
+        while(count<index)
+        {
+            int u = Math.min(a.get(i)*2,Math.min(a.get(j)*3,a.get(k)*5));
+            a.add(u);count++;
+            if(u==a.get(i)*2)i++;
+            if(u==a.get(j)*3)j++;
+            if(u==a.get(k)*5)k++;
+        }
+        
+        return a.get(a.size()-1);
+    }
+}

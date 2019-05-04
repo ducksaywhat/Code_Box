@@ -1,0 +1,25 @@
+public class Solution {
+    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+        ArrayList<Integer>list =new ArrayList<Integer>();
+        if(root!=null)
+        list.add(root.val);
+        else return list;
+        for(int depth=0;throughTree(list,root,0,depth++););
+        return list;
+    }
+    public boolean throughTree(ArrayList arr,TreeNode root,int d,int depth){
+        if(root==null)return false;
+        if(d==depth){
+            boolean has = false;
+            if(root.left!=null){
+                arr.add(root.left.val);
+                has = true;
+            }
+            if(root.right!=null){
+                arr.add(root.right.val);
+                has = true;
+            }return has;
+        }
+        return throughTree(arr,root.left,++d,depth)|throughTree(arr,root.right,d,depth);
+    }
+}

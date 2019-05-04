@@ -1,0 +1,9 @@
+class Solution {
+public:
+    int Add(int num1, int num2)
+    {
+        int a = num1^num2,b=(num1&num2)<<1;
+        if((b&a)==0)return a|b;
+        return Add(a,b);
+    }
+};

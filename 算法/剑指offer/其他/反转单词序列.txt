@@ -1,0 +1,24 @@
+#include<stack>
+class Solution {
+public:
+    string ReverseSentence(string str) {
+        stack<string>strs;
+        int indx = 0;
+        for(int i =0;i<str.size();i++)
+        {
+            if(str[i]==' ')
+            {
+                strs.push(' '+str.substr(indx, i-indx));
+                indx = i+1;
+            }
+        };
+        strs.push(str.substr(indx,str.size()));
+        string ans = "";
+        while(!strs.empty())
+        {
+            ans+=strs.top();
+            strs.pop();
+        }
+        return ans;
+    }
+};

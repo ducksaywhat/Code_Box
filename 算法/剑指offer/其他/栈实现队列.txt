@@ -1,0 +1,23 @@
+public class Solution {
+    Stack<Integer> stack1 = new Stack<Integer>();
+    Stack<Integer> stack2 = new Stack<Integer>();
+    
+    public void push(int node) {
+        stack1.push(node);
+        Goto();
+    }
+    
+    public int pop() {
+        int t = stack2.pop();
+        Goto();
+        return t;
+    }
+    public void Goto()
+    {
+        if(!stack2.isEmpty())return;
+        while(!stack1.isEmpty())stack2.push(stack1.pop());
+    }
+}
+
+
+//算法课上学过，舒舒服服，书到用时正好有嘿嘿(#`O′)嗨呀！

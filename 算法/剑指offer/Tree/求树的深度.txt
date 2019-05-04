@@ -1,0 +1,22 @@
+public class Solution {
+    public int TreeDepth(TreeNode root) {return GetDepth(root,0);}
+    public int GetDepth(TreeNode root,int nowDepth){
+        if(root==null)return nowDepth;
+        nowDepth++;
+        if(root.left==null&&root.right==null)return nowDepth;
+        return Math.max(GetDepth(root.left,nowDepth),GetDepth(root.right,nowDepth));
+    }
+}
+
+
+
+
+
+
+更缩版本 看评论看到的.....NP
+public class Solution {
+    public int TreeDepth(TreeNode root) {
+        if(root==null)return 0;
+        return Math.max(1+TreeDepth(root.left),1+TreeDepth(root.right));
+    }
+}

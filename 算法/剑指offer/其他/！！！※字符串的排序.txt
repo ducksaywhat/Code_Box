@@ -1,0 +1,29 @@
+public class Solution {
+    public ArrayList<String> Permutation(String str) {
+        char []chars =str.toCharArray();
+        ArrayList<String> ans =new ArrayList<String>();
+        if(str!=null&&str.length()>0){
+        for(int i = 0;i<chars.length;i++){
+            getit(chars,i,ans);
+        }
+        Collections.sort(ans);}
+        return ans;
+    }
+    public void getit(char []pieces,int i,ArrayList<String> ans){
+        if(i==pieces.length-1){
+            String val = new String(pieces);
+            if(!ans.contains(val))ans.add(val);
+        }else{
+            for(int j = i;j<pieces.length;j++){
+                swap(pieces,i,j);
+                getit(pieces,i+1,ans);
+                swap(pieces,i,j);
+            }
+        }
+    }
+    public void swap(char []p, int i ,int j){
+        char a = p[i];
+        p[i] = p[j];
+        p[j] = a;
+    }
+}//真的....递归小王子吃败仗了！！！佛了

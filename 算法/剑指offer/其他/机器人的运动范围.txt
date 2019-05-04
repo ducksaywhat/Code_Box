@@ -1,0 +1,28 @@
+class Solution {
+public:
+    bool *map;
+    int count=0;
+    int movingCount(int threshold, int rows, int cols)
+    {
+        map=new bool[rows*cols]();
+        count=0;
+        find(threshold,rows,cols,0,0);
+        return count;
+    }
+    void find (int hold,int r ,int w,int n,int m)
+    {
+        if(n>=r||m>=w)return;
+        if(map[n*w+m])return;
+        map[n*w+m]=true;
+        int c = 0;
+        for(int i =1;(n/i)!=0;i*=10)
+            c+=(n%(i*10))/i;
+        for(int i =1;(m/i)!=0;i*=10)
+            c+=(m%(i*10))/i;
+        if(c>hold)return;
+        map[n*w+m]=true;
+        count++;
+        find(hold,r,w,n,m+1);
+        find(hold,r,w,n+1,m);
+    }
+};//剑指offer做完啦！！！撒花

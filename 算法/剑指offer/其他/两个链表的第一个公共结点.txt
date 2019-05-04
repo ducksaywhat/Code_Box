@@ -1,0 +1,39 @@
+class Solution {
+public:
+    ListNode* FindFirstCommonNode( ListNode* pHead1, ListNode* pHead2) {
+        ListNode *t1=pHead1,*t2=pHead2;
+        int ct1=0,ct2=0;
+        while(t1!=NULL)
+        {
+            t1 = t1->next;
+            ct1++;
+        }
+        while(t2!=NULL)
+        {
+            t2 = t2->next;
+            ct2++;
+        }
+        if(t1!=t2)return NULL;
+        if(ct1>ct2)
+        {
+            for(int i =0;i<ct1-ct2;i++)
+            {
+                pHead1=pHead1->next;
+            }
+        }
+        else if((ct1<ct2))
+        {
+            for(int i =0;i<ct2-ct1;i++)
+            {
+                pHead2=pHead2->next;
+            }
+        }
+        while(pHead1!=pHead2)
+        {
+            pHead1=pHead1->next;
+            pHead2 = pHead2->next;
+        }
+        return pHead1;
+        
+    }
+};

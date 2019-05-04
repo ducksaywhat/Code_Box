@@ -1,0 +1,33 @@
+#include<vector>
+
+class Solution
+{
+    private:
+    int m[256];
+    string s;
+public:
+    
+  //Insert one char from stringstream
+    void Insert(char ch)
+    {
+        s+=ch;
+        if(m[ch]==0)
+        {
+            m[ch]=1;
+        }
+        else
+        {
+            m[ch]=7;
+        }
+    }
+  //return the first appearence once char in current stringstream
+    char FirstAppearingOnce()
+    {
+        for(char c:s)
+        {
+            if(m[c]==1)return c;
+        }
+        return '#';
+    }
+
+};//== = 搞错了 弄了半天 气死

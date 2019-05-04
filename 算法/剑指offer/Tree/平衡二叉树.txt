@@ -1,0 +1,15 @@
+public class Solution {
+    boolean goodnow = true;
+    public boolean IsBalanced_Solution(TreeNode root) {
+        if(root==null)return true;
+        if(Math.abs(GetDepth(root.left)-GetDepth(root.right))>1)return false;
+        return IsBalanced_Solution(root.left)&&IsBalanced_Solution(root.right);
+        
+        
+    }
+    public int GetDepth(TreeNode root)
+    {
+        if(root==null)return 0;
+        return Math.max(1+GetDepth(root.left),1+GetDepth(root.right));
+    }
+}//弄错了平衡二叉树的定义！糟糕！！！！浪费了两个多小时！！！！

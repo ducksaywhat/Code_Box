@@ -1,0 +1,20 @@
+public class Solution {
+    public boolean Find(int target, int [][] array) {
+        if(array==null)return false;
+        int i=0,j=0;
+        for(i=0;i<array[0].length;i++){
+            if(array[0][i]>target)break;
+            if(array[0][i]==target)return true;
+            if(array[0][i]<target){
+                for(j=1;j<array.length;j++){
+                    if(array[j][i]>target)break;
+                    if(array[j][i]==target)return true;
+                }
+            }
+        }
+        return false;
+    }
+}//这么简单的题做了半天，我真的铁睿智....不要大意啊！！！你没那么厉害！！！！！沉下心来！才能厉害！！！
+
+
+//看了下答案  用矩阵来做更好  因为整体有序，从左下角开始，向上小，向右大。
