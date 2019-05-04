@@ -1,0 +1,158 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		text.setSize(1200,700);
+		text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel=new JPanel();
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	JPanel buttonpanel=new JPanel();
+	public frame()
+	{
+		Border a=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.PINK);
+		//Border b=BorderFactory.createTitledBorder(a,"A title");
+		JButton Abutton=new JButton("A");
+		JButton Bbutton=new JButton("B");
+		JButton Cbutton=new JButton("C");
+		JButton Dbutton=new JButton("D");
+		JButton Ebutton=new JButton("E");
+		JButton Fbutton=new JButton("F");
+		panel.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
+        panel.add(Abutton,BorderLayout.NORTH);
+        panel.add(Bbutton,BorderLayout.SOUTH);
+        panel.add(Cbutton,BorderLayout.WEST);
+        panel.add(Dbutton,BorderLayout.EAST);
+        panel.add(Ebutton);
+        //panel.setPreferredSize(new Dimension(1200,300));//OK there
+        add(panel,BorderLayout.NORTH);
+        //textarea
+        JTextArea textarea=new JTextArea(10,20);
+        JScrollPane scrollPane=new JScrollPane(textarea);
+        //textarea.setLineWrap(true);
+        //add(scrollPane,BorderLayout.CENTER);
+        //panel1.add(textarea);
+        //panel1.add(scrollPane);
+        ButtonGroup group=new ButtonGroup();
+        JRadioButton button1=new JRadioButton("no.1",true);
+        JRadioButton button2=new JRadioButton("no.2");
+        JRadioButton button3=new JRadioButton("no.3");
+        JRadioButton button4=new JRadioButton("no.4");
+        button1.addActionListener(new ActionListener()
+        		{
+        	public void actionPerformed(ActionEvent event)
+        	{
+        		panel1.setBorder(a);
+        	}
+        		});
+        //group.add(button4);if one group have only one button the button once have been choice ,it would never change
+        group.add(button3);
+        group.add(button2);
+        group.add(button1);
+        panel1.add(button4);
+        panel1.add(button3);
+        panel1.add(button2);
+        panel1.add(button1);
+        panel1.setBorder(a);
+        panel.setPreferredSize(new Dimension(1200,300));
+        JComboBox<String>faceCombo=new JComboBox<>();
+        faceCombo.addItem("no.1");
+        faceCombo.addItem("no.2");
+        faceCombo.addItem("no.3");
+        faceCombo.addItem("no.4");
+        faceCombo.addItem("no.4");
+        ChangeListener listener=new ChangeListener()
+		{
+	public void stateChanged(ChangeEvent event)
+	{
+		JSlider source=(JSlider)event.getSource();
+		panel1.setBorder(BorderFactory.createMatteBorder(15, 15, 15, 15,new Color(source.getValue(),120,170)));
+		
+	}
+	
+		};
+		UIManager.LookAndFeelInfo[] infos=UIManager.getInstalledLookAndFeels();
+		for(UIManager.LookAndFeelInfo info:infos)
+			makebutton(info.getName(),info.getClassName());
+		panel1.add(buttonpanel);
+        JSlider slider =new JSlider(0,200,50);
+        slider.addChangeListener(listener);
+        panel1.add(slider);
+        slider.setMajorTickSpacing(20);
+        slider.setMinorTickSpacing(5);
+        slider.setPaintTicks(true);
+        //slider.setSnapToTicks(true);
+        //slider.setPaintLabels(true);
+        //faceCombo.setEditable(true);
+        panel1.add(faceCombo);
+        add(panel1);
+        //panel2.add(Fbutton);
+        //Fbutton.setPreferredSize(new Dimension(60,60));
+        panel2.setLayout(null);
+        Fbutton.setBounds(100, 100, 50, 50);//相对于自己！！！
+        //Fbutton.setContentAreaFilled(false);
+        panel2.add(Fbutton);
+        panel2.setPreferredSize(new Dimension(200,300));
+        add(panel2,BorderLayout.WEST);
+        Toolkit tk=Toolkit.getDefaultToolkit();
+        Image img=tk.getImage("bling.png");
+        Cursor dynamiteCusor=tk.createCustomCursor(img, new Point(10,10 ), "name");
+        panel1.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        panel.setCursor(dynamiteCusor);
+        //panel2.setCursor(Cursor.getPredefinedCursor());
+ 
+        pack();
+		
+	}
+	public void makebutton(String name,String plafName)
+	{
+		JButton button=new JButton(name);
+		buttonpanel.add(button);
+		button.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				try
+				{
+					UIManager.setLookAndFeel(plafName);
+					SwingUtilities.updateComponentTreeUI(frame.this);//当你改变程序的LookAndFeel外观时，通过调用这个方法来刷新整个UI
+					//Java DOC中的描述是
+					//简单的外观更改：将树结构中的每个节点转到 updateUI() -- 也就是说，通过当前外观初始化其 UI 属性。
+					//pack();
+					
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+			}
+				});
+		
+	}
+	
+}

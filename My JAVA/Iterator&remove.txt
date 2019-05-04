@@ -1,0 +1,25 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		ArrayList<Double>abc=new ArrayList<>();
+		ArrayList<Double>a=new ArrayList<>();
+		a.add(new Double(5));
+		a.add(new Double(6));
+		abc.add(new Double(1));
+		abc.add(new Double(2));
+		abc.add(new Double(3));
+		abc.add(new Double(4));
+		abc.addAll(a);
+		ListIterator<Double> it=abc.listIterator();
+		double ab=it.next();
+		it.remove();
+		System.out.println(abc.toString());
+		//it.remove(); go wrong
+		//Iterator接口的remove方法将会删除上次调用next方法时返回的元素。
+		//**add方法只依赖迭代器的位置，Iterator依赖迭代器的状态。
+		
+	}
+}

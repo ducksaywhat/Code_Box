@@ -1,0 +1,49 @@
+package fun2;
+import java.io.*;
+//import java.util.*;
+//import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		GraphicsEnvironment environment=GraphicsEnvironment.getLocalGraphicsEnvironment().getLocalGraphicsEnvironment();
+		GraphicsDevice screen=environment.getDefaultScreenDevice();
+		try
+		{
+		final Robot robot=new Robot(screen);
+		robot.waitForIdle();
+		robot.mouseMove(40, 50);
+		robot.keyPress(KeyEvent.VK_WINDOWS);
+		robot.keyPress(KeyEvent.VK_D);
+		robot.keyRelease(KeyEvent.VK_D);
+		robot.keyRelease(KeyEvent.VK_WINDOWS);
+		robot.mousePress(InputEvent.BUTTON1_MASK);
+		robot.mouseRelease(InputEvent.BUTTON1_MASK);
+		robot.mousePress(InputEvent.BUTTON1_MASK);
+		robot.mouseRelease(InputEvent.BUTTON1_MASK);
+		Dimension d=Toolkit.getDefaultToolkit().getScreenSize();
+		Rectangle screenrectangle=new Rectangle(d);
+		BufferedImage bufferedimage=robot.createScreenCapture(screenrectangle);
+		File file=new File("C:/Users/wwx/Desktop/newscreen.png");
+		ImageIO.write(bufferedimage, "png", file);
+		/*robot.keyPress(' ');
+		robot.keyRelease(' ');
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);*/ 
+		}
+		catch(AWTException e)
+		{
+			
+		}
+		catch(IOException e)
+		{
+			
+		}
+	}
+	
+
+}

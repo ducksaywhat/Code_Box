@@ -1,0 +1,34 @@
+package fun2;
+import java.nio.channels.FileChannel;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		Scanner scan=new Scanner(System.in);
+		String url=scan.nextLine();
+		InputStreamReader in=new InputStreamReader(new URL(url).openStream(),"UTF-8");
+		FileOutputStream fw=new FileOutputStream("C:/Users/wwx/Desktop/Save.txt");
+		StringBuilder sb=new StringBuilder();
+		int ch;
+		while((ch=in.read())!=-1)
+		{
+			sb.append((char)ch);
+			if(ch=='>')
+				sb.append("\r\n");
+		}
+		fw.write(sb.toString().getBytes("UTF-8"));
+		System.out.println(sb.toString());
+		fw.flush();
+		fw.close();
+		in.close();
+	}
+}

@@ -1,0 +1,9 @@
+import java.util.*;
+public class fun{
+	public static void main(String args[])
+	{
+		Random a=new Random();
+		System.out.println(a.nextInt(500));
+		
+	}
+}

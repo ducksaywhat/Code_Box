@@ -1,0 +1,25 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+import java.awt.*;
+
+public class fun2 {
+	public static void main(String arg[])
+	{
+		try {
+			InputStream in=new FileInputStream("C:/Users/wwx/Desktop/text.txt");
+			StringWriter sw=new StringWriter();
+			sw.write("lallallla");
+			sw.write("asdasdasdasd\n");
+			int a;
+			while((a=in.read())>0)
+			{
+				sw.write(a);
+			}
+			System.out.println(sw.toString());
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+}

@@ -1,0 +1,42 @@
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+
+ 
+  private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		System.out.println("  "+q.getasd());
+        ArrayList<a> w=new ArrayList<>(5);
+        w.add(q);
+        w.add(new a(55));
+        w.add(new a(65));
+        System.out.println(w.get(1).getasd());
+        w.set(1, new a(77));//垃圾回收(garbage collection,GC)自动清空堆中不再使用的对象 
+        System.out.println(w.get(1).getasd());
+        
+        
+        
+        
+        
+
+		
+		
+
+
+     
+		
+		
+
+		
+	}
+	}

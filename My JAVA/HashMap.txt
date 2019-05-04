@@ -1,0 +1,15 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		HashMap hp=new HashMap();
+		hp.put(new Double(50),new Double(60));
+		hp.put(new Double(50), new Double(80));//the "60" had been covered.
+		hp.put(new Double(1), new Double(5));
+		System.out.println(hp.get(50.0).toString());
+		System.out.println(hp.get(1.0).toString());
+		
+	}
+}

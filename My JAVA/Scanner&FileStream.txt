@@ -1,0 +1,26 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		//System.out.println("asdasdasd");
+		try
+		{
+		InputStream   in=new FileInputStream("C:/Users/wwx/Desktop/abc.txt");
+		Scanner a=new Scanner(System.in);
+		char b;
+		int c;
+		String d=a.nextLine();
+		while((c=in.read())!=-1)
+				{
+			b=(char)c;
+			d=d+b;
+				}
+		System.out.println(d);
+		}
+		catch(IOException exception)
+		{
+			
+		}
+	}

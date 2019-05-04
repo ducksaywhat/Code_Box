@@ -1,0 +1,77 @@
+EventHandler 类为动态生成事件侦听器提供支持，这些侦听器的方法执行一条涉及传入事件对象和目标对象的简单语句。
+ 
+EventHandler 类由交互工具（比如应用程序生成器）使用，这些工具允许开发人员在 bean 之间建立连接。通常是建立从用户界面 bean（事件 source）到应用程序逻辑 bean（target）的连接。大多数这类有效连接隔离了应用程序逻辑与用户界面。例如，用于从 JCheckBox 到接受 boolean 值的方法之间连接的 EventHandler 可以处理复选框状态的提取，以及处理将其直接传递给该方法，从而使该方法与用户界面层隔离。 
+
+内部类是处理来自用户界面的事件的另一种更常见方法。EventHandler 类只处理可能使用内部类的事件的子集。不过，EventHandler 使用长期持久方案要比使用内部类更有效。同样，在同一接口被实现很多次的大型应用程序中，使用 EventHandler 可以减少应用程序的磁盘和内存占用。 
+
+使用 EventHandler 创建侦听器占用内存如此之少的原因是，EventHandler 所依赖的 Proxy 类共享了同一接口的实现。例如，如果使用 EventHandler 的 create 方法生成某个应用程序中的所有 ActionListener，则所有动作侦听器都将是单个类（由 Proxy 类创建）的实例。通常，基于 Proxy 类的侦听器要求为每个侦听器类型（接口）创建一个侦听器类，而使用内部类方法时要求为每个侦听器（实现接口的对象）创建一个类。 
+
+通常不需要直接处理 EventHandler 实例。相反，可使用 EventHandler 的 create 方法之一创建实现给定侦听器接口的对象。此侦听器对象在后台使用一个 EventHandler 对象来封装关于事件的信息、发生事件时发送消息的对象、要发送的消息（方法）和方法的任意参数。以下部分给出了如何使用 create 方法创建侦听器对象的示例。 
+
+使用 EventHandler 的示例
+
+EventHandler 最简单的使用方法是安装一个侦听器，不带参数地在目标对象上调用某个方法。在以下示例中，将创建一个在 javax.swing.JFrame 实例上调用 toFront 方法的 ActionListener。 
+myButton.addActionListener(
+    (ActionListener)EventHandler.create(ActionListener.class, frame, "toFront"));
+当按下 myButton 时，将执行 frame.toFront() 语句。通过定义 ActionListener 接口的新实现并将其实例添加到按钮中，用户可以获得同样的效果，且具有额外的编译时类型安全： 
+//Equivalent code using an inner class instead of EventHandler.
+myButton.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        frame.toFront();
+    }
+});
+EventHandler 的另一种最简单用法是从侦听器接口（通常是一个事件对象）中的方法的第一个参数中提取属性值，并用其设置目标对象中的属性值。在以下示例中，将创建一个 ActionListener，它将目标 (myButton) 对象的 nextFocusableComponent 属性设置为事件的 "source" 属性的值。 
+
+EventHandler.create(ActionListener.class, myButton, "nextFocusableComponent", "source")
+这将对应于以下内部类实现： 
+//Equivalent code using an inner class instead of EventHandler.
+new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        myButton.setNextFocusableComponent((Component)e.getSource()); 
+    }
+}
+也可以创建一个只是将传入事件对象传递给目标动作的 EventHandler。如果 EventHandler.create 中的第四个参数为空字符串，则事件的传递方式如下： 
+EventHandler.create(ActionListener.class, target, "doActionEvent", "")
+这将对应于以下内部类实现： 
+//Equivalent code using an inner class instead of EventHandler.
+new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        target.doActionEvent(e);
+    }
+}
+EventHandler 最常见的用法可能是从事件对象的 source 中提取属性值，并将此值设置为目标对象的属性值。在以下示例中，将创建一个 ActionListener，它将目标对象的 "label" 属性设置为事件源的 "text" 属性的值（"source" 属性的值）。 
+EventHandler.create(ActionListener.class, myButton, "label", "source.text")
+这将对应于以下内部类实现： 
+//Equivalent code using an inner class instead of EventHandler.
+new ActionListener {
+    public void actionPerformed(ActionEvent e) {
+        myButton.setLabel(((JTextField)e.getSource()).getText()); 
+    }
+}
+可以使用以 "." 字符分隔的任意数量的属性前缀来“限定”事件属性。采用出现在 "." 字符前面的“限定”名称作为将应用于事件对象的属性名称，最左边的最先应用。 
+例如，以下动作侦听器 
+EventHandler.create(ActionListener.class, target, "a", "b.c.d")
+可以写成以下内部类（假定所有属性都有规范的获取方法并返回适当的类型）： 
+//Equivalent code using an inner class instead of EventHandler.
+new ActionListener {
+    public void actionPerformed(ActionEvent e) {
+        target.setA(e.getB().getC().isD()); 
+    }
+}
+也可以使用以 "." 字符分隔的任意数量的属性前缀来“限定”目标属性。例如，以下动作侦听器： 
+   EventHandler.create(ActionListener.class, target, "a.b", "c.d")
+ 
+可以写成以下内部类（假定所有属性都有规范的获取方法并返回适当的类型）： 
+   //Equivalent code using an inner class instead of EventHandler.
+   new ActionListener {
+     public void actionPerformed(ActionEvent e) {
+         target.getA().setB(e.getC().isD()); 
+    }
+}
+由于 EventHandler 最终依赖反射来调用方法，所以建议不要以重载方法为目标。 例如，如果目标是类 MyTarget 的一个实例，而 MyTarget 定义如下： 
+   public class MyTarget {
+     public void doIt(String);
+     public void doIt(Object);
+   }
+ 
+那么方法 doIt 被重载。EventHandler 将基于源调用恰当的方法。如果源为 null，那么两个方法都可以，具体调用哪个方法是不确定的。因此，建议不要以重载方法为目标。

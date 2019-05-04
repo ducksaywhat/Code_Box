@@ -1,0 +1,13 @@
+import java.util.*;
+public class fun{
+	public static void main(String []args)
+	{
+		Date[] dates=new Date[100];
+		for(int i=0;i<dates.length;i++)
+			dates[i]=new Date();
+		for(Date a:dates)
+		{
+			System.out.println("   "+a);	
+		}
+	}
+}

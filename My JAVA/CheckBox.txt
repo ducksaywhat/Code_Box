@@ -1,0 +1,101 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		text.setSize(1200,700);
+		text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	
+	JPanel panel=new JPanel();
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	public frame()
+	{
+		Border a=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.PINK);
+		//Border b=BorderFactory.createTitledBorder(a,"A title");
+		JButton Abutton=new JButton("A");
+		JButton Bbutton=new JButton("B");
+		JButton Cbutton=new JButton("C");
+		JButton Dbutton=new JButton("D");
+		JButton Ebutton=new JButton("E");
+		JButton Fbutton=new JButton("F");
+		panel.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
+        panel.add(Abutton,BorderLayout.NORTH);
+        panel.add(Bbutton,BorderLayout.SOUTH);
+        panel.add(Cbutton,BorderLayout.WEST);
+        panel.add(Dbutton,BorderLayout.EAST);
+        panel.add(Ebutton);
+        //panel.setPreferredSize(new Dimension(1200,300));//OK there
+        add(panel,BorderLayout.NORTH);
+        //textarea
+        JTextArea textarea=new JTextArea(10,20);
+        JScrollPane scrollPane=new JScrollPane(textarea);
+        //textarea.setLineWrap(true);
+        //add(scrollPane,BorderLayout.CENTER);
+        //panel1.add(textarea);
+        //panel1.add(scrollPane);
+        JCheckBox cheakbox1=new JCheckBox("no.1",true);
+        JCheckBox cheakbox2=new JCheckBox("no.2");
+        JCheckBox cheakbox3=new JCheckBox("no.3");
+        JCheckBox cheakbox4=new JCheckBox("no.4");
+        panel1.add(cheakbox1);
+        panel1.add(cheakbox2);
+        panel1.add(cheakbox3);
+        panel1.add(cheakbox4);
+        panel1.setBorder(a);
+        panel.setPreferredSize(new Dimension(1200,300));
+        add(panel1);
+        //panel2.add(Fbutton);
+        //Fbutton.setPreferredSize(new Dimension(60,60));
+        panel2.setLayout(null);
+        Fbutton.setBounds(100, 100, 50, 50);//相对于自己！！！
+        panel2.add(Fbutton);
+        panel2.setPreferredSize(new Dimension(200,300));
+        add(panel2,BorderLayout.WEST);
+ 
+        pack();
+		
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

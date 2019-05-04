@@ -1,0 +1,31 @@
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+
+ 
+
+	private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		System.out.println("  "+q.getasd());
+		System.out.println(q.getClass());
+		System.out.println(System.out.getClass());
+	
+
+     
+		
+		
+
+		
+	}
+	}
+

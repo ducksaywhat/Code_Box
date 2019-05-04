@@ -1,0 +1,89 @@
+keyPressed(KeyEvent e) 
+按下某个键时调用此方法。
+
+keyReleased(KeyEvent e) 
+释放某个键时调用此方法。
+
+keyTyped(KeyEvent e) 
+键入某个键时调用此方法。
+
+1 import javax.swing.*;
+ 2 import java.awt.*;
+ 3 import java.awt.event.*;
+ 4 public class KeyDemo
+ 5 {
+ 6     //定义该图形中所需的组件的引用
+ 7     private Frame f;
+ 8     private Button bt; 
+ 9     private TextField tf;
+10     
+11     //方法
+12     KeyDemo()//构造方法
+13     {
+14         madeFrame();
+15     }
+16     
+17     public void madeFrame()
+18     {
+19         f = new Frame("My Frame");
+20         
+21         //对Frame进行基本设置。
+22         f.setBounds(300,100,600,500);//对框架的位置和大小进行设置
+23         f.setLayout(new FlowLayout(FlowLayout.CENTER,5,5));//设计布局
+24         
+25         bt = new Button("My Button");
+26         tf = new TextField(20);
+27         
+28         //将组件添加到Frame中
+29         f.add(tf);
+30         f.add(bt);
+31         
+32         //加载一下窗体上的事件
+33         myEvent();
+34         
+35         //显示窗体
+36         f.setVisible(true);
+37     }
+38     
+39     private void myEvent()
+40     {
+41         f.addWindowListener(new WindowAdapter()//窗口监听
+42         {
+43             public void windowClosing(WindowEvent e)
+44             {
+45                 System.out.println("窗体执行关闭！");
+46                 System.exit(0);
+47             }
+48         });
+49         bt.addKeyListener(new KeyAdapter()//键盘监听按钮
+50         {
+51             public void keyPressed(KeyEvent e)
+52             {
+53                 if(e.getKeyCode()==KeyEvent.VK_ESCAPE)
+54                    System.exit(0);
+55                 //组合键
+56                 else if(e.isControlDown()&&e.getKeyCode()==KeyEvent.VK_ENTER)
+57                    System.exit(0);
+58                 else System.out.println(e.getKeyChar()+"..."+KeyEvent.getKeyText(e.getKeyCode()));
+59             }
+60             
+61         });
+62         tf.addKeyListener(new KeyAdapter()
+63         {
+64             public void keyPressed(KeyEvent e)
+65             {
+66                 int code = e.getKeyCode();
+67                 if(!(code>=KeyEvent.VK_0&&code<=KeyEvent.VK_9))
+68                 {
+69                     System.out.println(code+"..."+"是非法的");
+70                     e.consume();
+71                 }
+72             }
+73         });
+74     }
+75     
+76     public static void main(String[] agrs)
+77     {
+78         new KeyDemo();
+79     }
+80 }

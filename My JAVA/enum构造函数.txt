@@ -1,0 +1,29 @@
+import java.util.*;
+import java.lang.*;
+enum a{
+	red("∞•‡À‡À‡À‡À∫£"),
+	blue("hahhah"),
+	haha("asdsad"),
+	giveme5("sdsdsdsdsd");
+	private String s;
+	a(String s){
+		this.s=s;
+		
+	}
+	String gets()
+	{
+		return s;
+	}
+}
+public class please {
+	public static void main(String args[])
+	{	a i;
+	 a abc=a.blue;
+	 i=abc;
+	 abc=a.haha;
+	 System.out.println(abc.gets());
+	 System.out.println(i.gets());
+	 
+	 
+    }
+}

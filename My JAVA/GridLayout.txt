@@ -1,0 +1,68 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame  text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		//text.setSize(1200,700);
+		text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	
+	public frame()
+	{
+		JTextArea area=new JTextArea(1,20);
+		panel2.add(area);
+		panel1.setLayout(new GridLayout(2,2,200,0));
+		panel1.setBorder(BorderFactory.createMatteBorder(15, 15, 15, 15,Color.WHITE));
+		JButton button3=new JButton(new getaction("cyan","set border color",new ImageIcon("bling.png"),Color.CYAN));
+		JButton button4=new JButton(new getaction("black","set border color",new ImageIcon("bling.png"),Color.BLACK));
+		JButton button1=new JButton(new getaction("pink","set border color",new ImageIcon("bling.png"),Color.pink));
+		JButton button2=new JButton(new getaction("magenta","set border color",new ImageIcon("bling.png"),Color.MAGENTA));
+		panel1.add(button1);
+		panel1.add(button2);
+		panel1.add(button3);
+		panel1.add(button4);
+		add(panel2,BorderLayout.NORTH);
+		add(panel1);
+		pack();
+		
+	}
+	class getaction extends AbstractAction
+	{
+		Border border;
+		public getaction(String name,String des,Icon icon,Color color)
+		{
+			putValue(NAME, name);
+			putValue(SHORT_DESCRIPTION, des);
+			putValue(SMALL_ICON, icon);
+			border=BorderFactory.createMatteBorder(15, 15, 15, 15,color);
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			panel1.setBorder(border);
+			
+		}
+		
+	}
+}

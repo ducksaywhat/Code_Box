@@ -1,0 +1,50 @@
+import javax.swing.*;
+import java.awt.geom.*;
+
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				frame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("Hey");
+				text.setVisible(true);
+			}
+		});
+	}
+}
+class frame extends  JFrame
+{
+	public frame()
+	{
+		add(new frameComponent());
+		pack();
+	}
+}
+class frameComponent extends JComponent
+{
+	private static final int DEFAULT_WIDTH=800;
+	private static final int DEFAULT_HEIGHT=600;
+	public void paintComponent(Graphics g)
+	{
+		Graphics2D g2=(Graphics2D) g;
+		//draw a rectangle
+		double leftX=100;
+		double topY=100;
+		double width=200;
+		double height=150;
+		
+		Color newcolor=new Color(0,0,223);
+		g2.setPaint(newcolor);
+		Rectangle2D rect=new Rectangle2D.Double(leftX,topY,width,height);
+		g2.draw(rect);
+		rect=new Rectangle2D.Double(200,200,200,200);
+		g2.draw(rect);
+	}
+	public Dimension getPreferredSize(){return new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT);}
+	
+}

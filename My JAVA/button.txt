@@ -1,0 +1,93 @@
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+			}
+			
+				});
+		
+		
+	}
+}
+class frame extends JFrame 
+{
+	private JPanel button;
+	
+	public frame()
+	{
+		//add(new ImageComponent());
+		pack();
+		JButton yellow=new JButton("Yellow");
+		JButton white=new JButton("white");
+		JButton yangmi=new JButton("—Ó√›");
+		button=new JPanel();
+		button.add(yellow);
+		button.add(white);
+		button.add(yangmi);
+		add(button);
+		action yellowaction=new action(Color.YELLOW);
+		action whiteaction=new action(Color.white);
+		action1 yangmiaction=new action1();
+		yellow.addActionListener(yellowaction);
+		white.addActionListener(whiteaction);
+		yangmi.addActionListener(yangmiaction);
+	}
+	class action implements ActionListener
+	{
+		private Color backgroundColor;
+		public action(Color c)
+		{
+			backgroundColor=c;
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    button.setBackground(backgroundColor);
+		}
+		
+	}
+	class action1 implements ActionListener
+	{
+		private Image image;
+		public action1()
+		{
+			image=new ImageIcon("image.jpg").getImage();
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+		    button.getGraphics().drawImage(image, 200, 80,363,420, null);
+		}
+	}
+	public Dimension getPreferredSize(){return new Dimension(800,600);}
+}
+/*class ImageComponent extends JComponent
+{
+	private static final int DEFAULT_WIDTH=800;
+	private static final int DEFAULT_HEIGHT=600;
+	private Image image;
+	public ImageComponent()
+	{
+	   image=new ImageIcon("image.jpg").getImage();
+	}
+		public void paintComponent(Graphics g)
+		{
+			if(image==null) return;
+
+			g.drawImage(image, 0, 0,363,420, null);
+			
+		}
+
+	
+	public Dimension getPreferredSize(){return new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT);}
+}*/

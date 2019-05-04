@@ -1,0 +1,26 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		ArrayList<Double>abc=new ArrayList<>();
+		ArrayList<Double>a=new ArrayList<>();
+		a.add(new Double(5));
+		a.add(new Double(6));
+		abc.add(new Double(1));
+		abc.add(new Double(2));
+		abc.add(new Double(3));
+		abc.add(new Double(4));
+		abc.addAll(a);
+		ListIterator<Double> it=abc.listIterator();
+		int ab=it.next().intValue();
+		System.out.println(ab);
+		System.out.println(it.previousIndex());
+		System.out.println(it.nextIndex());
+		ab=it.previous().intValue();
+		System.out.println(ab);
+		System.out.println(it.nextIndex());
+		
+	}
+}

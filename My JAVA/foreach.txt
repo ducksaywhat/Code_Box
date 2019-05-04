@@ -1,0 +1,13 @@
+public class fun{
+	public static void main(String args[])
+	{
+		int a[]=new int[10];
+		int i=0;
+		for(int asd:a)//这里的“asd”是暂时存放。不能用于赋值吗？有待进一步研究
+			asd=i++;
+		for(int elem:a)
+			System.out.println(elem);
+		
+		
+	}
+}

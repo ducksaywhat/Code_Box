@@ -1,0 +1,15 @@
+public class fun{
+	public static void main(String []args)
+	{
+		/*final int a;
+		a=10;
+		a=20;*/
+		final int[] a=new int[1];
+		a[0]=50;
+		System.out.println(a[0]);
+		a[0]=60;
+		System.out.println(a[0]);
+		
+		
+	}
+}

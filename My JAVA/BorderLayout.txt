@@ -1,0 +1,50 @@
+
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		text.setSize(1200,700);
+		text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel=new JPanel();
+	public frame()
+	{
+		JButton Abutton=new JButton("A");
+		JButton Bbutton=new JButton("B");
+		JButton Cbutton=new JButton("C");
+		JButton Dbutton=new JButton("D");
+		JButton Ebutton=new JButton("E");
+		panel.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
+        panel.add(Abutton, BorderLayout.NORTH);
+        panel.add(Bbutton, BorderLayout.SOUTH);
+        panel.add(Cbutton, BorderLayout.WEST);
+        panel.add(Dbutton, BorderLayout.EAST);
+        panel.add(Ebutton);
+        add(panel);
+        //panel.setLayout(new BorderLayout());//it's not work if it set here
+        pack();
+		
+	}
+	
+}

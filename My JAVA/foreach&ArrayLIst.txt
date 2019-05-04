@@ -1,0 +1,39 @@
+package fun;
+import java.util.*;
+class b
+{
+	int x;
+	b(int x)
+	{
+		this.x=x;
+	}
+}
+public class fun
+{
+	public static void main(String args[])
+	{
+		ArrayList<b> abc=new ArrayList<>();
+		int i=0;
+		while(i<5)
+		{
+			b newone=new b(i);
+			abc.add(newone);
+			i++;
+		}
+		i=0;
+		while(i<abc.size())
+		{
+			if(i==3)
+			{
+				abc.remove(i);
+			}
+			i++;
+		}
+		for(b q:abc)
+		{
+			System.out.println(q.x);
+		}
+		
+		
+	}
+}

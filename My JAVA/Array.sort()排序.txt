@@ -1,0 +1,11 @@
+import java.util.Arrays;
+
+public class fun{
+	public static void main(String args[])
+	{
+		int[]a={50,100,200,3132,12,12,1,45,465,1,321};
+		Arrays.sort(a);
+		
+		System.out.println(Arrays.toString(a));
+	}
+}

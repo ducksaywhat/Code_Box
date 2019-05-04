@@ -1,0 +1,233 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import java.io.*;
+import javax.swing.filechooser.FileFilter;
+import java.beans.*;
+
+import javax.swing.filechooser.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame  text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+	    text.setSize(800,600);
+		//text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel1=new JPanel();
+	Image image=new ImageIcon("yangmiup.jpg").getImage();
+	component c=new component(frame.this);
+	public frame()
+	{
+		//this.setLayout(new BorderLayout());
+		//JPanel panel1=new JPanel();
+		//JPanel panel2=new JPanel();
+		JButton button1=new JButton("ShowJDialog");
+		JButton button2=new JButton("ShowJFileChooser");
+		JButton button3=new JButton("ShowColorChooser1");
+		JButton button4=new JButton("ShowColorChooser2");
+		button1.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				JDialog a=new textJDialog(frame.this,"asdasd",true);
+				//a.setLocation(475, 200); it is ok at all
+				a.setBounds(475,200,300,200);
+				a.setVisible(true);
+			}
+				});
+		button2.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				JFileChooser b=new JFileChooser();
+				b.setDialogTitle("why i so diao");
+				b.setCurrentDirectory(new File("."));
+				//b.setMultiSelectionEnabled(true);
+				b.setFileFilter(new FileNameExtensionFilter("Image","jpg","png","gif"));
+				b.setFileFilter(new FileNameExtensionFilter("Image2","jpg"));
+				//FileFilter a=new FileNameExtensionFilter("Image3","gif");
+				b.setAccessory(new ImagePreviewer(b));
+				//b.setFileFilter(a);
+				//b.setFileView(new FileIconView(a,new ImageIcon("blingup.png")));
+				int result=b.showOpenDialog(frame.this);
+				if(result==JFileChooser.APPROVE_OPTION)
+				{
+					String path=b.getSelectedFile().getPath();
+					image=new ImageIcon(path).getImage();
+					c.repaint();
+				}
+			}
+				});
+		/*button3.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				JColorChooser chooser=new JColorChooser();
+				JDialog Dialog=chooser.createDialog(frame.this, "ColorChooser", false, chooser, new ActionListener()
+						{
+					public void actionPerformed(ActionEvent event)
+					{
+						Border a=BorderFactory.createMatteBorder(15, 15, 15, 15, chooser.getColor());
+						panel2.setBorder(a);
+					}
+						},null);
+				chooser.setColor(getBackground());
+				Dialog.setVisible(true);
+			}
+				}); */
+		button4.addActionListener(new changecolor());
+		
+		panel1.add(button1);
+		panel1.add(button2);
+	    //add(button3);
+		panel1.add(button4);
+		add(panel1);
+		//panel2.add(c);
+		//add(panel2,BorderLayout.SOUTH);
+		//add(panel1);
+		pack();
+		//JDialog a=new textJDialog(this,"asdasd",true);
+		//a.setVisible(true);
+		
+	}
+	class changecolor implements ActionListener
+	{
+		private JDialog dialog;
+		private JColorChooser chooser;
+		public changecolor()
+		{
+			chooser=new JColorChooser();
+			chooser.getSelectionModel().addChangeListener(new ChangeListener()
+					{
+				public void stateChanged(ChangeEvent event)
+				{
+					//Border a=BorderFactory.createMatteBorder(15, 15, 15, 15, chooser.getColor());
+					panel1.setBackground(chooser.getColor());
+				}
+					});
+			dialog=new JDialog((Frame)null,false);
+			dialog.add(chooser);
+			dialog.pack();
+
+			
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+
+			chooser.setColor(getBackground());
+			dialog.setVisible(true);
+			
+		}
+	}
+	
+}
+class textJDialog extends JDialog
+{
+	public textJDialog(JFrame owner,String name,boolean model)
+	{
+		super(owner,name,model);
+		this.setIconImage(new ImageIcon("yangmiup.jpg.").getImage());
+		add(new Label("lalallalal Label"));
+		JPanel panel=new JPanel();
+		JButton ok=new JButton("OK");
+		ok.addActionListener(new ActionListener()
+				{
+		public void actionPerformed(ActionEvent event)
+		{
+			setVisible(false);
+		}
+				});
+		panel.add(ok);
+		add(panel,BorderLayout.SOUTH);
+		//setSize(250,150);
+	}
+}
+class component extends JComponent
+{
+	private frame owner;
+	public component(frame frame)
+	{
+		this.owner=frame;
+	    this.setSize(50,50);
+	}
+	public void paintComponent(Graphics g)
+	{
+		g.drawImage(owner.image,100,100,200,200,null);
+	}
+	public Dimension getPreferredSize(){return new Dimension(400,400);}
+}
+class FileIconView extends FileView
+{
+	public FileIconView(FileFilter aFilter,Icon anIcon)
+	{
+		filter=aFilter;
+		icon=anIcon;
+	}
+	public Icon getIcon(File f)
+	{
+		if(!f.isDirectory()&&filter.accept(f))
+			return icon;
+		else
+			return null;
+	}
+	private FileFilter filter;
+	private Icon icon;
+}
+class ImagePreviewer extends JLabel
+{
+	public ImagePreviewer(JFileChooser chooser)
+	{
+		setPreferredSize(new Dimension(100,10));
+		setBorder(BorderFactory.createEtchedBorder());
+		chooser.addPropertyChangeListener(new PropertyChangeListener()
+				{
+		public void propertyChange(PropertyChangeEvent event)
+		{
+			if(event.getPropertyName()==JFileChooser.SELECTED_FILE_CHANGED_PROPERTY)
+			{
+				File f=(File)event.getNewValue();
+				if(f==null)
+				{
+					setIcon(null);
+					return;
+				}
+				ImageIcon icon=new ImageIcon(f.getPath());
+				if(icon.getIconWidth()>getWidth())icon=new ImageIcon(icon.getImage()
+						.getScaledInstance(getWidth(), -1, Image.SCALE_DEFAULT));
+				setIcon(icon);
+			}
+		}
+				});
+		
+	}
+}
+
+
+
+
+
+
+
+
+

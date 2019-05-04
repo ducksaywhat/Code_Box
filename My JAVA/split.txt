@@ -1,0 +1,30 @@
+package fun2;
+import java.io.*;
+import java.util.Scanner;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		Scanner in=new Scanner(new FileInputStream("C:/Users/wwx/Desktop/text.txt"));
+		String str="";
+		str=in.nextLine();
+		String[]tokens=str.split("\\|");
+		String string=tokens[0];
+		int a=Integer.parseInt(tokens[1]);
+		double b=Double.parseDouble(tokens[2]);
+		int c=Integer.parseInt(tokens[3]);
+		char d=tokens[4].charAt(0);
+		boolean e=((Integer.parseInt(tokens[5])>0)? true:false);
+		System.out.println(string);
+		System.out.println(a);
+		System.out.println(b);
+		System.out.println(c);
+		System.out.println(d);
+		System.out.println(e);
+	}
+}

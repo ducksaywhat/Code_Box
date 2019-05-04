@@ -1,0 +1,40 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		HashSet hs=new HashSet();
+		hs.add(50);
+		hs.add(new Double(50.0));
+		hs.add(new String("asdasdasd"));
+		hs.add(66);
+		hs.add(0);
+		Iterator it=hs.iterator();
+		System.out.println("Iterator");
+		while(it.hasNext())
+		{
+			System.out.println(it.next().toString());
+		}
+		System.out.println("For each");
+		for(Object ob:hs)
+		{
+			System.out.println(ob.toString());
+		}
+	}
+}
+/*
+ * Iterator
+0
+50
+66
+50.0
+asdasdasd
+For each
+0
+50
+66
+50.0
+asdasdasd//Set is disordered
+ */
+*/

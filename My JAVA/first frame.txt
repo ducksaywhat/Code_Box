@@ -1,0 +1,28 @@
+import java.awt.*;
+import javax.swing.*;
+
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				frame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setVisible(true);
+			}
+		});
+	}
+}
+class frame extends JFrame
+{
+	private static final int DEFAULT_WIDTH=300;
+	private static final int DEFAULT_HEIGHT=200;
+	public frame()
+	{
+		setSize(DEFAULT_WIDTH,DEFAULT_HEIGHT);
+	}
+	
+}

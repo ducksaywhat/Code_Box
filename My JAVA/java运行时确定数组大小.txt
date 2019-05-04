@@ -1,0 +1,33 @@
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+
+ 
+  private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		System.out.println("  "+q.getasd());
+		int e;
+		e=5;
+		a[]w=new a[e]; //运行时确定数组大小，c不可以
+
+		
+		
+
+
+     
+		
+		
+
+		
+	}
+	}

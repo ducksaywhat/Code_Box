@@ -1,0 +1,32 @@
+package fun2;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		System.out.println(InetAddress.getLocalHost());
+		try(ServerSocket s=new ServerSocket(8180))
+		{
+			try(Socket incoming=s.accept())
+			{
+				InputStream inStream=incoming.getInputStream();
+				OutputStream outStream=incoming.getOutputStream();
+				try(Scanner in=new Scanner(inStream))
+				{
+					PrintWriter out=new PrintWriter(outStream,true);
+					out.println("Hellow! Enter BYE to exit.");
+					boolean done=false;
+					while(!done&&in.hasNextLine())
+					{
+						String line=in.nextLine();
+						out.println("Echo:"+line);
+						System.out.print("From:"+line);
+						if(line.trim().equals("BYE")) done=true;
+					}
+				}
+			}
+		}
+	}
+}

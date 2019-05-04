@@ -1,0 +1,98 @@
+package fun2;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		man[]men=new man[3];
+		men[0]=new man("qqq",1111,1998,5,20);
+		men[1]=new man("www",1112,1995,2,15);
+		men[2]=new man("eee",1113,1996,1,10);
+		try(DataOutputStream out=new DataOutputStream(new FileOutputStream("C:/Users/wwx/Desktop/text.dat")))
+		{
+			for(man one:men)
+			{
+				writeData(out,one);
+			}
+			out.close();
+		}
+		try(RandomAccessFile in=new RandomAccessFile("C:/Users/wwx/Desktop/text.dat","r"))
+		{
+			int n=(int)(in.length()/man.RECORD_SIZE);
+			men=new man[n];
+			for(int i=n-1;i>=0;i--)
+			{
+				in.seek(i*man.RECORD_SIZE);
+				men[n-i-1]=readData(in);
+			}
+			in.close();
+			for(man one:men)
+			{
+				System.out.println("Name:"+one.name+"ID:"+one.IDnumber+"birthday:"+one.birthday.getTime());
+			}
+			
+		}
+	}
+	public static void writeData(DataOutput out,man one)throws IOException
+	{
+		writeFixedString(one.name,one.NAME_SIZE,out);
+		out.writeDouble(one.IDnumber);
+		GregorianCalendar calendar=new GregorianCalendar();
+		calendar.setTime(one.birthday);
+		out.writeInt(calendar.get(Calendar.YEAR));
+		out.writeInt(calendar.get(Calendar.MONTH)-1);
+		out.writeInt(calendar.get(Calendar.DAY_OF_MONTH));
+	}
+	public static man readData(DataInput in)throws IOException
+	{
+		String name=readFixedString(man.NAME_SIZE,in);
+		double IDnumber=in.readDouble();
+		int y=in.readInt();
+		int m=in.readInt();
+		int d=in.readInt();
+		return new man(name,IDnumber,y,m-1,d);
+	}
+	public static void writeFixedString(String s,int size,DataOutput out) throws IOException
+	{
+		for(int i=0;i<size;i++)
+		{
+			char ch=0;
+			if(i<s.length())ch=s.charAt(i);
+			out.writeChar(ch);
+		}
+	}
+	public static String readFixedString(int size ,DataInput in)throws IOException
+	{
+		StringBuilder b=new StringBuilder(size);
+		int i=0;
+		boolean more=true;
+		while(more&&i<size)
+		{
+			char ch=in.readChar();
+			i++;
+			if(ch==0)more=false;
+			else b.append(ch);
+		}
+		in.skipBytes(2*(size-i));
+		return b.toString();
+		
+	}
+}
+class man
+{
+	String name;
+	static int NAME_SIZE=5;
+	static int RECORD_SIZE=30;
+	Date birthday;
+	double IDnumber;
+	public man(String n,double i,int year,int month,int day)
+	{
+		name=n;
+		IDnumber=i;
+		birthday=(new GregorianCalendar(year,month-1,day).getTime());
+	}
+}

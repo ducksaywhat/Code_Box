@@ -1,0 +1,26 @@
+class a{
+
+	private int num=565;
+	private String name="asdasdasd";
+	public void getname()
+	{
+		System.out.println(name+num);
+	
+	}
+	
+}
+class b extends a{
+	public void getname(){
+		System.out.println("mbbb");
+		super.getname();
+	}
+}
+public class fun{
+	public static void main(String args[])
+	{
+		a asd=new b();
+		asd.getname();
+		asd=new a();
+		asd.getname();
+	}
+}

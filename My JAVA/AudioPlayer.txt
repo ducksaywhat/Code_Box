@@ -1,0 +1,51 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import sun.audio.*;
+import java.io.*;
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("hey hey some like it hot");
+				text.setVisible(true);
+				text.setSize(800,600);
+				text.setResizable(false);
+				
+
+			}		
+				});
+	}
+}
+class frame extends JFrame 
+{
+	frame()
+	{
+	try {
+		InputStream in = new FileInputStream("demo.au");
+		AudioStream as = new AudioStream(in);
+		AudioPlayer.player.start(as);
+		   //如果要实现循环播放，则用下面的三句取代上面的“AudioPlayer.player.start(as);”这句?
+		   //AudioData data = as.getData();?
+		   //ContinuousAudioDataStream gg= new ContinuousAudioDataStream (data);?
+		   //AudioPlayer.player.start(gg);// Play audio.?
+		//System.out.println(as.getData());
+		//ContinuousAudioDataStream gg=new ContinuousAudioDataStream(data);
+		//AudioPlayer.player.start(gg);
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	};
+}
+}

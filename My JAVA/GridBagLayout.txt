@@ -1,0 +1,130 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame  text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		//text.setSize(1200,700);
+		//text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	
+	public frame()
+	{
+		GridBagLayout layout=new GridBagLayout();
+		panel1.setLayout(layout);
+		JTextArea area=new JTextArea(1,20);
+		panel1.setBorder(BorderFactory.createMatteBorder(15, 15, 15, 15,Color.WHITE));
+		JButton button3=new JButton(new getaction("cyan","set border color",new ImageIcon("bling.png"),Color.CYAN));
+		JButton button4=new JButton(new getaction("black","set border color",new ImageIcon("bling.png"),Color.BLACK));
+		JButton button1=new JButton(new getaction("pink","set border color",new ImageIcon("bling.png"),Color.pink));
+		JButton button2=new JButton(new getaction("magenta","set border color",new ImageIcon("bling.png"),Color.MAGENTA));
+		JButton button5=new JButton("abcde");
+		JButton button6=new JButton("abcdef");
+		JButton button7=new JButton("lalall");
+		panel1.add(button1,new CGB(0,0).setFill(CGB.BOTH).setAnchor(CGB.WEST).setweight(50,100));
+		panel1.add(button2,new CGB(1,0).setFill(CGB.BOTH).setweight(100, 100).setInsets(20));
+		panel1.add(button3,new CGB(0,1).setFill(CGB.BOTH).setAnchor(CGB.WEST).setweight(50,10));
+		panel1.add(button4,new CGB(1,1).setFill(CGB.BOTH).setweight(100,10).setInsets(20));
+		panel1.add(button5,new CGB(0,2,2,1).setAnchor(CGB.WEST).setweight(100, 100));
+		panel1.add(button6,new CGB(0,3,2,1).setAnchor(CGB.CENTER).setweight(100, 100).setIpad(150, 10));
+		panel1.add(area,new CGB(2,0,1,4).setFill(CGB.BOTH).setweight(100, 100));
+		//add(panel2,BorderLayout.NORTH);
+		add(panel1);
+		pack();
+		
+	}
+	class getaction extends AbstractAction
+	{
+		Border border;
+		public getaction(String name,String des,Icon icon,Color color)
+		{
+			putValue(NAME, name); 
+			putValue(SHORT_DESCRIPTION, des);
+			putValue(SMALL_ICON, icon);
+			border=BorderFactory.createMatteBorder(15, 15, 15, 15,color);
+		}
+		public void actionPerformed(ActionEvent event)
+		{
+			panel1.setBorder(border);
+			
+		}
+		
+	}
+}
+class CGB extends GridBagConstraints
+{
+	public CGB(int gridx,int griy)
+	{
+		this.gridx=gridx;
+		this.gridy=gridy;
+	}
+	public CGB(int gridx,int griy,int gridwidth,int gridheight)
+	{
+		this.gridx=gridx;
+		this.gridy=gridy;
+		this.gridwidth=gridwidth;
+		this.gridheight=gridheight;
+	}
+	public CGB setAnchor(int anchor)
+	{
+		this.anchor=anchor;
+		return this;
+	}
+	public CGB setFill(int fill)
+	{
+		this.fill=fill;
+		return this;
+	}
+	public CGB setweight(double weightx,double weighty)
+	{
+		this.weightx=weightx;
+		this.weighty=weighty;
+		return this;
+	}
+	public CGB setInsets(int distance)
+	{
+		this.insets=new Insets(distance,distance,distance,distance);
+		return this;
+	}
+	public CGB setInsets(int top,int left,int bottom,int right)
+	{
+		this.insets=new Insets(top,left,bottom,right);
+		return this;
+	}
+	public CGB setIpad(int ipadx,int ipady)
+	{
+		this.ipadx=ipadx;
+		this.ipady=ipady;
+		return this;
+	}
+	
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+package fun2;
+import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class fun2 {
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame frame=new textFrame();
+				frame.setTitle("just for text baby");
+				frame.setPreferredSize(new Dimension(500,300));
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setVisible(true);
+			}
+				});
+	}
+}
+class textFrame extends JFrame
+{
+	static int num=1;
+	public synchronized void yoyo(int a)
+	{
+		System.out.println(a+""+a);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	public textFrame()
+	{
+		JPanel panel1=new JPanel();
+		JButton button1=new JButton("Good");
+		button1.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent e)
+			{
+				new Thread()
+				{
+					public void run()
+					{
+						int a=num++;
+						for(int i=0;i<500;i++)
+						{
+							yoyo(a);
+						}
+					}
+				}.start();
+			}
+				});
+		panel1.add(button1);
+		panel1.setPreferredSize(new Dimension(500,300));
+	    add(panel1);
+	    pack();
+	    
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

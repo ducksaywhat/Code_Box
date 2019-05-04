@@ -1,0 +1,19 @@
+package fun2;
+import java.nio.channels.FileChannel;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		FileChannel fcin=new FileInputStream("C:/Users/wwx/Desktop/text.txt").getChannel();
+		FileChannel fcout=new FileOutputStream("C:/Users/wwx/Desktop/123/text1.txt").getChannel();
+		long start=System.currentTimeMillis();
+		fcout.transferFrom(fcin, 0, fcin.size());
+		long end=System.currentTimeMillis();
+		System.out.println(start-end+"milliseconds");
+		fcin.close();
+		fcout.close();
+	}
+}

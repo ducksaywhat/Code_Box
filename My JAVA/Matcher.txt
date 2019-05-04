@@ -1,0 +1,17 @@
+package fun2;
+import java.nio.channels.FileChannel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		String patternString="<\\s[^6~9]*abc\\s*>";
+		Pattern pattern=Pattern.compile(patternString, Pattern.CASE_INSENSITIVE);
+		Matcher matcher=pattern.matcher("<  asdasdasdasdac    >");
+		if(matcher.find())System.out.println("yeah");
+	}
+}

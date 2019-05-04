@@ -1,0 +1,13 @@
+package fun2;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		InetAddress address=InetAddress.getByName("www.baidu.com");
+		byte[] addressBytes=address.getAddress();
+		System.out.println(address);
+	}
+}

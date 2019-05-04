@@ -1,0 +1,16 @@
+package fun2;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		String a="abcdefghijklmn";
+		int[]b=new int[15];
+		for(int i=0;i<a.length();i++)
+		{
+			b[i]=a.charAt(i);
+		}
+		for(int i:b)
+		{
+			System.out.println((char)i+" "+i);
+		}
+	}
+}

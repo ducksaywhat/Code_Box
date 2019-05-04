@@ -1,0 +1,27 @@
+public class fun{
+
+	public static void main(String []args)
+	{
+		Object[] obj=new Object[10];
+		obj[0]=50;
+		obj[1]=5055.5;
+		obj[2]='a';
+		obj[2]="asdasfasd";
+		for(Object a:obj)
+			System.out.println(a);
+	}
+}
+//结果为：
+/*
+ * 50
+5055.5
+asdasfasd
+null
+null
+null
+null
+null
+null
+null
+ */
+//Object类的自动拆装箱子

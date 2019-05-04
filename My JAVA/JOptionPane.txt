@@ -1,0 +1,170 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame  text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		//text.setSize(1200,700);
+		//text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	Icon image=new ImageIcon("yangmibiu.png");
+	private ButtonPanel typePanel;
+	private ButtonPanel messagePanel;
+	private ButtonPanel messageTypePanel;
+	private ButtonPanel optionTypePanel;
+	private ButtonPanel optionsPanel;
+	private ButtonPanel inputPanel;
+	private String messageString="Message";
+	private Icon messageIcon =image;
+	private Object messageObject=new Date();
+	private Component messageComponent=new SampleComponent();
+	public frame()
+	{
+		JPanel gridPanel=new JPanel();
+		gridPanel.setLayout(new GridLayout(2,3));
+		
+		typePanel=new ButtonPanel("Type","Message","Confirm","Option","Input");
+		messageTypePanel=new ButtonPanel("Message Type","ERROR_MESSAGE","INFORMATION_MESSAGE");
+		messagePanel=new ButtonPanel("Message","String","Icon","Component","Other","Object[]");
+		optionTypePanel=new ButtonPanel("Confirm","DEFAULT_OPTION","YES_NO_OPTION");
+		optionsPanel=new ButtonPanel("Option","String[]","Icon[]","Object[]");
+		inputPanel=new ButtonPanel("Input","Text field","Combo box");
+		gridPanel.add(typePanel);
+		gridPanel.add(messageTypePanel);
+		gridPanel.add(messagePanel);
+		gridPanel.add(optionTypePanel);
+		gridPanel.add(optionsPanel);
+		gridPanel.add(inputPanel);
+		JPanel showPanel =new JPanel();
+		JButton showButton=new JButton("show");
+		showPanel.add(showButton);
+		showButton.addActionListener(new ShowAction());
+		add(gridPanel,BorderLayout.CENTER);
+		add(showPanel,BorderLayout.SOUTH);
+		pack();	
+	}
+	public Object getMessage()
+	{
+		String s=messagePanel.getSelection();
+		if(s.equals("String"))return messageString;
+		else if(s.equals("Icon"))return messageIcon;
+		else if(s.equals("Component"))return messageComponent;
+		else if(s.equals("Object[]"))return new Object[]
+				{
+						messageString,messageIcon,messageComponent,messageObject
+				};
+		else if(s.equals("Other"))return messageObject;
+		else return null;
+	}
+	public Object[] getOptions()
+	{
+		String s=optionsPanel.getSelection();
+		if(s.equals("String[]"))return new String[]{"yellow","Blue","Red"};
+		else if(s.equals("Icon[]"))return new Icon[]{image,image,image};
+		else if(s.equals("Object[]"))return new Object[]{messageString,messageIcon,messageComponent,messageObject};
+		else return null;
+	}
+	public int getType(ButtonPanel panel)
+	{
+		String s=panel.getSelection();
+		try
+		{
+			return JOptionPane.class.getField(s).getInt(null);
+		}
+		catch(Exception e)
+		{
+			return -1;
+			
+		}
+		
+	}
+	private class ShowAction implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			if(typePanel.getSelection().equals("Confirm"))JOptionPane.showConfirmDialog(frame.this,getMessage(),
+					"Title",getType(optionTypePanel),getType(messageTypePanel));
+			else if(typePanel.getSelection().equals("Input"))
+			{
+				if(inputPanel.getSelection().equals("Text field")) JOptionPane.showInputDialog(
+						frame.this,getMessage(),"Title",getType(messageTypePanel)
+				);
+				else
+					JOptionPane.showInputDialog(frame.this,getMessage(),"Title",getType(messageTypePanel),
+							null,new String[]{"yellow","Blue","Red"},"Blue");
+					}
+					else if(typePanel.getSelection().equals("Message"))JOptionPane.showMessageDialog(frame.this,
+							getMessage(),"Title",getType(messageTypePanel));
+					else if(typePanel.getSelection().equals("Option"))JOptionPane.showOptionDialog(frame.this,
+							getMessage(),"Title", getType(optionTypePanel),getType(messageTypePanel),null,getOptions(),getOptions()[0]);
+		}
+		
+	}
+}
+class SampleComponent extends JComponent
+{
+	
+	public void paintComponent(Graphics g)
+	{
+	Graphics2D g2=(Graphics2D)g;
+	Rectangle2D rect=new Rectangle2D.Double(0,0,getWidth()-1,getHeight()-1);
+	g2.setPaint(Color.PINK);
+	g2.fill(rect);
+	g2.setPaint(Color.CYAN);
+	g2.draw(rect);
+	}
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(50,50);
+	}
+	
+}
+class ButtonPanel extends JPanel
+{
+	private ButtonGroup group;
+	public ButtonPanel(String title,String... options)
+	{
+		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),title));
+		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+		group=new ButtonGroup();
+		for(String option:options)
+		{
+			JRadioButton b=new JRadioButton(option);
+			b.setActionCommand(option);
+			add(b);
+			group.add(b);
+			b.setSelected(option==options[0]);
+		}
+	}
+	public String getSelection()
+	{
+		return group.getSelection().getActionCommand();
+	}
+}
+
+
+
+
+
+
+
+

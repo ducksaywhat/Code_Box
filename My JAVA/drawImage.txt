@@ -1,0 +1,49 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+				{
+			public void run()
+			{
+				JFrame frame=new ImageFrame();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setTitle("image test");
+				frame.setVisible(true);
+				
+			}
+				});
+		
+	}
+}
+class ImageFrame extends JFrame
+{
+	public ImageFrame()
+	{ 
+		add(new ImageComponent());
+		pack();
+	}
+}
+class ImageComponent extends JComponent
+{
+	private static final int DEFAULT_WIDTH=800;
+	private static final int DEFAULT_HEIGHT=600;
+	private Image image;
+	public ImageComponent()
+	{
+		if(image==null) System.out.println("asdasd");
+	   image=new ImageIcon("image.jpg").getImage();
+	   if(image==null) System.out.println("asdasd");
+	}
+		public void paintComponent(Graphics g)
+		{
+			if(image==null) return;
+
+			g.drawImage(image, 0, 0,363,420, null);
+			
+		}
+	public Dimension getPreferredSize(){return new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT);}
+}

@@ -1,0 +1,42 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		ab abc=null;
+		String classname;
+		Scanner scan=new Scanner(System.in);
+		classname=scan.nextLine();//there in "fun2.ab" or "fun2.b". 
+		try
+		{
+			abc=(ab)Class.forName(classname).newInstance();
+			System.out.println("WTF???");
+		}
+		catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
+		{
+		}
+		abc.show();
+		scan.close();
+		
+	}
+}
+class ab//when it was "a" the task gone wrong,when it was ab ,it's ok,i don't know why.
+{
+	public ab(){};
+	public void show()
+	{
+		System.out.println("Nice Day!");
+	}
+}
+class b extends ab
+{
+	public b(){};
+	public void show()
+	{
+		System.out.println("Nice Day My Man!");
+	}
+}
+/*
+"A a=new A();"=="A a=(A)Class.forName(ClassName(like package.class)).newInstance();"
+*/

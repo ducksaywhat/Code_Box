@@ -1,0 +1,79 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame  text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+	    text.setSize(1200,700);
+		//text.setResizable(false);
+	}		
+		});
+	}
+}
+class frame extends JFrame
+{
+	public frame()
+	{
+		JPanel panel=new JPanel();
+		JButton button=new JButton("Show");
+		button.addActionListener(new ActionListener()
+				{
+			public void actionPerformed(ActionEvent event)
+			{
+				JDialog a=new textJDialog(frame.this,"asdasd",true);
+				//a.setLocation(475, 200); it is ok at all
+				a.setBounds(475, 200, 500, 500);
+				a.setVisible(true);
+			}
+				});
+		panel.add(button);
+		add(panel);
+		pack();
+		//JDialog a=new textJDialog(this,"asdasd",true);
+		//a.setVisible(true);
+		
+	}
+	
+}
+class textJDialog extends JDialog
+{
+	public textJDialog(JFrame owner,String name,boolean model)
+	{
+		super(owner,name,model);
+		add(new Label("lalallalal Label"));
+		JPanel panel=new JPanel();
+		JButton ok=new JButton("OK");
+		ok.addActionListener(new ActionListener()
+				{
+		public void actionPerformed(ActionEvent event)
+		{
+			setVisible(false);
+		}
+				});
+		panel.add(ok);
+		add(panel,BorderLayout.SOUTH);
+		setSize(250,150);
+	}
+}
+
+
+
+
+
+
+
+

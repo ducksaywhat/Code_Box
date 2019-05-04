@@ -1,0 +1,23 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		HashSet hs=new HashSet();
+		hs.add(50);
+		hs.add(new Double(50.0));
+		hs.add(new String("asdasdasd"));
+		Iterator it=hs.iterator();
+		System.out.println("Iterator");
+		while(it.hasNext())
+		{
+			System.out.println(it.next().toString());
+		}
+		System.out.println("For each");
+		for(Object ob:hs)
+		{
+			System.out.println(ob.toString());
+		}
+	}
+}

@@ -1,0 +1,32 @@
+import java.lang.Object;
+
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+ protected void finalize()
+ {
+	 System.out.println("lalalacomeon");
+ }
+
+	private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		System.out.println("  "+q.getasd());
+	    q.finalize();
+     
+		
+		
+
+		
+	}
+	}
+//Îö¹¹º¯Êý

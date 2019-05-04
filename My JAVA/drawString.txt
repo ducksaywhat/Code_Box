@@ -1,0 +1,42 @@
+import java.awt.*;
+import javax.swing.*;
+
+public class fun
+{
+	public static void main(String arg[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				frame text=new frame();
+				text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				text.setTitle("Hey");
+				text.setVisible(true);
+			}
+		});
+	}
+}
+class frame extends  JFrame
+{
+	public frame()
+	{
+		add(new frameComponent());
+		pack();
+	}
+}
+class frameComponent extends JComponent
+{
+	public static final int MeSSAGE_X=296;
+	public static final int MeSSAGE_Y=250;
+	
+	private static final int DEFAULT_WIDTH=800;
+	private static final int DEFAULT_HEIGHT=600;
+	public void paintComponent(Graphics p)
+	{
+		p.drawString("Yuyan",315,280 );
+		p.drawString("i love you",307,300);
+	}
+	public Dimension getPreferredSize(){return new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT);}
+	
+}

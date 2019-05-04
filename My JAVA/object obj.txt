@@ -1,0 +1,31 @@
+import java.lang.Object;
+
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+
+
+	private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		System.out.println("  "+q.getasd());
+        Object obj=q;
+        a w=(a)obj;
+        System.out.println("  "+w.getasd());
+        
+		
+		
+
+		
+	}
+	}
+//clon£¿

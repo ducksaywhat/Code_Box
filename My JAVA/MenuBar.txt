@@ -1,0 +1,160 @@
+package fun;
+import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import java.util.*;
+import java.awt.geom.*;
+import javax.swing.border.*;
+public class fun
+{
+	//Image imageup=new ImageIcon("bling.png").getImage();
+	public static void main(String args[])
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+	public void run()
+	{
+		JFrame text=new frame();
+		text.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		text.setTitle("Text");
+		text.setVisible(true);
+		text.setSize(1200,700);
+		text.setResizable(false);
+		text.setJMenuBar(makemenu());
+	}		
+		});
+	}
+	public static JMenuBar makemenu()
+	{
+		JMenuBar menubar=new JMenuBar();
+		JMenu editmenu=new JMenu("Edit");
+		JMenu menu2=new JMenu("menu2");
+		JMenu innermenu=new JMenu("inner");
+		//JMenuItem pasteItem=new JMenuItem("Paste",new ImageIcon("bling.png"));
+		JMenuItem pasteItem=new JMenuItem("Paste");
+		JMenuItem copyItem=new JMenuItem("Copy");
+		JMenuItem cutItem=new JMenuItem("Cut");
+		JMenuItem innerItem1=new JMenuItem("No.1");
+		JMenuItem innerItem2=new JMenuItem("No.2");
+		JMenuItem innerItem3=new JMenuItem("No.3");
+		editmenu.add(cutItem);
+		editmenu.add(copyItem);
+		editmenu.add(pasteItem);
+		editmenu.addSeparator();
+		editmenu.add(innermenu);
+		innermenu.add(innerItem1);
+		innermenu.add(innerItem2);
+		innermenu.add(innerItem3);
+		ButtonGroup group=new ButtonGroup();
+		JRadioButtonMenuItem radiobutton1=new JRadioButtonMenuItem("No.1");
+		JRadioButtonMenuItem radiobutton2=new JRadioButtonMenuItem("No.2");
+		JRadioButtonMenuItem radiobutton3=new JRadioButtonMenuItem("No.3");
+		JRadioButtonMenuItem radiobutton4=new JRadioButtonMenuItem("No.4");
+		group.add(radiobutton1);
+		group.add(radiobutton2);
+		group.add(radiobutton3);
+		group.add(radiobutton4);
+		menu2.add(radiobutton1);
+		menu2.add(radiobutton2);
+		menu2.add(radiobutton3);
+		menu2.add(radiobutton4);
+		menu2.addSeparator();
+		JCheckBoxMenuItem checkbox1=new JCheckBoxMenuItem("one");
+		JCheckBoxMenuItem checkbox2=new JCheckBoxMenuItem("two");
+		JCheckBoxMenuItem checkbox3=new JCheckBoxMenuItem("three");
+		JCheckBoxMenuItem checkbox4=new JCheckBoxMenuItem("four");
+		menu2.add(checkbox1);
+		menu2.add(checkbox2);
+		menu2.add(checkbox3);
+		menu2.add(checkbox4);
+		menubar.add(editmenu);
+		menubar.add(menu2);
+		return menubar;
+		
+	}
+}
+class frame extends JFrame
+{
+	ButtonGroup group;
+	JPanel panel=new JPanel();
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	public frame()
+	{
+		Border a=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.PINK);
+		Border b=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.CYAN);
+		Border c=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.GRAY);
+		Border d=BorderFactory.createMatteBorder(15, 15, 15, 15,Color.LIGHT_GRAY);
+		//Border b=BorderFactory.createTitledBorder(a,"A title");
+		JButton Abutton=new JButton("A");
+		JButton Bbutton=new JButton("B");
+		JButton Cbutton=new JButton("C");
+		JButton Dbutton=new JButton("D");
+		JButton Ebutton=new JButton("E");
+		JButton Fbutton=new JButton("F");
+		panel.setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
+        panel.add(Abutton,BorderLayout.NORTH);
+        panel.add(Bbutton,BorderLayout.SOUTH);
+        panel.add(Cbutton,BorderLayout.WEST);
+        panel.add(Dbutton,BorderLayout.EAST);
+        panel.add(Ebutton);
+        //panel.setPreferredSize(new Dimension(1200,300));//OK there
+        add(panel,BorderLayout.NORTH);
+        //textarea
+        JTextArea textarea=new JTextArea(10,20);
+        JScrollPane scrollPane=new JScrollPane(textarea);
+        //textarea.setLineWrap(true);
+        //add(scrollPane,BorderLayout.CENTER);
+        //panel1.add(textarea);
+        //panel1.add(scrollPane);
+        group=new ButtonGroup();
+        /*JRadioButton button1=new JRadioButton("no.1",true);
+        JRadioButton button2=new JRadioButton("no.2");
+        JRadioButton button3=new JRadioButton("no.3");
+        JRadioButton button4=new JRadioButton("no.4");
+        //group.add(button4);if one group have only one button the button once have been choice ,it would never change
+        group.add(button3);
+        group.add(button2);
+        group.add(button1);
+        panel1.add(button4);
+        panel1.add(button3);
+        panel1.add(button2);
+        panel1.add(button1);*/
+        addbutton("button1",a);
+        addbutton("button2",b);
+        addbutton("button3",c);
+        addbutton("button4",d);
+        panel1.setBorder(a);
+        panel.setPreferredSize(new Dimension(1200,300));
+        add(panel1);
+        //panel2.add(Fbutton);
+        //Fbutton.setPreferredSize(new Dimension(60,60));
+        panel2.setLayout(null);
+        Fbutton.setBounds(100, 100, 50, 50);//相对于自己！！！
+        panel2.add(Fbutton);
+        panel2.setPreferredSize(new Dimension(200,300));
+        add(panel2,BorderLayout.WEST);
+ 
+        pack();
+	}
+		
+	public void addbutton(String name,Border a)
+	{
+		JRadioButton button=new JRadioButton(name);
+		group.add(button);
+		panel1.add(button);
+		ActionListener listener=new ActionListener()
+		{
+	public void actionPerformed(ActionEvent event)
+	{
+		panel1.setBorder(a);
+	}
+		};
+		button.addActionListener(listener);
+		
+	}
+
+	
+}

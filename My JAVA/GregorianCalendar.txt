@@ -1,0 +1,33 @@
+package fun;
+import java.text.DateFormatSymbols;
+import java.util.*;
+public class fun{
+	public static void main(String args[])
+	{
+		GregorianCalendar a=new GregorianCalendar();
+		//System.out.println(Calendar);
+		int month=a.get(Calendar.MONTH);
+		int day=a.get(Calendar.DAY_OF_MONTH);
+		System.out.println(day);
+		System.out.println(month);
+		a.set(Calendar.DAY_OF_MONTH,1);
+		a.add(Calendar.DAY_OF_MONTH, -1);
+		day=a.get(Calendar.DAY_OF_MONTH);
+		month=a.get(Calendar.MONTH);
+		System.out.println(month);
+		System.out.println(day);
+		
+		
+		
+		 
+	}
+}
+
+/*
+输出结果为：
+3
+3  
+2
+31
+ps；在此类中，11表示12月。3表示4月，此时时间为2017年4月3日23:20:04
+ */

@@ -1,0 +1,76 @@
+package fun2;
+import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		FileInputStream in1=new FileInputStream("C:/Users/wwx/Desktop/Text.txt");
+		FileInputStream in2=new FileInputStream("C:/Users/wwx/Desktop/Text.txt");
+		PushbackInputStream pin1=new PushbackInputStream(new BufferedInputStream(in1),4);
+		PushbackInputStream pin2=new PushbackInputStream(new BufferedInputStream(in2),2);
+		Thread t1=new Thread()
+				{
+			public void run()
+			{
+				String big="";
+				int i=0;
+				try {
+					while(pin1.available()>0)
+					{
+						i=pin1.read();
+						if(i>52)big+=i+" ";
+						else
+						{
+							pin1.unread(i);
+						}
+					}
+					System.out.println("Big:"+big);
+					try {
+						sleep(5000);
+						pin1.close();
+						pin2.close();
+						in1.close();
+						in2.close();
+					} catch (IOException e) {
+						// TODO 自动生成的 catch 块
+						e.printStackTrace();
+					}
+				} catch (IOException | InterruptedException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+				};
+		Thread t2=new Thread()
+				{
+			public void run()
+			{
+				String small="";
+				int i=0;
+				try {
+					while(pin1.available()>0)
+					{
+						i=pin1.read();
+						if(i<=52)small+=i+" ";
+						else
+						{
+							pin1.unread(i);
+						}
+					}
+					System.out.println("Small:"+small);
+				} catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+				};
+				t1.start();
+				t2.start();
+	}
+}
+//By default,pushbackInputStream only allocates enough space to be
+able to unread() for a single character.if you want to be able to
+push back more than that,you must specify the capacity at construction
+time. just like: new PushbackInputStream(inputstream,ln).

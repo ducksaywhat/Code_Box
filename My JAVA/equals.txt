@@ -1,0 +1,32 @@
+import java.util.Objects;
+
+class a{
+	a(int a){
+	this.asd=a;
+		
+	}
+	public int getasd()
+	{
+		return asd;
+	}
+
+ 
+
+	private int asd;
+}
+
+public class fun{
+	public static void main(String args[]){
+		a q=new a(50);
+		a w=new a(60);
+		System.out.println("  "+q.getasd());
+		System.out.println(a.class.equals(w));
+		System.out.println(Objects.equals(q,w));
+
+     
+		
+		
+
+		
+	}
+	}

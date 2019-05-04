@@ -1,0 +1,21 @@
+package fun2;
+import java.io.*;
+import java.util.*;
+import java.awt.*;
+
+public class fun2 {
+	public static void main(String arg[])
+	{
+		try {
+			InputStream in=new FileInputStream("C:/Users/wwx/Desktop/text.txt");
+			InputStreamReader isr=new InputStreamReader(in);
+			char[]cha=new char[1024];
+			int lenght;
+			lenght=isr.read(cha);
+			System.out.println(new String(cha,0,lenght));
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+}

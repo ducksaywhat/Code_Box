@@ -1,0 +1,11 @@
+import java.util.*;
+	import javax.script.*;
+	public class Main {
+		static int count = 0;
+		public static void main(String []args) throws ScriptException
+		{
+			ScriptEngineManager m = new ScriptEngineManager();
+			ScriptEngine engine = m.getEngineByName("JavaScript");
+			engine.eval("print('asdasfasdasdasfd');");
+		}
+	}

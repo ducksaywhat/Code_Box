@@ -1,0 +1,19 @@
+package fun2;
+import java.io.*;
+import java.nio.*;
+import java.nio.charset.Charset;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		String str="가가가가가가가가뉐";
+		Charset cset=Charset.forName("MS936");
+		ByteBuffer buffer=cset.encode(str);
+		byte[] bytes=buffer.array();
+		FileOutputStream os=new FileOutputStream("C:/Users/wwx/Desktop/abc.txt");
+		os.write(bytes);
+		os.close();
+	}
+}

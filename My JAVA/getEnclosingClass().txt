@@ -1,0 +1,30 @@
+interface b
+{
+	void method();
+}
+class a implements b
+{
+	/*a()
+	{
+		System.out.println("one a has been construct");
+	}*/
+	public void b()
+	{
+		System.out.println("laaaaaaaaaaaaaaaaaaaaaaa");
+	}
+	public void method()
+	{
+		System.out.println("method");
+	}
+	
+}
+public class fun{
+	public static void main(String []args)
+	{
+		b text=new a();
+		
+		text.method();
+		System.out.println(text.getClass());
+		System.out.println(new Object(){}.getClass().getEnclosingClass());
+	}
+}

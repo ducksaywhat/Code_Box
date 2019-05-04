@@ -1,0 +1,13 @@
+import java.util.*;
+public class fun2 {
+	public static void main(String arg[])
+	{
+		Scanner in=new Scanner(System.in);
+		while(in.hasNext())
+		{
+			System.out.print(in.next());
+		}
+		in.close();
+	}
+}
+//java fun2 <***.txt

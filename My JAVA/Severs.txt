@@ -1,0 +1,61 @@
+package fun2;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+public class fun2
+{
+	public static void main(String[]args) throws IOException
+	{
+		System.out.println(InetAddress.getLocalHost());
+		try(ServerSocket s=new ServerSocket(8180))
+		{
+			int i=1;
+			while(true)
+			{
+				Socket incoming=s.accept();
+				Runnable r=new ThreadedEchoHandler(incoming,i);
+				Thread t=new Thread(r);
+				t.start();
+				i++;
+			}
+		}
+	}
+}
+class ThreadedEchoHandler implements Runnable
+{
+	Socket incoming;
+	int num;
+	public ThreadedEchoHandler(Socket incoming,int num)
+	{
+		this.incoming=incoming;
+		this.num=num;
+	}
+	public void run()
+	{
+		try
+		{
+			InputStream inStream=incoming.getInputStream();
+			OutputStream outStream=incoming.getOutputStream();
+			try(Scanner in=new Scanner(inStream))
+			{
+			boolean done=false;
+			String echo;
+			PrintWriter out=new PrintWriter(outStream,true);
+			while(!done&&in.hasNextLine())
+			{
+				echo=in.nextLine();
+				out.println("Echo:"+echo);
+				System.out.println("Thread"+num+':'+echo);
+				if(echo.equals("BYE"))done=true;
+			}
+			incoming.close();
+			}
+			
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+}

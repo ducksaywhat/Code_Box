@@ -1,0 +1,106 @@
+package fun2;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+public class fun2
+{
+	public static void main(String[]args)
+	{
+		BlockingQueue<File>queue=new ArrayBlockingQueue<>(10);
+		FileEnumerationTask enumerator=new FileEnumerationTask(queue,new File("C:/Users/wwx/Desktop/text1"));
+		new Thread(enumerator).start();
+		for(int i=1;i<=5;i++)
+		{
+			new Thread(new SearchTask(queue,"aaab")).start();
+		}
+	}
+}
+class FileEnumerationTask implements Runnable
+{
+	public static File DUMMY=new File("");
+	private BlockingQueue<File> queue;
+	private File startingDirectory;
+	public FileEnumerationTask(BlockingQueue<File>queue,File startingDirecty)
+	{
+		this.queue=queue;
+		this.startingDirectory=startingDirecty;
+	}
+	public void run()
+	{
+		try
+		{
+			enumerate(startingDirectory);
+			queue.put(DUMMY);
+		}
+		catch(InterruptedException e)
+		{
+			
+		}
+	}
+	public void enumerate(File directory)throws InterruptedException
+	{
+		File[]files=directory.listFiles();
+		for(File file:files)
+		{
+			if(file.isDirectory())enumerate(file);
+			else
+				queue.put(file);
+		}
+	}
+}
+class SearchTask implements Runnable
+{
+	private BlockingQueue<File>queue;
+	private String keyword;
+	public SearchTask(BlockingQueue<File>queue,String keyword)
+	{
+		this.queue=queue;
+		this.keyword=keyword;
+	}
+	public void run()
+	{
+		try
+		{
+		boolean done=false;
+		while(!done)
+		{
+			File file=queue.take();
+			if(file==FileEnumerationTask.DUMMY)
+			{
+				queue.put(file);
+				done=true;
+			}
+			else search(file);
+		}
+		}
+		catch(IOException e)
+		{
+			
+		}
+		catch(InterruptedException e)
+		{
+			
+		}
+		
+	}
+	public void search(File file)throws IOException
+	{
+		try(Scanner in=new Scanner(file))
+		{
+			int lineNumber=0;
+			while(in.hasNextLine())
+			{
+				lineNumber++;
+				String line=in.nextLine();
+				if(line.contains(keyword))
+					System.out.printf("%s:%d:%s%n",file.getPath(),lineNumber,line);
+			}
+		}
+	}
+}
