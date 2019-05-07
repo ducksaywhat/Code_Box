@@ -1,0 +1,35 @@
+//我透透透 有点难，马拉车那个实在不想看了
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        if (s.empty()) return "";
+		if (s.length() == 1)return s;
+		bool **dp = new bool*[s.length()];
+		int ls = 0, le = 1;
+		for (int i = 0; i < s.length(); i++) {
+			dp[i] = new bool[s.length()]();
+		}
+		int count = 0;
+		for (int i = 0; i < s.length()-1; i++) {
+			dp[i][i] = true;
+			if (s[i] == s[i + 1])
+			{
+				dp[i][i + 1] = true;
+				ls = i; le = 2;
+			}
+		}
+		dp[s.length() - 1][s.length() - 1] = true;
+		for (int l = 3; l <= s.length(); l++) {
+			for (int i = 0; i + l-1 < s.length(); i++) {
+				int j = i + l - 1;
+				if (dp[i + 1][j - 1] && s[i] == s[j]) {
+					dp[i][j] = true;
+					ls = i;
+					le = l;
+				}
+
+			}
+		}
+		return s.substr(ls, le);
+    }
+};
