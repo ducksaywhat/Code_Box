@@ -1,0 +1,37 @@
+class Solution {
+public:
+	string longestPalindrome(string s) {
+		int ans = -1;
+		int start = 0; 
+		if (s.length() == 0)return "";
+		string str = "$#";
+		for (int i = 0; i < s.length() ; i++) {
+			
+			str+= s[i];
+			str+= '#';
+		}
+		str+='@';
+		int* dp = new int[str.length()]();
+		int I = 0, i = 1, m = 0;
+		for (; i < str.size()-1; i++) {
+			if (m > i)
+				dp[i] = min(dp[2 * I - i],m-i);
+			else
+				dp[i] = 1;
+			while (str[i + dp[i]] == str[i - dp[i]]) {
+				dp[i]++;
+			}
+			if (i + dp[i] > m) {
+				I = i;
+				m = i + dp[i];
+			}
+			if (ans < dp[i]-1) {
+				start = (i - dp[i]) / 2;
+				ans = dp[i] - 1;
+
+			}
+			
+		}
+		return s.substr(start, ans);
+	}
+};
