@@ -1,8 +1,0 @@
-https://blog.csdn.net/puppet_master/article/details/80317178
-//讲软渲很不错的文章
-
-https://www.cnblogs.com/bluebean/p/5299358.html
-//blinn-phong光照
-
-https://blog.csdn.net/jfy307596479/article/details/84104220
-//PBR
