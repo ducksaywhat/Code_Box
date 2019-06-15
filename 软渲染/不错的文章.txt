@@ -1,8 +1,36 @@
 https://blog.csdn.net/puppet_master/article/details/80317178
-//�����ֺܲ���������
+//讲软渲很不错的文章
 
 https://www.cnblogs.com/bluebean/p/5299358.html
-//blinn-phong����
+//blinn-phong光照
 
 https://blog.csdn.net/jfy307596479/article/details/84104220
 //PBR
+
+https://blog.csdn.net/weixin_44420768/article/details/86675205
+//讲shadowmap不错的文章 还没看完 先马
+
+http://www.opengl-tutorial.org/cn/intermediate-tutorials/tutorial-13-normal-mapping/
+//法线贴图
+
+https://learnopengl-cn.github.io/07%20PBR/01%20Theory/
+//PBR
+
+https://zhuanlan.zhihu.com/p/25427105
+//PBR函数解析（懒即原力 may the force be with lazy
+
+https://zhuanlan.zhihu.com/p/25427105
+//PBR复杂
+
+https://www.qiujiawei.com/pbr-rendering/
+//BRDF简单
+
+http://copyfuture.com/blogs-details/d028c6c54a1e0425e2e0b4cacfe09565
+//较完整的PBR知识体系
+
+https://learnopengl-cn.github.io/07%20PBR/02%20Lighting/
+//根据这篇文章最终完成的PBR1
+
+https://github.com/JoeyDeVries/LearnOpenGL/blob/master/src/6.pbr/2.2.1.ibl_specular/2.2.1.pbr.fs
+//根据这篇文章最终完成的PBR2
+
