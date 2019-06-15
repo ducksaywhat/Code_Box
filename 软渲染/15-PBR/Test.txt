@@ -1,0 +1,1528 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <assert.h>
+#include <iostream>
+#include<fstream>
+#include <windows.h>
+#include <math.h>
+using namespace std;
+
+#define DRAW 0
+#define SHADOW_DRAW 1
+int drawmode = 0;
+
+float pos = 2.5;//摄像机的位置
+float height = 0.0f;//摄像机的位置
+bool drawingcube = false;
+const int Width = 800;
+const int Height = 600;
+const int SWidth = 1024;
+const int SHeight = 1024;
+typedef unsigned int IUINT32;
+
+typedef struct { float x, y, z, w; } vector_t;
+typedef vector_t point;
+typedef struct { unsigned char  r, g, b; } color;
+typedef struct { float u, v; } texcoord;
+typedef struct { point pos; texcoord tc; color color; float rhw; } vertex;
+//typedef struct { vector_t pos; texcoord tc;}vertex;
+typedef struct { float m[4][4]; };
+
+
+class Vector3;
+void paint();
+void drawpixel(int x, int y, int r, int g, int b);
+void drawpixel(int x, int y, float u, float v);
+void drawpixel(int x, int y, float u, float v, float specular);
+void drawline(int x1, int y1, int x2, int y2, int r, int g, int b);
+void drawpixel(int x, int y, float u, float v, float diffuseLight, float specular);
+void drawshadow(int x, int y, float z);
+void drawpixel(int x, int y, Vector3 c);
+
+typedef unsigned int IUINT32;
+//=====================================================================
+// Win32 窗口及图形绘制：为 device 提供一个 DibSection 的 FB
+//=====================================================================
+int screen_w, screen_h, screen_exit = 0;
+int screen_mx = 0, screen_my = 0, screen_mb = 0;
+int screen_keys[512];	// 当前键盘按下状态
+static HWND screen_handle = NULL;		// 主窗口 HWND
+static HDC screen_dc = NULL;			// 配套的 HDC
+static HBITMAP screen_hb = NULL;		// DIB
+static HBITMAP screen_ob = NULL;		// 老的 BITMAP
+unsigned char* screen_fb = NULL;		// frame buffer
+long screen_pitch = 0;
+
+int screen_init(int w, int h, const char* title);	// 屏幕初始化
+int screen_close(void);								// 关闭屏幕
+void screen_dispatch(void);							// 处理消息
+void screen_update(void);							// 显示 FrameBuffer
+
+// win32 event handler
+static LRESULT screen_events(HWND, UINT, WPARAM, LPARAM);
+
+#ifdef _MSC_VER
+#pragma comment(lib, "gdi32.lib")
+#pragma comment(lib, "user32.lib")
+#endif
+
+// 初始化窗口并设置标题
+int screen_init(int w, int h, const char* title) {
+	WNDCLASSA wc = { CS_BYTEALIGNCLIENT, (WNDPROC)screen_events, 0, 0, 0,
+		NULL, NULL, NULL, NULL, "SCREEN3.1415926" };
+	BITMAPINFO bi = { { sizeof(BITMAPINFOHEADER), w, -h, 1, 32, BI_RGB,
+		(DWORD)w * h * 4, 0, 0, 0, 0 } };
+	RECT rect = { 0, 0, w, h };
+	int wx, wy, sx, sy;
+	LPVOID ptr;
+	HDC hDC;
+
+	screen_close();
+
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.hInstance = GetModuleHandle(NULL);
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	if (!RegisterClassA(&wc)) return -1;
+
+	screen_handle = CreateWindowA("SCREEN3.1415926", title,
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+		0, 0, 0, 0, NULL, NULL, wc.hInstance, NULL);
+	if (screen_handle == NULL) return -2;
+
+	screen_exit = 0;
+	hDC = GetDC(screen_handle);
+	screen_dc = CreateCompatibleDC(hDC);
+	ReleaseDC(screen_handle, hDC);
+
+	screen_hb = CreateDIBSection(screen_dc, &bi, DIB_RGB_COLORS, &ptr, 0, 0);
+	if (screen_hb == NULL) return -3;
+
+	screen_ob = (HBITMAP)SelectObject(screen_dc, screen_hb);
+	screen_fb = (unsigned char*)ptr;
+	screen_w = w;
+	screen_h = h;
+	screen_pitch = w * 4;
+
+	AdjustWindowRect(&rect, GetWindowLong(screen_handle, GWL_STYLE), 0);
+	wx = rect.right - rect.left;
+	wy = rect.bottom - rect.top;
+	sx = (GetSystemMetrics(SM_CXSCREEN) - wx) / 2;
+	sy = (GetSystemMetrics(SM_CYSCREEN) - wy) / 2;
+	if (sy < 0) sy = 0;
+	SetWindowPos(screen_handle, NULL, sx, sy, wx, wy, (SWP_NOCOPYBITS | SWP_NOZORDER | SWP_SHOWWINDOW));
+	SetForegroundWindow(screen_handle);
+
+	ShowWindow(screen_handle, SW_NORMAL);
+	screen_dispatch();
+
+	memset(screen_keys, 0, sizeof(int) * 512);
+	memset(screen_fb, 0, w * h * 4);
+
+	return 0;
+}
+
+int screen_close(void) {
+	if (screen_dc) {
+		if (screen_ob) {
+			SelectObject(screen_dc, screen_ob);
+			screen_ob = NULL;
+		}
+		DeleteDC(screen_dc);
+		screen_dc = NULL;
+	}
+	if (screen_hb) {
+		DeleteObject(screen_hb);
+		screen_hb = NULL;
+	}
+	if (screen_handle) {
+		CloseWindow(screen_handle);
+		screen_handle = NULL;
+	}
+	return 0;
+}
+
+static LRESULT screen_events(HWND hWnd, UINT msg,
+	WPARAM wParam, LPARAM lParam) {
+	switch (msg) {
+	case WM_CLOSE: screen_exit = 1; break;
+	case WM_KEYDOWN: screen_keys[wParam & 511] = 1; break;
+	case WM_KEYUP: screen_keys[wParam & 511] = 0; break;
+	default: return DefWindowProc(hWnd, msg, wParam, lParam);
+	}
+	return 0;
+}
+
+void screen_dispatch(void) {
+	MSG msg;
+	while (1) {
+		if (!PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) break;
+		if (!GetMessage(&msg, NULL, 0, 0)) break;
+		DispatchMessage(&msg);
+	}
+}
+
+//=====================================================================
+// 数学库：此部分应该不用详解，熟悉 D3D 矩阵变换即可
+//=====================================================================
+class Vector3
+{
+public:
+	Vector3()
+		:x(1), y(1), z(1)
+	{
+	}
+	Vector3(float a)
+		:x(a), y(a), z(a)
+	{
+	}
+	Vector3(float fx, float fy, float fz)
+		:x(fx), y(fy), z(fz)
+	{
+	}
+
+	// Subtract
+	Vector3 operator - (const Vector3& v) const
+	{
+		return Vector3(x - v.x, y - v.y, z - v.z);
+	}
+	Vector3 operator+(const Vector3& b) {
+		return Vector3(this->x + b.x, this->y + b.y, this->z + b.z);
+	}
+	Vector3 operator/(float y) {
+		return Vector3(this->x / y, this->y / y, this->z / y);
+	}
+	Vector3 operator/(Vector3 y) {
+		return Vector3(this->x / y.x, this->y / y.y, this->z / y.z);
+	}
+	Vector3 operator*(float y) {
+		return Vector3(this->x * y, this->y * y, this->z * y);
+	}
+	Vector3 operator*(Vector3 y) {
+		return Vector3(this->x * y.x, this->y * y.y, this->z * y.z);
+	}
+
+	// Dot product
+	float Dot(const Vector3& v) const
+	{
+		return x * v.x + y * v.y + z * v.z;
+	}
+
+	// Cross product
+	Vector3 Cross(const Vector3& v) const
+	{
+		return Vector3(
+			y * v.z - z * v.y,
+			z * v.x - x * v.z,
+			x * v.y - y * v.x);
+	}
+	Vector3 Normalize()
+	{
+		float inv = 1.0f / sqrt(x * x + y * y + z * z);
+		x *= inv;
+		y *= inv;
+		z *= inv;
+		return *this;
+	}
+	float length()
+	{
+		return sqrt(x * x + y * y + z * z);
+	}
+
+public:
+	float x, y, z;
+};
+typedef struct { float m[4][4]; } matrix_t;
+typedef vector_t point_t;
+
+int CMID(int x, int min, int max) { return (x < min) ? min : ((x > max) ? max : x); }
+
+// 计算插值：t 为 [0, 1] 之间的数值
+float interp(float x1, float x2, float t) { return x1 + (x2 - x1) * t; }
+
+// | v |
+float vector_length(const vector_t* v) {
+	float sq = v->x * v->x + v->y * v->y + v->z * v->z;
+	return (float)sqrt(sq);
+}
+
+// z = x + y
+void vector_add(vector_t* z, const vector_t* x, const vector_t* y) {
+	z->x = x->x + y->x;
+	z->y = x->y + y->y;
+	z->z = x->z + y->z;
+	z->w = 1.0;
+}
+
+// z = x - y
+void vector_sub(vector_t* z, const vector_t* x, const vector_t* y) {
+	z->x = x->x - y->x;
+	z->y = x->y - y->y;
+	z->z = x->z - y->z;
+	z->w = 1.0;
+}
+
+// 矢量点乘
+float vector_dotproduct(const vector_t* x, const vector_t* y) {
+	return x->x * y->x + x->y * y->y + x->z * y->z;
+}
+
+// 矢量叉乘
+void vector_crossproduct(vector_t* z, const vector_t* x, const vector_t* y) {
+	float m1, m2, m3;
+	m1 = x->y * y->z - x->z * y->y;
+	m2 = x->z * y->x - x->x * y->z;
+	m3 = x->x * y->y - x->y * y->x;
+	z->x = m1;
+	z->y = m2;
+	z->z = m3;
+	z->w = 1.0f;
+}
+
+// 矢量插值，t取值 [0, 1]
+void vector_interp(vector_t* z, const vector_t* x1, const vector_t* x2, float t) {
+	z->x = interp(x1->x, x2->x, t);
+	z->y = interp(x1->y, x2->y, t);
+	z->z = interp(x1->z, x2->z, t);
+	z->w = 1.0f;
+}
+
+// 矢量归一化
+void vector_normalize(vector_t* v) {
+	float length = vector_length(v);
+	if (length != 0.0f) {
+		float inv = 1.0f / length;
+		v->x *= inv;
+		v->y *= inv;
+		v->z *= inv;
+	}
+}
+
+// c = a + b
+void matrix_add(matrix_t* c, const matrix_t* a, const matrix_t* b) {
+	int i, j;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++)
+			c->m[i][j] = a->m[i][j] + b->m[i][j];
+	}
+}
+
+// c = a - b
+void matrix_sub(matrix_t* c, const matrix_t* a, const matrix_t* b) {
+	int i, j;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++)
+			c->m[i][j] = a->m[i][j] - b->m[i][j];
+	}
+}
+
+// c = a * b
+void matrix_mul(matrix_t* c, const matrix_t* a, const matrix_t* b) {
+	matrix_t z;
+	int i, j;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++) {
+			z.m[j][i] = (a->m[j][0] * b->m[0][i]) +
+				(a->m[j][1] * b->m[1][i]) +
+				(a->m[j][2] * b->m[2][i]) +
+				(a->m[j][3] * b->m[3][i]);
+		}
+	}
+	c[0] = z;
+}
+
+// c = a * f
+void matrix_scale(matrix_t* c, const matrix_t* a, float f) {
+	int i, j;
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 4; j++)
+			c->m[i][j] = a->m[i][j] * f;
+	}
+}
+
+// y = x * m
+void matrix_apply(vector_t* y, const vector_t* x, const matrix_t* m) {
+	float X = x->x, Y = x->y, Z = x->z, W = x->w;
+	y->x = X * m->m[0][0] + Y * m->m[1][0] + Z * m->m[2][0] + W * m->m[3][0];
+	y->y = X * m->m[0][1] + Y * m->m[1][1] + Z * m->m[2][1] + W * m->m[3][1];
+	y->z = X * m->m[0][2] + Y * m->m[1][2] + Z * m->m[2][2] + W * m->m[3][2];
+	y->w = X * m->m[0][3] + Y * m->m[1][3] + Z * m->m[2][3] + W * m->m[3][3];
+}
+void matrix_apply(Vector3* y, const Vector3* x, const matrix_t* m) {
+	float X = x->x, Y = x->y, Z = x->z, W = 0;
+	y->x = X * m->m[0][0] + Y * m->m[1][0] + Z * m->m[2][0] + W * m->m[3][0];
+	y->y = X * m->m[0][1] + Y * m->m[1][1] + Z * m->m[2][1] + W * m->m[3][1];
+	y->z = X * m->m[0][2] + Y * m->m[1][2] + Z * m->m[2][2] + W * m->m[3][2];
+	//y->w = X * m->m[0][3] + Y * m->m[1][3] + Z * m->m[2][3] + W * m->m[3][3];
+}
+
+void matrix_set_identity(matrix_t* m) {
+	m->m[0][0] = m->m[1][1] = m->m[2][2] = m->m[3][3] = 1.0f;
+	m->m[0][1] = m->m[0][2] = m->m[0][3] = 0.0f;
+	m->m[1][0] = m->m[1][2] = m->m[1][3] = 0.0f;
+	m->m[2][0] = m->m[2][1] = m->m[2][3] = 0.0f;
+	m->m[3][0] = m->m[3][1] = m->m[3][2] = 0.0f;
+}
+
+void matrix_set_zero(matrix_t* m) {
+	m->m[0][0] = m->m[0][1] = m->m[0][2] = m->m[0][3] = 0.0f;
+	m->m[1][0] = m->m[1][1] = m->m[1][2] = m->m[1][3] = 0.0f;
+	m->m[2][0] = m->m[2][1] = m->m[2][2] = m->m[2][3] = 0.0f;
+	m->m[3][0] = m->m[3][1] = m->m[3][2] = m->m[3][3] = 0.0f;
+}
+
+// 平移变换
+void matrix_set_translate(matrix_t* m, float x, float y, float z) {
+	matrix_set_identity(m);
+	m->m[3][0] = x;
+	m->m[3][1] = y;
+	m->m[3][2] = z;
+}
+
+// 缩放变换
+void matrix_set_scale(matrix_t* m, float x, float y, float z) {
+	matrix_set_identity(m);
+	m->m[0][0] = x;
+	m->m[1][1] = y;
+	m->m[2][2] = z;
+}
+
+// 旋转矩阵
+void matrix_set_rotate(matrix_t* m, float x, float y, float z, float theta) {
+	float qsin = (float)sin(theta * 0.5f);
+	float qcos = (float)cos(theta * 0.5f);
+	vector_t vec = { x, y, z, 1.0f };
+	float w = qcos;
+	vector_normalize(&vec);
+	x = vec.x * qsin;
+	y = vec.y * qsin;
+	z = vec.z * qsin;
+	m->m[0][0] = 1 - 2 * y * y - 2 * z * z;
+	m->m[1][0] = 2 * x * y - 2 * w * z;
+	m->m[2][0] = 2 * x * z + 2 * w * y;
+	m->m[0][1] = 2 * x * y + 2 * w * z;
+	m->m[1][1] = 1 - 2 * x * x - 2 * z * z;
+	m->m[2][1] = 2 * y * z - 2 * w * x;
+	m->m[0][2] = 2 * x * z - 2 * w * y;
+	m->m[1][2] = 2 * y * z + 2 * w * x;
+	m->m[2][2] = 1 - 2 * x * x - 2 * y * y;
+	m->m[0][3] = m->m[1][3] = m->m[2][3] = 0.0f;
+	m->m[3][0] = m->m[3][1] = m->m[3][2] = 0.0f;
+	m->m[3][3] = 1.0f;
+}
+
+// 设置摄像机
+void matrix_set_lookat(matrix_t* m, const vector_t* eye, const vector_t* at, const vector_t* up) {
+	vector_t xaxis, yaxis, zaxis;
+
+	vector_sub(&zaxis, at, eye);
+	vector_normalize(&zaxis);
+	vector_crossproduct(&xaxis, up, &zaxis);
+	vector_normalize(&xaxis);
+	vector_crossproduct(&yaxis, &zaxis, &xaxis);
+
+	m->m[0][0] = xaxis.x;
+	m->m[1][0] = xaxis.y;
+	m->m[2][0] = xaxis.z;
+	m->m[3][0] = -vector_dotproduct(&xaxis, eye);
+
+	m->m[0][1] = yaxis.x;
+	m->m[1][1] = yaxis.y;
+	m->m[2][1] = yaxis.z;
+	m->m[3][1] = -vector_dotproduct(&yaxis, eye);
+
+	m->m[0][2] = zaxis.x;
+	m->m[1][2] = zaxis.y;
+	m->m[2][2] = zaxis.z;
+	m->m[3][2] = -vector_dotproduct(&zaxis, eye);
+
+	m->m[0][3] = m->m[1][3] = m->m[2][3] = 0.0f;
+	m->m[3][3] = 1.0f;
+}
+
+// D3DXMatrixPerspectiveFovLH
+void matrix_set_perspective(matrix_t* m, float fovy, float aspect, float zn, float zf) {
+	float fax = 1.0f / (float)tan(fovy * 0.5f);
+	matrix_set_zero(m);
+	m->m[0][0] = (float)(fax / aspect);
+	m->m[1][1] = (float)(fax);
+	m->m[2][2] = zf / (zf - zn);
+	m->m[3][2] = -zn * zf / (zf - zn);
+	m->m[2][3] = 1;
+}
+matrix_t TBN;//我藏在这儿哦
+//=====================================================================
+// 坐标变换
+//=====================================================================
+typedef struct {
+	matrix_t world;         // 世界坐标变换
+	matrix_t view;          // 摄影机坐标变换
+	matrix_t projection;    // 投影变换
+	matrix_t transform;     // transform = world * view * projection
+	float w, h;             // 屏幕大小
+}	transform_t;
+// 矩阵更新，计算 transform = world * view * projection
+void transform_update(transform_t* ts) {
+	matrix_t m;
+	matrix_mul(&m, &ts->world, &ts->view);
+	matrix_mul(&ts->transform, &m, &ts->projection);
+}
+// 初始化，设置屏幕长宽
+void transform_init(transform_t* ts, int width, int height) {
+	float aspect = (float)width / ((float)height);
+	matrix_set_identity(&ts->world);
+	matrix_set_identity(&ts->view);
+	matrix_set_perspective(&ts->projection, 3.1415926f * 0.5f, aspect, 1.0f, 500.0f);
+	ts->w = (float)width;
+	ts->h = (float)height;
+	transform_update(ts);
+}
+
+// 将矢量 x 进行 project 
+void transform_apply(transform_t* ts, vector_t* y, vector_t* x) {
+	matrix_apply(y, x, &ts->transform);
+}
+// 检查齐次坐标同 cvv 的边界用于视锥裁剪
+int transform_check_cvv(const vector_t* v) {
+	float w = v->w;
+	int check = 0;
+	if (v->z < 0.0f) check |= 1;
+	if (v->z > w) check |= 2;
+	if (v->x < -w) check |= 4;
+	if (v->x > w) check |= 8;
+	if (v->y < -w) check |= 16;
+	if (v->y > w) check |= 32;
+	return check;
+}
+
+// 归一化，得到屏幕坐标
+void transform_homogenize(const transform_t* ts, vector_t* y, const vector_t* x) {
+	float rhw = 1.0f / x->w;
+	y->x = (x->x * rhw + 1.0f) * ts->w * 0.5f;
+	y->y = (1.0f - x->y * rhw) * ts->h * 0.5f;
+	y->z = x->z * rhw;
+	y->w = 1.0f;
+}
+//=====================================================================
+// 几何计算：顶点、扫描线、边缘、矩形、步长计算
+//=====================================================================
+typedef struct { float r, g, b; } color_t;
+typedef struct { float u, v; } texcoord_t;
+//typedef struct { point_t pos; texcoord_t tc; color_t color; float rhw; } vertex_t;
+typedef struct { point_t pos; texcoord_t tc; color_t color; float rhw; } vertex_t;
+
+typedef struct { point pos; point ppos; point PfromL;  texcoord tc; float rhw; float shadowz; } vertex_2;
+
+typedef struct { vertex_2 v, v1, v2; } edge_t;
+typedef struct { float top, bottom; edge_t left, right; } trapezoid_t;
+typedef struct { vertex_2 v, step; int x, y, w; } scanline_t;
+
+
+vertex p1{ {0,0,0,1},{0,0} };
+vertex p2{ {0,0,0,1},{0,0} };
+vertex p3{ {0,0,0,1},{0,0} };
+
+void vertex_rhw_init(vertex* v) {
+	float rhw = 1.0f / v->pos.w;
+	v->rhw = rhw;
+	v->tc.u *= rhw;
+	v->tc.v *= rhw;
+	v->color.r *= rhw;
+	v->color.g *= rhw;
+	v->color.b *= rhw;
+}
+
+void vertex_interp(vertex_2* y, const vertex_2* x1, const vertex_2* x2, float t) {
+	vector_interp(&y->pos, &x1->pos, &x2->pos, t);
+	vector_interp(&y->ppos, &x1->ppos, &x2->ppos, t);
+	vector_interp(&y->PfromL, &x1->PfromL, &x2->PfromL, t);
+	y->tc.u = interp(x1->tc.u, x2->tc.u, t);
+	y->tc.v = interp(x1->tc.v, x2->tc.v, t);
+	y->rhw = interp(x1->rhw, x2->rhw, t);
+	y->shadowz = interp(x1->shadowz, x2->shadowz, t);
+}
+
+void vertex_division(vertex_2* y, const vertex_2* x1, const vertex_2* x2, float w) {
+	float inv = 1.0f / w;
+	y->pos.x = (x2->pos.x - x1->pos.x) * inv;
+	y->pos.y = (x2->pos.y - x1->pos.y) * inv;
+	y->pos.z = (x2->pos.z - x1->pos.z) * inv;
+	y->pos.w = (x2->pos.w - x1->pos.w) * inv;
+	y->ppos.x = (x2->ppos.x - x1->ppos.x) * inv;
+	y->ppos.y = (x2->ppos.y - x1->ppos.y) * inv;
+	y->ppos.z = (x2->ppos.z - x1->ppos.z) * inv;
+	y->ppos.w = (x2->ppos.w - x1->ppos.w) * inv;
+	y->tc.u = (x2->tc.u - x1->tc.u) * inv;
+	y->tc.v = (x2->tc.v - x1->tc.v) * inv;
+	y->rhw = (x2->rhw - x1->rhw) * inv;
+	y->PfromL.x = (x2->PfromL.x - x1->PfromL.x) * inv;
+	y->PfromL.y = (x2->PfromL.y - x1->PfromL.y) * inv;
+	y->PfromL.z = (x2->PfromL.z - x1->PfromL.z) * inv;
+	y->PfromL.w = (x2->PfromL.w - x1->PfromL.w) * inv;
+	y->shadowz = (x2->shadowz - x1->shadowz) * inv;
+}
+
+void vertex_add(vertex_2* y, const vertex_2* x) {
+	y->pos.x += x->pos.x;
+	y->pos.y += x->pos.y;
+	y->pos.z += x->pos.z;
+	y->pos.w += x->pos.w;
+	y->ppos.x += x->ppos.x;
+	y->ppos.y += x->ppos.y;
+	y->ppos.z += x->ppos.z;
+	y->ppos.w += x->ppos.w;
+	y->rhw += x->rhw;
+	y->tc.u += x->tc.u;
+	y->tc.v += x->tc.v;
+	y->PfromL.x += x->PfromL.x;
+	y->PfromL.y += x->PfromL.y;
+	y->PfromL.z += x->PfromL.z;
+	y->PfromL.w += x->PfromL.w;
+	y->shadowz += x->shadowz;
+}
+
+// 根据三角形生成 0-2 个梯形，并且返回合法梯形的数量
+int trapezoid_init_triangle(trapezoid_t* trap, vertex_2* p1, vertex_2* p2, vertex_2* p3) {
+	vertex_2* p;
+	float k, x;
+
+	if (p1->pos.y > p2->pos.y) p = p1, p1 = p2, p2 = p;
+	if (p1->pos.y > p3->pos.y) p = p1, p1 = p3, p3 = p;
+	if (p2->pos.y > p3->pos.y) p = p2, p2 = p3, p3 = p;
+	if (p1->pos.y == p2->pos.y && p1->pos.y == p3->pos.y) return 0;
+	if (p1->pos.x == p2->pos.x && p1->pos.x == p3->pos.x) return 0;
+
+	if (p1->pos.y == p2->pos.y) {	// triangle down
+		if (p1->pos.x > p2->pos.x) p = p1, p1 = p2, p2 = p;
+		trap[0].top = p1->pos.y;
+		trap[0].bottom = p3->pos.y;
+		trap[0].left.v1 = *p1;
+		trap[0].left.v2 = *p3;
+		trap[0].right.v1 = *p2;
+		trap[0].right.v2 = *p3;
+		return (trap[0].top < trap[0].bottom) ? 1 : 0;
+	}
+
+	if (p2->pos.y == p3->pos.y) {	// triangle up
+		if (p2->pos.x > p3->pos.x) p = p2, p2 = p3, p3 = p;
+		trap[0].top = p1->pos.y;
+		trap[0].bottom = p3->pos.y;
+		trap[0].left.v1 = *p1;
+		trap[0].left.v2 = *p2;
+		trap[0].right.v1 = *p1;
+		trap[0].right.v2 = *p3;
+		return (trap[0].top < trap[0].bottom) ? 1 : 0;
+	}
+
+	trap[0].top = p1->pos.y;
+	trap[0].bottom = p2->pos.y;
+	trap[1].top = p2->pos.y;
+	trap[1].bottom = p3->pos.y;
+
+	k = (p3->pos.y - p1->pos.y) / (p2->pos.y - p1->pos.y);
+	x = p1->pos.x + (p2->pos.x - p1->pos.x) * k;
+
+	if (x <= p3->pos.x) {		// triangle left
+		trap[0].left.v1 = *p1;
+		trap[0].left.v2 = *p2;
+		trap[0].right.v1 = *p1;
+		trap[0].right.v2 = *p3;
+		trap[1].left.v1 = *p2;
+		trap[1].left.v2 = *p3;
+		trap[1].right.v1 = *p1;
+		trap[1].right.v2 = *p3;
+	}
+	else {					// triangle right
+		trap[0].left.v1 = *p1;
+		trap[0].left.v2 = *p3;
+		trap[0].right.v1 = *p1;
+		trap[0].right.v2 = *p2;
+		trap[1].left.v1 = *p1;
+		trap[1].left.v2 = *p3;
+		trap[1].right.v1 = *p2;
+		trap[1].right.v2 = *p3;
+	}
+
+	return 2;
+}
+
+// 按照 Y 坐标计算出左右两条边纵坐标等于 Y 的顶点
+void trapezoid_edge_interp(trapezoid_t* trap, float y) {
+	float s1 = trap->left.v2.pos.y - trap->left.v1.pos.y;
+	float s2 = trap->right.v2.pos.y - trap->right.v1.pos.y;
+	float t1 = (y - trap->left.v1.pos.y) / s1;
+	float t2 = (y - trap->right.v1.pos.y) / s2;
+	vertex_interp(&trap->left.v, &trap->left.v1, &trap->left.v2, t1);
+	vertex_interp(&trap->right.v, &trap->right.v1, &trap->right.v2, t2);
+}
+
+// 根据左右两边的端点，初始化计算出扫描线的起点和步长
+void trapezoid_init_scan_line(const trapezoid_t* trap, scanline_t* scanline, int y) {
+	float width = trap->right.v.pos.x - trap->left.v.pos.x;
+	scanline->x = (int)(trap->left.v.pos.x + 0.5f);
+	scanline->w = (int)(trap->right.v.pos.x + 0.5f) - scanline->x;
+	scanline->y = y;
+	scanline->v = trap->left.v;
+	if (trap->left.v.pos.x >= trap->right.v.pos.x) scanline->w = 0;
+	vertex_division(&scanline->step, &trap->left.v, &trap->right.v, width);
+
+}
+
+////////////////////////////////////////////////////////////////////////
+//
+//blinn-phong光照
+//
+////////////////////////////////////////////////////////////////////////
+typedef struct {
+	float ks;    //漫反射系数
+	vector_t dir;//光的方向（平行光
+	float Shininess;//高光系数
+}phonglight;
+phonglight light{ 0.5f,{0,4,0,1},2 };
+vector_t vlightdir{ 0,0,0,0 };
+transform_t lightttransform;
+Vector3 pnormal(0, 0, 0);
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+//
+//材质
+//
+////////////////////////////////////////////////////////////////////////
+typedef struct {
+	float diffuse;//漫反射系数 材质的粗糙程度
+	float specular;//物体对于反射光线的衰减系数
+	float shininess; //高光系数 材质的光滑程度
+} material;
+material* matr = nullptr;
+
+//=====================================================================
+// 渲染设备
+//=====================================================================
+typedef struct {
+	transform_t transform;      //cube 坐标变换器
+	transform_t Ltransform;		//灯光 坐标变换器
+	transform_t Ptransform;     //平面 坐标转换器
+	transform_t SCtransform;     //阴影 视点转换器 Cube
+	transform_t SPtransform;     //阴影 视点转换器 Plane
+	int width;                  // 窗口宽度
+	int height;                 // 窗口高度
+}	device_t;
+void device_init(device_t* device, int width, int height)
+{
+	device->height = height;
+	device->width = width;
+	transform_init(&device->transform, width, height);
+	transform_init(&device->Ltransform, width, height);
+	transform_init(&device->Ptransform, width, height);
+}
+//set camera
+void camera_at_zero(device_t* device, float x, float y, float z) {
+	point_t eye = { x, y, z, 1 }, at = { 0, 0, 0, 1 }, up = { 0, 1, 0, 1 };
+	matrix_set_lookat(&device->transform.view, &eye, &at, &up);
+	matrix_set_lookat(&device->Ltransform.view, &eye, &at, &up);
+	matrix_set_lookat(&device->Ptransform.view, &eye, &at, &up);
+	transform_update(&device->transform);
+	transform_update(&device->Ltransform);
+	transform_update(&device->Ptransform);
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////
+//   纹理
+////////////////////////////////////////////////////////////////////
+float min_u, min_v, max_u, max_v;
+int min_x, max_x, min_y, max_y;
+typedef struct {
+	int tex_width, tex_height;
+	unsigned char* buf = nullptr;
+	int level;
+}tex_;
+tex_ Ctex400, Ctex200, Ctex100, Ctex50, Ctex25, Ptex, tex;
+const int Texsize = 400;
+unsigned char* tempbuf;
+float* normalbuf;
+float* roughnessbuf;
+float* aobuf;
+float* metallicbuf;
+void popstar(unsigned char* sbuf, unsigned char* bbuf, const int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			sbuf[(i * size + j) * 3] = (unsigned char)
+				((bbuf[(i * 2 * size * 2 + j * 2) * 3] +
+					bbuf[((i * 2 + 1) * size * 2 + j * 2) * 3] +
+					bbuf[(i * 2 * size * 2 + (j * 2 + 1)) * 3] +
+					bbuf[((i * 2 + 1) * size * 2 + (j * 2 + 1)) * 3]) / 4);
+
+			sbuf[(i * size + j) * 3 + 1] = (unsigned char)
+				((bbuf[(i * 2 * size * 2 + j * 2) * 3 + 1] +
+					bbuf[((i * 2 + 1) * size * 2 + j * 2) * 3 + 1] +
+					bbuf[(i * 2 * size * 2 + (j * 2 + 1)) * 3 + 1] +
+					bbuf[((i * 2 + 1) * size * 2 + (j * 2 + 1)) * 3 + 1]) / 4);
+
+			sbuf[(i * size + j) * 3 + 2] = (unsigned char)
+				((bbuf[(i * 2 * size * 2 + j * 2) * 3 + 2] +
+					bbuf[((i * 2 + 1) * size * 2 + j * 2) * 3 + 2] +
+					bbuf[(i * 2 * size * 2 + (j * 2 + 1)) * 3 + 2] +
+					bbuf[((i * 2 + 1) * size * 2 + (j * 2 + 1)) * 3 + 2]) / 4);
+		}
+	}
+}
+//对数据的解析可能存在问题
+float* normalmapinit(unsigned char* normalbuf)
+{
+	float* Nbuf;
+	Nbuf = (float*)malloc(Texsize * Texsize * sizeof(float) * 3);
+	for (int i = 0; i < Texsize; i++)
+	{
+		for (int j = 0; j < Texsize; j++)
+		{
+			//Vector3 temp(normalbuf[(i * Texsize + j) * 3 + 2]/128 -1.0f, normalbuf[(i * Texsize + j) * 3 + 1]/128 -1.0f, normalbuf[(i * Texsize + j) * 3]/128 - 1.0f );
+			Vector3 temp(normalbuf[(i * Texsize + j) * 3 + 2]/128.0-1, normalbuf[(i * Texsize + j) * 3 + 1]/128.0-1, normalbuf[(i * Texsize + j) * 3]/128.0-1);
+			temp.Normalize();
+			//Nbuf[(i * Texsize + j) * 3] = temp.x;
+			//Nbuf[(i * Texsize + j) * 3 + 1] = temp.y;
+			//Nbuf[(i * Texsize + j) * 3 + 2] = temp.z;
+			Nbuf[(i * Texsize + j) * 3] = 0; temp.x;
+			Nbuf[(i * Texsize + j) * 3 + 1] = 0; temp.y;
+			Nbuf[(i * Texsize + j) * 3 + 2] = 1; temp.z;
+		}
+	}
+	free(normalbuf);
+	return Nbuf;
+}
+float* roughnessmapinit(unsigned char* roughnessbuf)
+{
+	float* Rbuf;
+	Rbuf = (float*)malloc(Texsize * Texsize * sizeof(float));
+	for (int i = 0; i < Texsize; i++)
+	{
+		for (int j = 0; j < Texsize; j++)
+		{
+			Rbuf[i * Texsize + j] = roughnessbuf[(i * Texsize + j) * 3] / 256.0;
+		}
+	}
+	free(roughnessbuf);
+	return Rbuf;
+}
+float* metallicmapinit(unsigned char* metallicbuf)
+{
+	float* Rbuf;
+	Rbuf = (float*)malloc(Texsize * Texsize * sizeof(float));
+	for (int i = 0; i < Texsize; i++)
+	{
+		for (int j = 0; j < Texsize; j++)
+		{
+			Rbuf[i * Texsize + j] = metallicbuf[(i * Texsize + j) * 3] / 256.0;
+		}
+	}
+	free(metallicbuf);
+	return Rbuf;
+}
+void tex_init()
+{
+	ifstream fin("C:\\Users\\Administrator\\Desktop\\cube.bmp", ios::binary);
+	BITMAPFILEHEADER bf;
+	BITMAPINFOHEADER bi;
+	//unsigned char* buf;
+	fin.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	Ctex400.tex_width = 400;//bi.biWidth;
+	Ctex400.tex_height = 400;// bi.biHeight;
+	Ctex400.buf = (unsigned char*)malloc(bi.biWidth * bi.biHeight * 3);
+	fin.seekg(54, ios::beg);
+	fin.read((char*)Ctex400.buf, bi.biWidth * bi.biHeight * 3);
+	fin.close();
+	Ctex400.level = 0;
+	//200x200
+	Ctex200.level = 1;
+	Ctex200.tex_height = Ctex200.tex_width = 200;
+	Ctex200.buf = (unsigned char*)malloc(200 * 200 * 3);
+	popstar(Ctex200.buf, Ctex400.buf, 200);
+	//100x100
+	Ctex100.level = 2;
+	Ctex100.tex_height = Ctex100.tex_width = 100;
+	Ctex100.buf = (unsigned char*)malloc(100 * 100 * 3);
+	popstar(Ctex100.buf, Ctex200.buf, 100);
+	//50x50
+	Ctex50.level = 3;
+	Ctex50.tex_height = Ctex50.tex_width = 50;
+	Ctex50.buf = (unsigned char*)malloc(50 * 50 * 3);
+	popstar(Ctex50.buf, Ctex100.buf, 50);
+	//25x25
+	Ctex25.level = 4;
+	Ctex25.tex_height = Ctex25.tex_width = 25;
+	Ctex25.buf = (unsigned char*)malloc(25 * 25 * 3);
+	popstar(Ctex25.buf, Ctex50.buf, 25);
+	//popstar(Cbuf100, Cbuf200, 100);
+	//popstar(Cbuf50, Cbuf100, 50);
+
+
+	ifstream fin2("C:\\Users\\Administrator\\Desktop\\plane.bmp", ios::binary);
+	//unsigned char* buf;
+	fin2.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin2.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	Ptex.tex_width = bi.biWidth;
+	Ptex.tex_height = bi.biHeight;
+	Ptex.buf = (unsigned char*)malloc(bi.biWidth * bi.biHeight * 3);
+	fin2.seekg(54, ios::beg);
+	fin2.read((char*)Ptex.buf, bi.biWidth * bi.biHeight * 3);
+	fin2.close();
+	//buf = Cbuf;
+
+	//加载法线贴图
+	ifstream fin3("C:\\Users\\Administrator\\Desktop\\normal.bmp", ios::binary);
+	fin3.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin3.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	tempbuf = (unsigned char*)malloc(Texsize * Texsize * 3);
+	fin3.seekg(54, ios::beg);
+	fin3.read((char*)tempbuf, Texsize * Texsize * 3);
+	fin3.close();
+	normalbuf = normalmapinit(tempbuf);
+
+	//加载粗糙度贴图
+	ifstream fin4("C:\\Users\\Administrator\\Desktop\\roughness.bmp", ios::binary);
+	fin4.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin4.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	tempbuf = (unsigned char*)malloc(Texsize * Texsize * 3);
+	fin4.seekg(54, ios::beg);
+	fin4.read((char*)tempbuf, Texsize * Texsize * 3);
+	fin4.close();
+	roughnessbuf = roughnessmapinit(tempbuf);
+	//加载oa贴图
+	ifstream fin5("C:\\Users\\Administrator\\Desktop\\ao.bmp", ios::binary);
+	fin5.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin5.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	tempbuf = (unsigned char*)malloc(Texsize * Texsize * 3);
+	fin5.seekg(54, ios::beg);
+	fin5.read((char*)tempbuf, Texsize * Texsize * 3);
+	fin5.close();
+	aobuf = roughnessmapinit(tempbuf);
+	//加载金属度贴图
+	ifstream fin6("C:\\Users\\Administrator\\Desktop\\metallic.bmp", ios::binary);
+	fin6.read((char*)& bf, sizeof(BITMAPFILEHEADER));
+	fin6.read((char*)& bi, sizeof(BITMAPINFOHEADER));
+	tempbuf = (unsigned char*)malloc(Texsize * Texsize * 3);
+	fin6.seekg(54, ios::beg);
+	fin6.read((char*)tempbuf, Texsize * Texsize * 3);
+	fin6.close();
+	metallicbuf = metallicmapinit(tempbuf);
+
+}
+/////////////////////////////////////////////////////////////////////
+//   深度缓存
+////////////////////////////////////////////////////////////////////
+float* zbuf = nullptr;
+float* szbuf = nullptr;
+void zbuf_init()
+{
+	zbuf = (float*)malloc(Width * Height * sizeof(float));
+	memset(zbuf, 0, Width * Height * sizeof(float));
+	szbuf = (float*)malloc(SWidth * SHeight * sizeof(float));
+	memset(szbuf, 0, SWidth * SHeight * sizeof(float));
+}
+/////////////////////////////////////////////////////////////////////
+//   阴影缓存
+////////////////////////////////////////////////////////////////////
+float* shadowbuf = nullptr;
+void shadowbuf_init(int w, int h)
+{
+	shadowbuf = (float*)malloc(w * h * sizeof(float));
+	memset(shadowbuf, 0, h * w * sizeof(float));
+}
+//=====================================================================
+// 渲染实现
+//=====================================================================
+const float PI = 3.14159265359;
+Vector3 getcoloruv(float u, float v)
+{
+	Vector3 c;
+	int i = ((int)(v * (tex.tex_height - 1) + 0.5f) * tex.tex_width + (u * (tex.tex_width - 1) + 0.5f));
+	c.z = tex.buf[i * 3];
+	c.y = tex.buf[i * 3 + 1];
+	c.x = tex.buf[i * 3 + 2];
+	return c;
+}
+Vector3 getnormal(float u, float v)
+{
+	Vector3 c;
+	int i = ((int)(v * (Texsize - 1) + 0.5f) * Texsize + (u * (Texsize - 1) + 0.5f));
+	c.x = normalbuf[i * 3];
+	c.y = normalbuf[i * 3 + 1];
+	c.z = normalbuf[i * 3 + 2];
+	return c;
+}
+float getroughness(float u, float v)
+{
+	int i = ((int)(v * (Texsize - 1) + 0.5f) * Texsize + (u * (Texsize - 1) + 0.5f));
+	return roughnessbuf[i];
+}
+float getao(float u, float v)
+{
+	int i = ((int)(v * (Texsize - 1) + 0.5f) * Texsize + (u * (Texsize - 1) + 0.5f));
+	return aobuf[i];
+}
+float getmetallic(float u, float v)
+{
+	int i = ((int)(v * (Texsize - 1) + 0.5f) * Texsize + (u * (Texsize - 1) + 0.5f));
+	return metallicbuf[i];
+}
+
+
+Vector3 mix(Vector3 a, Vector3 b, float alpha) {
+	return a * (1 - alpha) + b * alpha;
+}
+float DistributionGGX(Vector3 N, Vector3 H, float a)
+{
+	float a2 = pow((a * a), 2);
+	float NdotH = max(N.Dot(H), 0.0);
+	float NdotH2 = NdotH * NdotH;
+
+	float nom = a2;
+	float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+	denom = PI * denom * denom;
+
+	return nom / denom;
+}
+Vector3 fresnelSchlick(Vector3 n, Vector3 v, Vector3 F0)
+{
+	return F0 + (Vector3() - F0) * pow(1.0 - n.Dot(v), 5);
+}
+Vector3 fresnelSchlick(float cosTheta, Vector3 F0)
+{
+	return F0 + (Vector3(1.0) - F0) * pow(1.0 - cosTheta, 5.0);
+}
+/*float GeometrySchlickGGX(float NdotV, float k)
+{
+	float nom = NdotV;
+	float denom = NdotV * (1.0 - k) + k;
+
+	return nom / denom;
+}
+*/
+
+
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+	float r = (roughness + 1.0);
+	float k = (r * r) / 8.0;
+
+	float nom = NdotV;
+	float denom = NdotV * (1.0 - k) + k;
+
+	return nom / denom;
+}
+
+float GeometrySmith(Vector3 N, Vector3 V, Vector3 L, float k)
+{
+	float NdotV = max(N.Dot(V), 0.0);
+	float NdotL = max(N.Dot(L), 0.0);
+	float ggx1 = GeometrySchlickGGX(NdotV, k);
+	float ggx2 = GeometrySchlickGGX(NdotL, k);
+
+	return ggx1 * ggx2;
+}
+
+Vector3 lightPositions(-15.0, 8.0, 5.0);
+Vector3 lightcolor = Vector3(217, 217, 217).Normalize();// .Normalize();
+Vector3  getPBR(float u, float v, Vector3 pos)
+{
+	Vector3 albedo = getcoloruv(u, v);
+	albedo.Normalize();
+	Vector3 N;
+	matrix_apply(&N,&getnormal(u, v), &TBN);
+	N.Normalize();
+	float roughness = getroughness(u, v); //cout << roughness << endl;
+	float ao = getao(u, v); //cout << ao<< endl;
+	float metallic = getmetallic(u, v);
+	
+
+	Vector3 F0 = Vector3(0.04);
+	F0 = mix(F0, albedo, metallic);
+
+	// reflectance equation
+	Vector3 Lo(0.0f);
+	// calculate per-light radiance
+	//Vector3 L = (pos - lightPositions);//Vector3(lightPositions-pos).Normalize();
+	//Vector3 L(lightPositions.x-pos.x, lightPositions.y- pos.y,-lightPositions.z-pos.z);
+	Vector3 L(5,5,-3);
+	float distance = 0.7;// L.length(); //(pos - lightPositions).length();
+	L.Normalize();
+	Vector3 V = pos.Normalize();
+	//L.Normalize();
+	Vector3 H = (V + L).Normalize();
+	
+	float attenuation = 1.0 / (distance * distance);
+	Vector3 radiance = lightcolor * attenuation;
+
+	// cook-torrance brdf
+	float NDF = DistributionGGX(N, H, roughness);
+	float G = GeometrySmith(N, V, L, roughness);
+	//Vector3 F = fresnelSchlick(N, V, F0); //fresnelSchlick(max(H.Dot( V), 0.0), F0);
+	Vector3 F = fresnelSchlick(max(H.Dot(V), 0.0), F0);
+	Vector3 kS = F;// cout << F.x<<"|"<<F.y<<"|"<<F.z << endl;
+	Vector3 kD = Vector3(1.0) - kS;
+	kD = kD * (1.0 - metallic);
+
+	Vector3 nominator = F * G * NDF;
+	float denominator = 4.0 * max(N.Dot(V), 0.0) * max(N.Dot(L), 0.0) + 0.005;
+	Vector3 specular = nominator / denominator;
+
+	// add to outgoing radiance Lo
+	float NdotL = max(N.Dot(L), 0.0);
+	Lo = Lo +(kD * albedo / PI + specular) * radiance * NdotL;
+
+
+	Vector3 ambient = Vector3(0.03) * albedo * ao;
+	Vector3 color = ambient + Lo;
+
+	color = color / (color + Vector3(1.0));
+	color.x = pow(color.x, 1.0 / 2.2) * 256;
+	color.y = pow(color.y, 1.0 / 2.2) * 256;
+	color.z = pow(color.z, 1.0 / 2.2) * 256;
+	return color;
+
+}
+// 绘制扫描线
+void device_draw_scanline(device_t* device, scanline_t* scanline) {
+	float* zbuffer = zbuf;
+	int x = scanline->x;
+	int w = scanline->w;
+	int y = scanline->y;
+	int width = device->width;
+	for (; w > 0; x++, w--) {
+		if (x >= 0 && x < width) {
+			float rhw = scanline->v.rhw;
+			if (rhw >= zbuffer[y * Width + x]) {
+				float w = 1.0f / rhw;
+				zbuf[y * Width + x] = rhw;
+				float u = scanline->v.tc.u * w;
+				float v = scanline->v.tc.v * w;
+				Vector3 pos(scanline->v.ppos.x, scanline->v.ppos.y, scanline->v.ppos.z);
+				if (drawingcube) {
+					drawpixel(x, y, getPBR(u, v, Vector3()-pos));
+				}
+
+			}
+		}
+		vertex_add(&scanline->v, &scanline->step);
+		if (x >= width) break;
+	}
+}
+// 绘制shadow扫描线
+void device_drawshadow_scanline(device_t* device, scanline_t* scanline) {
+	int x = scanline->x;
+	int w = scanline->w;
+	int y = scanline->y;
+	int width = device->width;
+	for (; w > 0; x++, w--) {
+		if (x >= 0 && x < width) {
+			float rhw = scanline->v.rhw;
+			if (rhw >= szbuf[y * SWidth + x]) {
+				shadowbuf[y * SWidth + x] = scanline->v.ppos.z;
+				szbuf[y * SWidth + x] = rhw;
+			}
+		}
+		vertex_add(&scanline->v, &scanline->step);
+		if (x >= width) break;
+	}
+}
+// 主渲染函数
+void device_render_trap(device_t* device, trapezoid_t* trap) {
+	scanline_t scanline;
+	int j, top, bottom;
+	top = (int)(trap->top + 0.5f);
+	bottom = (int)(trap->bottom + 0.5f);
+	for (j = top; j < bottom; j++) {
+		if (j >= 0 && j < device->height) {
+			trapezoid_edge_interp(trap, (float)j + 0.5f);
+			trapezoid_init_scan_line(trap, &scanline, j);
+			device_draw_scanline(device, &scanline);
+		}
+		if (j >= device->height) break;
+	}
+}
+void device_rendershadow_trap(device_t* device, trapezoid_t* trap) {
+	scanline_t scanline;
+	int j, top, bottom;
+	top = (int)(trap->top + 0.5f);
+	bottom = (int)(trap->bottom + 0.5f);
+	for (j = top; j < bottom; j++) {
+		if (j >= 0 && j < device->height) {
+			trapezoid_edge_interp(trap, (float)j + 0.5f);
+			trapezoid_init_scan_line(trap, &scanline, j);
+			device_drawshadow_scanline(device, &scanline);
+		}
+		if (j >= device->height) break;
+	}
+}
+
+void device_draw_primitive(device_t* device, transform_t* transform, transform_t* Stransform, vertex* v1, vertex* v2, vertex* v3) {
+	point_t p1, p2, p3, c1, c2, c3;
+
+	// 按照 Transform 变化
+	transform_apply(transform, &c1, &v1->pos);
+	transform_apply(transform, &c2, &v2->pos);
+	transform_apply(transform, &c3, &v3->pos);
+
+	// 裁剪
+	if (transform_check_cvv(&c1) != 0) return;
+	if (transform_check_cvv(&c2) != 0) return;
+	if (transform_check_cvv(&c3) != 0) return;
+
+	//计算面法向量
+	Vector3 A(c1.x, c1.y, c1.z);
+	Vector3 B(c2.x, c2.y, c2.z);
+	Vector3 C(c3.x, c3.y, c3.z);
+	B = A - B;
+	A = C - A;
+	pnormal = B.Cross(A);
+	pnormal.Normalize();
+	float ang = pnormal.Dot(Vector3(0, 0, 1));
+	if (ang > 0)return;//后向面判别算法
+	vertex_2 v21, v22, v23;
+
+
+	v21.ppos = c1;
+	v22.ppos = c2;
+	v23.ppos = c3;
+
+	// 归一化
+	transform_homogenize(transform, &p1, &c1);
+	transform_homogenize(transform, &p2, &c2);
+	transform_homogenize(transform, &p3, &c3);
+	vertex t1 = *v1, t2 = *v2, t3 = *v3;
+	trapezoid_t traps[2];
+	int n;
+
+	t1.pos = p1;
+	t2.pos = p2;
+	t3.pos = p3;
+	t1.pos.w = c1.w;
+	t2.pos.w = c2.w;
+	t3.pos.w = c3.w;
+
+	vertex_rhw_init(&t1);	// 初始化 w
+	vertex_rhw_init(&t2);	// 初始化 w
+	vertex_rhw_init(&t3);	// 初始化 w
+
+	v21.pos = t1.pos;
+	v21.rhw = t1.rhw;
+	v21.tc = t1.tc;
+
+	v22.pos = t2.pos;
+	v22.rhw = t2.rhw;
+	v22.tc = t2.tc;
+
+	v23.pos = t3.pos;
+	v23.rhw = t3.rhw;
+	v23.tc = t3.tc;
+	
+
+
+
+
+
+	//////////////////////////////////////////////////////
+	// 拆分三角形为0-2个梯形，并且返回可用梯形数量
+
+	n = trapezoid_init_triangle(traps, &v21, &v22, &v23);
+	if (n >= 1) device_render_trap(device, &traps[0]);
+	if (n >= 2) device_render_trap(device, &traps[1]);
+}
+void device_drawshadow_primitive(device_t* device, transform_t* transform, vertex* v1, vertex* v2, vertex* v3) {
+	point_t p1, p2, p3, c1, c2, c3;
+	transform_apply(transform, &c1, &v1->pos);
+	transform_apply(transform, &c2, &v2->pos);
+	transform_apply(transform, &c3, &v3->pos);
+	if (transform_check_cvv(&c1) != 0) return;
+	if (transform_check_cvv(&c2) != 0) return;
+	if (transform_check_cvv(&c3) != 0) return;
+	vertex_2 v21, v22, v23;
+	v21.ppos = c1;
+	v22.ppos = c2;
+	v23.ppos = c3;
+	Vector3 A(c1.x, c1.y, c1.z);
+	Vector3 B(c2.x, c2.y, c2.z);
+	Vector3 C(c3.x, c3.y, c3.z);
+	B = A - B;
+	A = C - A;
+	pnormal = B.Cross(A);
+	pnormal.Normalize();
+	if (pnormal.Dot(Vector3(0, 0, 1)) > 0)return;
+
+
+	transform_homogenize(transform, &p1, &c1);
+	transform_homogenize(transform, &p2, &c2);
+	transform_homogenize(transform, &p3, &c3);
+	vertex t1 = *v1, t2 = *v2, t3 = *v3;
+	trapezoid_t traps[2];
+	int n;
+	t1.pos = p1;
+	t2.pos = p2;
+	t3.pos = p3;
+	t1.pos.w = c1.w;
+	t2.pos.w = c2.w;
+	t3.pos.w = c3.w;
+	vertex_rhw_init(&t1);	// 初始化 w
+	vertex_rhw_init(&t2);	// 初始化 w
+	vertex_rhw_init(&t3);	// 初始化 w
+	v21.pos = t1.pos;
+	v21.rhw = t1.rhw;
+	v22.pos = t2.pos;
+	v22.rhw = t2.rhw;
+	v23.pos = t3.pos;
+	v23.rhw = t3.rhw;
+	n = trapezoid_init_triangle(traps, &v21, &v22, &v23);
+	if (n >= 1) device_rendershadow_trap(device, &traps[0]);
+	if (n >= 2) device_rendershadow_trap(device, &traps[1]);
+}
+
+
+
+
+void screen_update(void) {
+	HDC hDC = GetDC(screen_handle);
+	BitBlt(hDC, 0, 0, screen_w, screen_h, screen_dc, 0, 0, SRCCOPY);
+	ReleaseDC(screen_handle, hDC);
+	screen_dispatch();
+}
+
+void shadowclear()
+{
+	memset(szbuf, 0, SWidth * SHeight * sizeof(float));
+	memset(shadowbuf, 0, SWidth * SHeight * sizeof(float));
+}
+
+void clear()
+{
+	memset(screen_fb, 177, 800 * 600 * 4);
+	memset(zbuf, 0, 800 * 600 * sizeof(float));
+}
+
+int tr, tg, tb;
+void drawshadow(int x, int y, float z)
+{
+	shadowbuf[(y * Width + x)] = z;
+}
+void drawpixel(int x, int y, float u, float v, float diffuseLight, float specular)
+{
+	Vector3 c = getcoloruv(u, v);
+	screen_fb[(y * Width + x) * 4] = min(c.z * (0.5f + diffuseLight) + specular * 177, 255);
+	screen_fb[(y * Width + x) * 4 + 1] = min(c.y * (0.5f + diffuseLight) + specular * 177, 255);
+	screen_fb[(y * Width + x) * 4 + 2] = min(c.x * (0.5f + diffuseLight) + specular * 177, 255);
+}
+void drawpixel(int x, int y, Vector3 c)
+{
+	screen_fb[(y * Width + x) * 4] = c.z;
+	screen_fb[(y * Width + x) * 4 + 1] = c.y;
+	screen_fb[(y * Width + x) * 4 + 2] = c.x;
+	screen_fb[(y * Width + x) * 4 + 3] = 1.0;
+}
+vertex* mesh;
+
+vertex Cube[8] = {
+	 {  1, -1,  1, 1 },
+	 { -1, -1,  1, 1 },
+	 { -1,  1,  1, 1 },
+	 {  1,  1,  1, 1 },
+	 {  1, -1, -1, 1 },
+	 { -1, -1, -1, 1 },
+	 { -1,  1, -1, 1 },
+	 {  1,  1, -1, 1 },
+};
+material Mcube{
+	0.6,
+	0.7,
+	2
+};
+vertex Floor[4] = {
+	 {  4, -7,  -3, 1 },
+	 { -4, -7,  -3, 1 },
+	 { -4,  7,  -3, 1 },
+	 {  4,  7,  -3, 1 }
+};
+material Mfloor{
+	0.6,
+	0.25,
+	2
+};
+void drawplane(device_t* ts, transform_t* transform, transform_t* Stransform, int i1, int i2, int i3, int i4)
+{
+	vertex p1 = mesh[i1], p2 = mesh[i2], p3 = mesh[i3], p4 = mesh[i4];
+	p1.tc.u = 1, p1.tc.v = 1, p2.tc.u = 0, p2.tc.v = 1;
+	p3.tc.u = 0, p3.tc.v = 0, p4.tc.u = 1, p4.tc.v = 0;
+	point_t c1=p1.pos, c2=p2.pos, c3=p3.pos;
+
+	//计算面法向量
+	Vector3 A(c1.x, c1.y, c1.z);
+	Vector3 B(c2.x, c2.y, c2.z);
+	Vector3 C(c3.x, c3.y, c3.z);
+	B = A - B;
+	A = C - A;
+	pnormal = B.Cross(A);
+	pnormal.Normalize();
+	//计算TBN
+
+	vertex edge1 = {
+		{
+			c2.x - c1.x,
+			c2.y - c1.y,
+			c2.z - c1.z,
+			c2.w - c1.w
+		} ,
+	{
+		p2.tc.u - p1.tc.u,
+		p2.tc.v - p1.tc.v,
+	},
+	{
+		0,0,0
+	},
+	0.0
+	};
+	vertex edge2 = {
+		{
+			c3.x - c1.x,
+			c3.y - c1.y,
+			c3.z - c1.z,
+			c3.w - c1.w
+		} ,
+	{
+		p3.tc.u - p1.tc.u,
+		p3.tc.v - p1.tc.v,
+	},
+	{
+		0,0,0
+	},
+	0.0
+	};
+	float f = 1.0f / (edge1.tc.u * edge2.tc.v - edge1.tc.v * edge2.tc.u);
+
+
+	vector_t tangent, bitangent;
+	tangent.x = f * (edge2.tc.v * edge1.pos.x - edge1.tc.v * edge2.pos.x);
+	tangent.y = f * (edge2.tc.v * edge1.pos.y - edge1.tc.v * edge2.pos.y);
+	tangent.z = f * (edge2.tc.v * edge1.pos.z - edge1.tc.v * edge2.pos.z);
+	tangent.w = 0;
+	//tangent = glm::normalize(tangent1);
+	vector_normalize(&tangent);
+	bitangent.x = f * (-edge2.tc.u * edge1.pos.x + edge1.tc.u * edge2.pos.x);
+	bitangent.y = f * (-edge2.tc.u * edge1.pos.y + edge1.tc.u * edge2.pos.y);
+	bitangent.z = f * (-edge2.tc.u * edge1.pos.z + edge1.tc.u * edge2.pos.z);
+	bitangent.w = 0;
+	//bitangent = glm::normalize(bitangent1);
+	vector_normalize(&bitangent);
+
+	vector_t T, BB, N,TN;
+	TN.x = pnormal.x;
+	TN.y = pnormal.y;
+	TN.z = pnormal.z;
+	TN.w = 0;
+	transform_apply(transform, &T, &tangent);
+	transform_apply(transform, &BB, &bitangent);
+	transform_apply(transform, &N, &TN);
+	vector_normalize(&T);
+	vector_normalize(&BB);
+	vector_normalize(&N);
+
+	TBN = {
+	T.x,T.y,T.z,0,
+	BB.x,BB.y,BB.z,0,
+	N.x,N.y,N.z,0,
+	0,0,0,0 
+	};
+
+	/*TBN = {
+	T.x,BB.x,N.x,0,
+	T.y,BB.y,N.y,0,
+	T.z,BB.z,N.z,0,
+	0,0,0,0
+	};*/
+	if (drawmode == DRAW)
+	{
+		device_draw_primitive(ts, transform, Stransform, &p1, &p2, &p3);
+		device_draw_primitive(ts, transform, Stransform, &p1, &p3, &p4);
+	}
+	else
+	{
+		device_drawshadow_primitive(ts, transform, &p1, &p2, &p3);
+		device_drawshadow_primitive(ts, transform, &p3, &p4, &p1);
+	}
+}
+void drawfloor(device_t* ts)
+{
+	drawingcube = false;
+	mesh = Floor;
+	matr = &Mfloor;
+	tex = Ptex;
+	drawplane(ts, &ts->Ptransform, &ts->SPtransform, 0, 1, 2, 3);
+}
+void drawcube(device_t* ts, float theta)
+{
+	drawingcube = true;
+	mesh = Cube;
+	matr = &Mcube;
+	tex = Ctex200;
+	matrix_t m;
+	matrix_set_rotate(&m, 1, 1, 0, theta);
+	ts->transform.world = m;
+	transform_update(&ts->transform);
+
+
+	drawplane(ts, &ts->transform, &ts->SCtransform, 0, 1, 2, 3);
+	drawplane(ts, &ts->transform, &ts->SCtransform, 5, 4, 7, 6);
+	drawplane(ts, &ts->transform, &ts->SCtransform, 0, 4, 5, 1);
+	drawplane(ts, &ts->transform, &ts->SCtransform, 1, 5, 6, 2);
+	drawplane(ts, &ts->transform, &ts->SCtransform, 2, 6, 7, 3);
+	drawplane(ts, &ts->transform, &ts->SCtransform, 3, 7, 4, 0);
+
+}
+
+int main(void)
+{
+	device_t device;
+	device_t shadowdevice;
+	float alpha = 0;
+	const char* title = "wangwuxuan software render";
+	if (screen_init(800, 600, title))
+		return -1;
+	device_init(&device, 800, 600);
+	device_init(&shadowdevice, SWidth, SHeight);
+	shadowbuf_init(SWidth, SHeight);
+	zbuf_init();
+	tex_init();
+
+	while (screen_exit == 0 && screen_keys[VK_ESCAPE] == 0) {
+
+		if (screen_keys[VK_UP])pos -= 0.04f;
+		if (screen_keys[VK_DOWN])pos += 0.04f;
+		if (screen_keys[VK_LEFT])alpha -= 0.07f;
+		if (screen_keys[VK_RIGHT])alpha += 0.07f;
+		if (screen_keys[VK_SPACE]);
+		if (screen_keys[0x57]);//qq += 0.14f;
+		if (screen_keys[0x53]);// qq -= 0.14f;
+		if (screen_keys[0x69]);// += 0.14f;
+		if (screen_keys[0x82]);// -= 0.14f;
+		if (screen_keys[0x41])light.dir.x += 0.14f;
+		if (screen_keys[0x44])light.dir.x -= 0.14f;
+		if (screen_keys[VK_NUMPAD8])height += 0.07f;
+		if (screen_keys[VK_NUMPAD2])height -= 0.07f;
+		screen_dispatch();
+		drawmode = DRAW;
+		//配置灯光
+		camera_at_zero(&device, 0, height, pos);
+		clear();
+		drawcube(&device, alpha);
+		screen_update();
+		Sleep(1);
+	}
+	return 0;
+}
+

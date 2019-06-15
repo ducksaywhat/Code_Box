@@ -1,0 +1,5 @@
+修复了mipmap梯度纹理生成算法
+坑：
+camera的up向量设置错误
+对bmp格式的normal map解析错误（BGR）
+对向量的处理错误（[-1,1]）
